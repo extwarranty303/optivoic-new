@@ -35,19 +35,19 @@ export default function TemplateDetails() {
     return () => { authListener.subscription.unsubscribe(); };
   }, []);
 
-  // Hardcoded product data for the demo
+  // Updated product data for maximum conversion
   const product = {
-    title: "E-Commerce Reseller Profit & COGS Tracker",
+    title: "The Ultimate E-Commerce Reseller Profit & COGS Tracker",
     price: 19.99,
-    category: "Essential Trackers",
+    category: "Essential Business Trackers",
     format: "Excel & Google Sheets",
-    description: "Stop guessing your margins. This professional-grade tracker is built specifically for high-volume resellers handling vintage clothing, luxury jewelry, and collectibles.",
+    description: "Stop guessing your true profit margins. Built specifically for serious resellers handling fine jewelry, designer toys, and vintage clothing, this automated system eliminates hidden fee leaks and turns chaotic inventory into clear, actionable business intelligence.",
     features: [
-      "Automated Cost of Goods Sold (COGS) calculations",
-      "Dynamic platform fee deduction (eBay, Depop, Poshmark)",
-      "Shipping cost variance tracking",
-      "Month-over-month profit visualization dashboard",
-      "Tax-ready quarterly export formatting"
+      "Automated COGS & Net Profit Calculations: Instantly see exactly what you make after costs.",
+      "Dynamic Platform Fee Deductions: Pre-loaded algorithms for eBay, Poshmark, Mercari, Etsy, Depop, and more.",
+      "Inventory Master to Sales Log Syncing: Dropdown menus seamlessly connect your stock to your sales.",
+      "Built-in Payment Processing Fees: Automatically calculates standard transaction fees (e.g., 2.9% + $0.30) so you never miss a cent.",
+      "Executive Dashboard: Real-time visualization of your Total Revenue and Total Profit."
     ]
   };
 
@@ -77,22 +77,44 @@ export default function TemplateDetails() {
           <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight drop-shadow-lg leading-tight">
             {product.title}
           </h1>
-          <p className="text-xl text-gray-300 leading-relaxed mb-12 font-light">
-            {product.description}
-          </p>
+          
+          <div className="text-xl text-gray-300 leading-relaxed mb-8 font-light space-y-6">
+            <p>
+              {product.description}
+            </p>
+            <p>
+              <strong>What You Gain:</strong> Total financial clarity. When you are sourcing from multiple platforms and selling across different marketplaces, keeping track of varying commission rates, base costs, and shipping materials becomes a nightmare. 
+            </p>
+            <p>
+              This tracker does the heavy lifting for you. Simply input your item cost and sale price—the built-in formulas instantly calculate the exact marketplace fee, deduct payment processing costs, and reveal your actual take-home profit. 
+            </p>
+          </div>
 
           <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl mb-12">
             <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="text-cyan-400">⚡</span> What's Included
+              <span className="text-cyan-400">⚡</span> Inside The Tracker
             </h3>
             <ul className="space-y-4">
-              {product.features.map((feature, idx) => (
-                <li key={idx} className="flex items-start gap-4 text-gray-300">
-                  <span className="text-violet-500 font-bold mt-1">✓</span>
-                  <span className="text-lg">{feature}</span>
-                </li>
-              ))}
+              {product.features.map((feature, idx) => {
+                // Split the feature text to bold the first part for better scannability
+                const [title, description] = feature.split(': ');
+                return (
+                  <li key={idx} className="flex items-start gap-4 text-gray-300">
+                    <span className="text-violet-500 font-bold mt-1">✓</span>
+                    <span className="text-lg">
+                      <strong className="text-white">{title}:</strong> {description}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
+          </div>
+          
+          <div className="bg-cyan-900/20 border border-cyan-500/30 rounded-2xl p-6 mb-12">
+            <h4 className="text-lg font-semibold text-cyan-300 mb-2">Perfect for Multi-Channel Sellers</h4>
+            <p className="text-sm text-gray-400">
+              Whether you are flipping thrifted home goods, managing a high-end jewelry archive, or moving hype collectibles, the customizable categories and standardized ID generation adapt perfectly to your specific business model.
+            </p>
           </div>
         </div>
 
