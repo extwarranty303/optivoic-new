@@ -35,10 +35,8 @@ export default function ExecutiveTaxEngine() {
     return () => { authListener.subscription.unsubscribe(); };
   }, []);
 
-  const productsById = {
-    "526dcf30-0990-458e-bba7-b9f1c7e99078": {
-    id: "executive-tax-engine",
-    dbId: 1, // <-- numeric template_id stored in Supabase for this product (replace with real ID)
+  const product = {
+    id: "526dcf30-0990-458e-bba7-b9f1c7e99078", // slug/UUID; templates table uses strings only
 
     title: "Executive Tax Engine - Business in a Box for 1099 Pros",
     price: 19.99,
@@ -248,11 +246,17 @@ export default function ExecutiveTaxEngine() {
                       onApprove={async (data, actions) => {
                         const details = await actions.order.capture();
                         
+                        // ensure we only send a number when it's available
+                        const templateId =
+                          typeof product.dbId === 'number' && !isNaN(product.dbId)
+                            ? product.dbId
+                            : product.id;
+
                         const { error } = await supabase.from('purchases').insert([
                           {
                             user_id: user.id,
                             user_email: user.email,
-                            template_id: product.dbId || product.id
+                            template_id: templateId
                           }
                         ]);
 
