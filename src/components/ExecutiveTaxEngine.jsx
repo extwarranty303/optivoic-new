@@ -19,6 +19,9 @@ export default function ExecutiveTaxEngine() {
   const location = useLocation();
 
   useEffect(() => {
+    // scroll to top when component mounts
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user || null);

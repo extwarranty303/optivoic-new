@@ -22,6 +22,9 @@ export default function TemplateDetails() {
   const location = useLocation();
 
   useEffect(() => {
+    // scroll to top when component mounts
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
     // Check if user is logged in when the page loads
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -35,7 +38,7 @@ export default function TemplateDetails() {
     });
 
     return () => { subscription.unsubscribe(); };
-  }, []);
+  }, [id]);
 
   // product dictionary keyed by template ID.  Future improvement: fetch from Supabase instead.
   const productsById = {
