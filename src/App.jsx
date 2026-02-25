@@ -9,11 +9,10 @@ import Privacy from "./components/Privacy";
 import ClientPortal from "./components/ClientPortal";
 import AdminDashboard from "./components/AdminDashboard";
 import UpdatePassword from "./components/UpdatePassword"; // <-- NEW
-import { HelmetProvider } from 'react-helmet-async';
+
 
 function App() {
   return (
-    <HelmetProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Storefront />} />
@@ -27,7 +26,6 @@ function App() {
           <Route path="/update-password" element={<UpdatePassword />} /> {/* <-- NEW */}
         </Routes>
       </Router>
-    </HelmetProvider>
   );
 }
 

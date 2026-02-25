@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet'; // ADDED: Missing import for SEO metadata
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
+import { usePageMeta } from '../utils/usePageMeta';
 
 // ==========================================
 // 1. DATA STORE 
@@ -231,17 +231,14 @@ export default function Storefront() {
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
       
       {/* --- NEW: Global SEO Metadata --- */}
-      <Helmet>
-        <title>OptiVöic | Elite Technology Consulting & Frameworks</title>
-        <meta name="description" content="Engineering Velocity. Elite technology consulting, AI system evaluation, and professional-grade operational frameworks built to scale your revenue." />
-        
-        {/* OpenGraph Tags for nice link previews on Twitter/LinkedIn/Discord */}
-        <meta property="og:title" content="OptiVöic Consulting & Software" />
-        <meta property="og:description" content="Turnkey frameworks and custom automation for instant operational ROI." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://optivoic.com" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      {usePageMeta({
+        title: 'OptiVöic | Elite Technology Consulting & Frameworks',
+        description: 'Engineering Velocity. Elite technology consulting, AI system evaluation, and professional-grade operational frameworks built to scale your revenue.',
+        ogTitle: 'OptiVöic Consulting & Software',
+        ogDescription: 'Turnkey frameworks and custom automation for instant operational ROI.',
+        ogType: 'website',
+        ogUrl: 'https://optivoic.com'
+      })}
 
       <AmbientBackground />
       <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
