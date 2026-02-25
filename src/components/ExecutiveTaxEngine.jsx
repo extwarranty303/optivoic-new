@@ -35,9 +35,11 @@ export default function ExecutiveTaxEngine() {
     return () => { authListener.subscription.unsubscribe(); };
   }, []);
 
-  const product = {
-    id: "526dcf30-0990-458e-bba7-b9f1c7e99078",
-    dbId: 1, // <-- replace 1 with the actual numeric template_id stored in Supabase for this product
+  const productsById = {
+    "526dcf30-0990-458e-bba7-b9f1c7e99078": {
+    id: "executive-tax-engine",
+    dbId: 1, // <-- numeric template_id stored in Supabase for this product (replace with real ID)
+
     title: "Executive Tax Engine - Business in a Box for 1099 Pros",
     price: 19.99,
     category: "Essential Business Tools",
