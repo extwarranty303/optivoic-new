@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet'; // ADDED: Missing import for SEO metadata
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
 
@@ -221,15 +222,10 @@ const InteractiveMarketplace = () => {
 };
 
 // ==========================================
-// 3. MAIN EXPORT
+// 3. MAIN EXPORT (FIXED)
 // ==========================================
 export default function Storefront() {
   const [isAuthOpen, setIsAuthOpen] = useState(false); // Controls modal visibility
-
-  return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
-      export default function Storefront() {
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
@@ -249,8 +245,6 @@ export default function Storefront() {
 
       <AmbientBackground />
       <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
-      <AmbientBackground />
-      <Navbar onOpenAuth={() => setIsAuthOpen(true)} /> {/* Triggers state change */}
       <Hero />
       <BentoServices />
       <InteractiveMarketplace />

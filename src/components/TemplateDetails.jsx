@@ -16,7 +16,7 @@ export default function TemplateDetails() {
   const { id } = useParams(); 
   const navigate = useNavigate();
   
-  // --- NEW: Authentication State ---
+  // Authentication State
   const [user, setUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
@@ -28,15 +28,14 @@ export default function TemplateDetails() {
     };
     checkUser();
 
-    // Listen for login/logout changes while they are on the page
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    // Listen for login/logout changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user || null);
     });
 
-    return () => { authListener.subscription.unsubscribe(); };
+    return () => { subscription.unsubscribe(); };
   }, []);
 
-  // Updated product data for maximum conversion
   const product = {
     title: "The Ultimate E-Commerce Reseller Profit & COGS Tracker",
     price: 19.99,
@@ -56,7 +55,6 @@ export default function TemplateDetails() {
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative">
       <NoiseOverlay />
 
-      {/* --- NEW: Dynamic Product SEO --- */}
       <Helmet>
         <title>{product.title} | OptiVöic Marketplace</title>
         <meta name="description" content={product.description} />
@@ -64,7 +62,7 @@ export default function TemplateDetails() {
         <meta property="og:title" content={product.title} />
         <meta property="og:description" content={product.description} />
         <meta property="og:type" content="product" />
-        <meta property="product:price:amount" content={product.price} />
+        <meta property="product:price:amount" content={product.price.toString()} />
         <meta property="product:price:currency" content="USD" />
       </Helmet>
       
@@ -92,9 +90,7 @@ export default function TemplateDetails() {
           </h1>
           
           <div className="text-xl text-gray-300 leading-relaxed mb-8 font-light space-y-6">
-            <p>
-              {product.description}
-            </p>
+            <p>{product.description}</p>
             <p>
               <strong>What You Gain:</strong> Total financial clarity. When you are sourcing from multiple platforms and selling across different marketplaces, keeping track of varying commission rates, base costs, and shipping materials becomes a nightmare. 
             </p>
@@ -109,13 +105,14 @@ export default function TemplateDetails() {
             </h3>
             <ul className="space-y-4">
               {product.features.map((feature, idx) => {
-                // Split the feature text to bold the first part for better scannability
-                const [title, description] = feature.split(': ');
+                const parts = feature.split(': ');
+                const title = parts[0];
+                const description = parts.length > 1 ? parts.slice(1).join(': ') : '';
                 return (
                   <li key={idx} className="flex items-start gap-4 text-gray-300">
                     <span className="text-violet-500 font-bold mt-1">✓</span>
                     <span className="text-lg">
-                      <strong className="text-white">{title}:</strong> {description}
+                      <strong className="text-white">{title}{description && ':'}</strong> {description}
                     </span>
                   </li>
                 );
@@ -145,7 +142,6 @@ export default function TemplateDetails() {
               </div>
             </div>
 
-            {/* --- NEW: Conditional Checkout Rendering --- */}
             <div className="min-h-[150px] relative z-20 flex flex-col justify-center mb-6">
               {!user ? (
                 <div className="text-center bg-black/40 border border-white/10 rounded-2xl p-6">
@@ -166,19 +162,21 @@ export default function TemplateDetails() {
                         return actions.order.create({
                           purchase_units: [{
                             description: product.title,
-                            amount: { value: product.price.toString() }
+                            amount: { 
+                              value: product.price.toString(),
+                              currency_code: "USD"
+                            }
                           }]
                         });
                       }}
                       onApprove={async (data, actions) => {
                         const details = await actions.order.capture();
                         
-                        // 1. THE MAGIC: Insert the purchase into Supabase!
                         const { error } = await supabase.from('purchases').insert([
                           {
                             user_id: user.id,
                             user_email: user.email,
-                            template_id: id // Captures the ID from the URL
+                            template_id: id 
                           }
                         ]);
 
@@ -186,7 +184,6 @@ export default function TemplateDetails() {
                           alert("Payment succeeded, but there was an error generating your link. Please contact support.");
                           console.error(error);
                         } else {
-                          // 2. Success! Teleport them to their portal to download it.
                           alert(`Success! Thank you, ${details.payer.name.given_name}. Redirecting to your secure portal...`);
                           navigate('/portal');
                         }
@@ -213,7 +210,6 @@ export default function TemplateDetails() {
         </div>
       </main>
 
-      {/* Render Auth Modal if they click "Create Account to Checkout" */}
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </div>
   );
