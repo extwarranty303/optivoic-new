@@ -165,7 +165,7 @@ export default function TemplateDetails() {
                           {
                             user_id: user.id,
                             user_email: user.email,
-                            template_id: parseInt(id) // Captures the ID from the URL
+                            template_id: id // Captures the ID from the URL
                           }
                         ]);
 
