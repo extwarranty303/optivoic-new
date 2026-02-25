@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Storefront from "./components/Storefront";
 import TemplateDetails from "./components/TemplateDetails";
+import ExecutiveTaxEngine from "./components/ExecutiveTaxEngine";
 import Consulting from "./components/Consulting";
 import Terms from "./components/Terms";
 import Privacy from "./components/Privacy";
@@ -17,6 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Storefront />} />
           <Route path="/template/:id" element={<TemplateDetails />} />
+          <Route path="/tax-engine" element={<ExecutiveTaxEngine />} />
           <Route path="/consulting" element={<Consulting />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />

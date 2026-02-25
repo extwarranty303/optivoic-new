@@ -8,13 +8,14 @@ import SpaceBackground from './SpaceBackground';
 // ==========================================
 const templates = [
   { id: "36a7cc71-0c17-4530-a653-e59a8dbda7a3", categoryName: "Essential Trackers", title: "E-Commerce Reseller Profit & COGS Tracker", desc: "Track inventory cost, shipping, platform fees, and final profit margins.", price: 19.99, status: "READY" },
+  { id: "executive-tax-engine", categoryName: "Essential Trackers", title: "Optivoic Executive Tax Engine", desc: "Business-in-a-Box spreadsheet for 1099 pros. Track income, calculate quarterly taxes, and map deductions automatically.", price: 19.99, status: "READY", route: "/tax-engine" },
   { id: 2, categoryName: "Essential Trackers", title: "Options Trading & Premium Journal", desc: "Log strike prices, premiums, expiration dates, and win/loss ratios.", price: 14.99, status: "COMING SOON" },
   { id: 3, categoryName: "Essential Trackers", title: "The 'Story Bible' for Fiction", desc: "Centralized Notion workspace for writers to track character arcs and world-building.", price: 19.99, status: "COMING SOON" },
   { id: 4, categoryName: "Essential Trackers", title: "Collectibles Portfolio Valuation Tracker", desc: "Track acquisition costs and market values for high-end collectibles.", price: 14.99, status: "COMING SOON" },
   { id: 5, categoryName: "Essential Trackers", title: "Digital Nomad Route Planner", desc: "Notion/Sheets budgeter for campground reservations and connectivity ratings.", price: 24.99, status: "COMING SOON" },
   
   { id: 6, categoryName: "Professional Hubs", title: "AI Prompt Testing Sandbox", desc: "Workspace for prompt engineers to track versions and rate efficiency.", price: 29.99, status: "COMING SOON" },
-  { id: 7, categoryName: "Professional Hubs", title: "Freelance Tax Allocator", desc: "Input multiple income streams and auto-calculate estimated quarterly taxes.", price: 24.99, status: "COMING SOON" },
+  { id: 7, categoryName: "Professional Hubs", title: "Freelance Tax Allocator", desc: "Input multiple income streams and auto-calculate estimated quarterly taxes.", price: 24.99, status: "READY", route: "/tax-engine" },
   { id: 8, categoryName: "Professional Hubs", title: "CS Degree Organizer", desc: "Notion hub featuring syllabus mapping, code snippet storage, and GPA calculation.", price: 29.99, status: "COMING SOON" },
   { id: 9, categoryName: "Professional Hubs", title: "Agile Sprint Planning Hub", desc: "Template including a product backlog, active sprint board, and retrospectives.", price: 34.99, status: "COMING SOON" },
   { id: 10, categoryName: "Professional Hubs", title: "30-60-90 Day Onboarding Portal", desc: "Notion HR template with department intros, access checklists, and milestones.", price: 34.99, status: "COMING SOON" },
@@ -202,7 +203,7 @@ const InteractiveMarketplace = () => {
               <span className="text-2xl font-light text-white drop-shadow-md">${item.price}</span>
               <button 
                 disabled={item.status !== 'READY'}
-                onClick={() => navigate(`/template/${item.id}`)}
+                onClick={() => navigate(item.route || `/template/${item.id}`)}
                 className={`px-5 py-2 text-sm rounded-full font-semibold transition-all duration-300 ${
                   item.status === 'READY'
                     ? 'bg-white text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(56,182,255,0.4)]'
