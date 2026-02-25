@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 // --- FALLBACK PRODUCT DATABASE ---
 // This acts as a safety net in case the products table isn't fully populated yet
 const TEMPLATES_DB = {
+  "executive-tax-engine": { category: "Essential Business Tools", title: "Executive Tax Engine" },
   1: { category: "Essential Trackers", title: "E-Commerce Reseller Profit & COGS Tracker" },
   2: { category: "Essential Trackers", title: "Options Trading & Premium Journal" },
   3: { category: "Essential Trackers", title: "The 'Story Bible' for Fiction" },
