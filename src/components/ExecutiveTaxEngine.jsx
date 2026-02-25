@@ -33,11 +33,11 @@ export default function ExecutiveTaxEngine() {
 
   const product = {
     id: "executive-tax-engine",
-    title: "Optivoic Executive Tax Engine - Business in a Box for 1099 Pros",
+    title: "Executive Tax Engine - Business in a Box for 1099 Pros",
     price: 19.99,
     category: "Essential Business Tools",
     format: "Excel & Google Sheets",
-    description: "Stop guessing your 1099 taxes. The Optivoic Executive Tax Engine is a powerful, automated template designed to track fragmented income, calculate quarterly tax liability, and map deductions for stress-free tax season.",
+    description: "Stop guessing your 1099 taxes. The Executive Tax Engine is a powerful, automated template designed to track fragmented income, calculate quarterly tax liability, and map deductions for stress-free tax season.",
     features: [
       "Schedule C Auto-Mapper (CPA Replacement): Automatically aggregates expenses and maps them to IRS Form 1040 Schedule C line numbers for instant TurboTax integration.",
       "Smart Reseller Inventory & COGS Tracker: Automatically calculates Net Profit, Profit Margin %, and exact ROI % for every item with color-coded statuses.",
@@ -149,7 +149,7 @@ export default function ExecutiveTaxEngine() {
           <div className="mb-16 bg-gradient-to-r from-slate-900/50 to-charcoal/50 border border-gold/20 rounded-3xl p-10 backdrop-blur-xl">
             <h2 className="text-3xl font-bold mb-4 text-gold text-center">🎨 Beautiful Bookkeeping</h2>
             <p className="text-gray-300 leading-relaxed text-center text-lg">
-              Spreadsheets shouldn't look like a 1990s math textbook. The Optivoic Engine features a deeply satisfying Deep Charcoal Navy and Champagne Gold color palette. Built with a clean, gridless layout and alternating subtle zebra-striped rows, it reduces eye strain and looks like a bespoke piece of financial software.
+              Spreadsheets shouldn't look like a 1990s math textbook. The Executive Tax Engine features a deeply satisfying Deep Charcoal Navy and Champagne Gold color palette. Built with a clean, gridless layout and alternating subtle zebra-striped rows, it reduces eye strain and looks like a bespoke piece of financial software.
             </p>
           </div>
 
@@ -182,7 +182,7 @@ export default function ExecutiveTaxEngine() {
             <ul className="space-y-4 text-gray-300 text-lg">
               <li className="flex items-start gap-4">
                 <span className="text-gold font-bold">✓</span>
-                <span><strong>1x Optivoic Executive Tax Engine</strong> (Blank Master Template)</span>
+                <span><strong>1x Executive Tax Engine</strong> (Blank Master Template)</span>
               </li>
               <li className="flex items-start gap-4">
                 <span className="text-gold font-bold">✓</span>

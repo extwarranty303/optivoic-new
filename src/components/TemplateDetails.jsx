@@ -36,19 +36,56 @@ export default function TemplateDetails() {
     return () => { subscription.unsubscribe(); };
   }, []);
 
-  const product = {
-    title: "The Ultimate E-Commerce Reseller Profit & COGS Tracker",
-    price: 19.99,
-    category: "Essential Business Trackers",
-    format: "Excel & Google Sheets",
-    description: "Stop guessing your true profit margins. Built specifically for serious resellers handling fine jewelry, designer toys, and vintage clothing, this automated system eliminates hidden fee leaks and turns chaotic inventory into clear, actionable business intelligence.",
-    features: [
-      "Automated COGS & Net Profit Calculations: Instantly see exactly what you make after costs.",
-      "Dynamic Platform Fee Deductions: Pre-loaded algorithms for eBay, Poshmark, Mercari, Etsy, Depop, and more.",
-      "Inventory Master to Sales Log Syncing: Dropdown menus seamlessly connect your stock to your sales.",
-      "Built-in Payment Processing Fees: Automatically calculates standard transaction fees (e.g., 2.9% + $0.30) so you never miss a cent.",
-      "Executive Dashboard: Real-time visualization of your Total Revenue and Total Profit."
-    ]
+  // product dictionary keyed by template ID.  Future improvement: fetch from Supabase instead.
+  const productsById = {
+    "36a7cc71-0c17-4530-a653-e59a8dbda7a3": {
+      title: "The Ultimate E-Commerce Reseller Profit & COGS Tracker",
+      price: 19.99,
+      category: "Essential Business Trackers",
+      format: "Excel & Google Sheets",
+      description: "Stop guessing your true profit margins. Built specifically for serious resellers handling fine jewelry, designer toys, and vintage clothing, this automated system eliminates hidden fee leaks and turns chaotic inventory into clear, actionable business intelligence.",
+      heroHeading: "Stop Guessing Your Profit Margins. Start Knowing Exactly What You Make.",
+      heroSub: "The \"Business in a Box\" spreadsheet built for serious resellers who flip luxury, collectibles, and vintage goods.",
+      problemCopy: [
+        "You're losing money to hidden platform fees and shipping costs.",
+        "You're flying blind on profit margins and inventory ROI.",
+        "Your books break every time someone deletes a cell or overwrites a formula.",
+        "You're stuck toggling between a dozen tabs just to get one accurate report."
+      ],
+      features: [
+        "Automated COGS & Net Profit Calculations: Instantly see exactly what you make after costs.",
+        "Dynamic Platform Fee Deductions: Pre-loaded algorithms for eBay, Poshmark, Mercari, Etsy, Depop, and more.",
+        "Inventory Master to Sales Log Syncing: Dropdown menus seamlessly connect your stock to your sales.",
+        "Built-in Payment Processing Fees: Automatically calculates standard transaction fees (e.g., 2.9% + $0.30) so you never miss a cent.",
+        "Executive Dashboard: Real-time visualization of your Total Revenue and Total Profit."
+      ],
+      whoFor: [
+        { title: "E-Commerce Resellers", subtitle: "(eBay, Poshmark, Mercari, Vintage Flippers)" },
+        { title: "Gig Economy Sellers", subtitle: "(Etsy shops, small wholesale stores)" },
+        { title: "Collectors & Flippers", subtitle: "(Antiques, luxury watches, hype sneakers)" },
+        { title: "Retail Arbitrage Entrepreneurs", subtitle: "(Thrift flips, clearance arbitrage)" }
+      ],
+      deliverables: [
+        "1x Optivoic E-Commerce Reseller Profit & COGS Tracker (Blank Master Template)",
+        "1x Pre-filled example file so you can hit the ground running",
+        "Step-by-step \"Start Here\" instructions built into the dashboard",
+        "Universal formatting: Google Sheets, Excel or Mac Numbers"
+      ]
+    }
+  };
+
+  const product = productsById[id] || {
+    title: "Unknown Template",
+    price: 0,
+    category: "",
+    format: "",
+    description: "",
+    features: [],
+    heroHeading: "",
+    heroSub: "",
+    problemCopy: [],
+    whoFor: [],
+    deliverables: []
   };
 
   return (
@@ -82,46 +119,86 @@ export default function TemplateDetails() {
               {product.category}
             </span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight drop-shadow-lg leading-tight">
-            {product.title}
-          </h1>
-          
-          <div className="text-xl text-gray-300 leading-relaxed mb-8 font-light space-y-6">
-            <p>{product.description}</p>
-            <p>
-              <strong>What You Gain:</strong> Total financial clarity. When you are sourcing from multiple platforms and selling across different marketplaces, keeping track of varying commission rates, base costs, and shipping materials becomes a nightmare. 
-            </p>
-            <p>
-              This tracker does the heavy lifting for you. Simply input your item cost and sale price—the built-in formulas instantly calculate the exact marketplace fee, deduct payment processing costs, and reveal your actual take-home profit. 
+
+          {/* Hero Section */}
+          <div className="mb-16">
+            <img
+              src="https://placehold.co/1400x700/0a1d37/f4e4bc/png?text=Reseller+Dashboard+Mockup"
+              alt="Reseller Tracker dashboard screenshot"
+              className="w-full rounded-2xl shadow-2xl mb-8"
+            />
+            <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight drop-shadow-lg leading-tight">
+              {product.heroHeading || product.title}
+            </h1>
+            <p className="text-xl text-gray-300 mb-6 font-light">
+              {product.heroSub || product.description}
             </p>
           </div>
 
-          <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl mb-12">
-            <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="text-cyan-400">⚡</span> Inside The Tracker
-            </h3>
-            <ul className="space-y-4">
+          {/* Problem Section */}
+          <div className="mb-16 bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
+            <h2 className="text-3xl font-bold mb-6 text-cyan-400">⚠️ Why Reseller Spreadsheets Fail You</h2>
+            <div className="space-y-4 text-gray-300">
+              {product.problemCopy.map((line, i) => (
+                <p key={i} className="text-lg leading-relaxed">{line}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* Solution Section */}
+          <div className="mb-16">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-bold mb-4 text-cyan-400">💎 Meet the Reseller Profit & COGS Tracker</h2>
+              <p className="text-xl text-gray-300">
+                Built with a clean, gridless interface and automations that do the math for you.
+              </p>
+            </div>
+
+            <div className="space-y-6">
               {product.features.map((feature, idx) => {
-                const parts = feature.split(': ');
-                const title = parts[0];
-                const description = parts.length > 1 ? parts.slice(1).join(': ') : '';
+                const [title, description] = feature.split(': ');
                 return (
-                  <li key={idx} className="flex items-start gap-4 text-gray-300">
-                    <span className="text-violet-500 font-bold mt-1">✓</span>
-                    <span className="text-lg">
-                      <strong className="text-white">{title}{description && ':'}</strong> {description}
-                    </span>
-                  </li>
+                  <div key={idx} className="bg-slate-900/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700">
+                    <h3 className="text-xl font-bold mb-3 text-cyan-300">✅ {title}</h3>
+                    <p className="text-gray-300 leading-relaxed">{description}</p>
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           </div>
-          
-          <div className="bg-cyan-900/20 border border-cyan-500/30 rounded-2xl p-6 mb-12">
-            <h4 className="text-lg font-semibold text-cyan-300 mb-2">Perfect for Multi-Channel Sellers</h4>
-            <p className="text-sm text-gray-400">
-              Whether you are flipping thrifted home goods, managing a high-end jewelry archive, or moving hype collectibles, the customizable categories and standardized ID generation adapt perfectly to your specific business model.
+
+          {/* Design Section */}
+          <div className="mb-16 bg-gradient-to-r from-slate-900/50 to-charcoal/50 border border-gold/20 rounded-3xl p-10 backdrop-blur-xl">
+            <h2 className="text-3xl font-bold mb-4 text-gold text-center">🎨 Beautiful Bookkeeping</h2>
+            <p className="text-gray-300 leading-relaxed text-center text-lg">
+              Spreadsheets shouldn't look like a 1990s math textbook. The Optivoic Reseller Tracker features a deep charcoal/navy palette with champagne gold accents, zebra rows, and locked formulas so you can work without fear.
             </p>
+          </div>
+
+          {/* Who For Section */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold mb-8 text-cyan-400 text-center">🎯 Who is this for?</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {product.whoFor.map((who, i) => (
+                <div key={i} className="p-6 bg-slate-900/50 rounded-2xl border border-slate-700 text-center">
+                  <h3 className="text-lg font-bold text-cyan-300 mb-2">{who.title}</h3>
+                  <p className="text-gray-400 text-sm">{who.subtitle}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Deliverables Section */}
+          <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
+            <h2 className="text-3xl font-bold mb-8 text-cyan-400 text-center">🛡️ What You Get</h2>
+            <ul className="space-y-4 text-gray-300 text-lg">
+              {product.deliverables.map((item, i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <span className="text-gold font-bold">✓</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
