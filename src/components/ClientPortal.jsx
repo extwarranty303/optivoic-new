@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
-// --- PRODUCT DATABASE ---
+// --- FALLBACK PRODUCT DATABASE ---
+// This acts as a safety net in case the products table isn't fully populated yet
 const TEMPLATES_DB = {
   1: { category: "Essential Trackers", title: "E-Commerce Reseller Profit & COGS Tracker" },
   2: { category: "Essential Trackers", title: "Options Trading & Premium Journal" },
@@ -21,8 +22,9 @@ export default function ClientPortal() {
   const [loading, setLoading] = useState(true);
   const [purchases, setPurchases] = useState([]);
   const [projects, setProjects] = useState([]); 
+  const [dynamicProducts, setDynamicProducts] = useState({}); // NEW: Holds live DB products
   const [downloadingId, setDownloadingId] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false); // Dynamic Admin State
+  const [isAdmin, setIsAdmin] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,7 +47,15 @@ export default function ClientPortal() {
 
       if (userPurchases) setPurchases(userPurchases);
 
-      // 3. SECURE CHECK: Is user in the admins table?
+      // 3. Fetch Live Products to map to purchases
+      const { data: prodData } = await supabase.from('products').select('id, title');
+      if (prodData) {
+        const prodMap = {};
+        prodData.forEach(p => { prodMap[p.id] = p; });
+        setDynamicProducts(prodMap);
+      }
+
+      // 4. SECURE CHECK: Is user in the admins table?
       const { data: adminData } = await supabase
         .from('admins')
         .select('email')
@@ -54,7 +64,7 @@ export default function ClientPortal() {
         
       if (adminData) setIsAdmin(true);
 
-      // 4. Fetch User's Consulting Projects
+      // 5. Fetch User's Consulting Projects
       const { data: userProjects } = await supabase
         .from('projects')
         .select('*')
@@ -74,25 +84,48 @@ export default function ClientPortal() {
     navigate('/');
   };
 
+  // UPDATED: The Smart Entitlement Download Engine
   const handleDownload = async (templateId) => {
     setDownloadingId(templateId);
     try {
-      const { data: files, error: listError } = await supabase.storage.from('templates').list();
-      if (listError) throw listError;
+      // Step 1: Look up the product to find the current active file ID
+      const { data: product, error: prodError } = await supabase
+        .from('products')
+        .select('current_file_id')
+        .eq('id', templateId)
+        .single();
 
-      const targetFile = files.find(f => f.name.startsWith(`${templateId}.`));
-      if (!targetFile) {
-        alert("The master file is currently being updated. Please check back in a few minutes.");
-        setDownloadingId(null);
-        return;
+      if (prodError || !product?.current_file_id) {
+        throw new Error("No active file is currently linked to this product. Contact support.");
       }
 
+      // Step 2: Grab the storage path and original filename from the files table
+      const { data: fileMeta, error: fileError } = await supabase
+        .from('files')
+        .select('storage_path, original_filename')
+        .eq('id', product.current_file_id)
+        .single();
+
+      if (fileError || !fileMeta) {
+        throw new Error("File metadata missing.");
+      }
+
+      // Step 3: Generate Signed URL and FORCE the download name
       const { data: signedData, error: signError } = await supabase.storage
-        .from('templates')
-        .createSignedUrl(targetFile.name, 60);
+        .from('templates') 
+        .createSignedUrl(fileMeta.storage_path, 60, {
+          download: fileMeta.original_filename // <-- THIS IS THE MAGIC BULLET
+        });
 
       if (signError) throw signError;
-      window.open(signedData.signedUrl, '_blank');
+
+      // Step 4: Execute the download cleanly in the browser
+      const link = document.createElement('a');
+      link.href = signedData.signedUrl;
+      link.setAttribute('download', fileMeta.original_filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
     } catch (error) {
       alert(`Download failed: ${error.message}`);
@@ -114,7 +147,12 @@ export default function ClientPortal() {
         </Link>
         <div className="flex items-center gap-4 sm:gap-6">
           
-          {/* SECURE ADMIN BUTTON: Only renders if database says they are VIP */}
+          <nav className="flex gap-4 mr-4">
+          <Link to="/" className="text-sm font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
+            Home
+          </Link>
+        </nav>
+
           {isAdmin && (
             <Link 
               to="/admin" 
@@ -159,7 +197,13 @@ export default function ClientPortal() {
               </div>
             ) : (
               purchases.map((purchase) => {
-                const templateInfo = TEMPLATES_DB[purchase.template_id] || { category: "Digital Asset", title: `Asset #${purchase.template_id}` };
+                // Dynamically pull title from DB, fallback to local DB if not found
+                const dbProduct = dynamicProducts[purchase.template_id];
+                const fallbackProduct = TEMPLATES_DB[purchase.template_id];
+                
+                const title = dbProduct ? dbProduct.title : (fallbackProduct ? fallbackProduct.title : `Asset #${purchase.template_id}`);
+                const category = fallbackProduct ? fallbackProduct.category : "Digital Asset";
+                
                 const isDownloading = downloadingId === purchase.template_id;
 
                 return (
@@ -167,9 +211,9 @@ export default function ClientPortal() {
                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-6">
                       <div>
                         <span className="text-xs font-bold uppercase tracking-widest text-gray-500 block mb-1">
-                          {templateInfo.category}
+                          {category}
                         </span>
-                        <h3 className="text-lg font-bold text-white mb-2">{templateInfo.title}</h3>
+                        <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
                         <p className="text-xs text-gray-400 font-mono">
                           Acquired: {new Date(purchase.created_at).toLocaleDateString()}
                         </p>

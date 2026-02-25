@@ -15,9 +15,13 @@ export default function AdminDashboard() {
   const [vaultFiles, setVaultFiles] = useState([]);
   const [projects, setProjects] = useState([]);
   
+  // NEW: Dynamic Products State
+  const [productsList, setProductsList] = useState([]);
+  
   // Upload State
   const [file, setFile] = useState(null);
-  const [templateId, setTemplateId] = useState("1");
+  const [templateId, setTemplateId] = useState(""); 
+  const [versionNotes, setVersionNotes] = useState(""); // NEW: Version tracking
   const [uploadStatus, setUploadStatus] = useState({ text: '', type: '' });
   const [isUploading, setIsUploading] = useState(false);
   
@@ -27,7 +31,7 @@ export default function AdminDashboard() {
 
   // Manual Override State
   const [grantEmail, setGrantEmail] = useState('');
-  const [grantTemplateId, setGrantTemplateId] = useState('1');
+  const [grantTemplateId, setGrantTemplateId] = useState('');
   const [grantStatus, setGrantStatus] = useState({ text: '', type: '' });
   const [isGranting, setIsGranting] = useState(false);
   
@@ -61,9 +65,20 @@ export default function AdminDashboard() {
   }, [navigate]);
 
   const fetchDashboardData = async () => {
+    // Fetch Dynamic Products
+    const { data: prodData } = await supabase.from('products').select('id, title').eq('is_active', true);
+    if (prodData) {
+      setProductsList(prodData);
+      if (prodData.length > 0) {
+        setTemplateId(prodData[0].id);
+        setGrantTemplateId(prodData[0].id);
+      }
+    }
+
     const { data: pData } = await supabase.from('purchases').select('*').order('created_at', { ascending: false });
     if (pData) setPurchases(pData);
 
+    // Assuming you are keeping the bucket named 'templates'
     const { data: fData } = await supabase.storage.from('templates').list();
     if (fData) setVaultFiles(fData.filter(f => f.name !== '.emptyFolderPlaceholder')); 
     
@@ -73,19 +88,54 @@ export default function AdminDashboard() {
     setLoading(false);
   };
 
+  // UPDATED: The 3-Step Upload Engine
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file) return;
+    if (!file || !templateId) return;
     setIsUploading(true);
-    setUploadStatus({ text: 'Encrypting and uploading...', type: 'loading' });
+    setUploadStatus({ text: 'Step 1: Encrypting and uploading secure file...', type: 'loading' });
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const secureFileName = `${templateId}.${fileExt}`;
-      const { error } = await supabase.storage.from('templates').upload(secureFileName, file, { upsert: true });
-      if (error) throw error;
-      setUploadStatus({ text: `Success! Master File #${templateId} uploaded safely.`, type: 'success' });
+      const originalFilename = file.name;
+      const safeName = originalFilename.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const storagePath = `${Date.now()}-${Math.round(Math.random() * 1000)}-${safeName}`;
+
+      // 1. Upload to Supabase Storage Bucket
+      const { error: storageError } = await supabase.storage
+        .from('templates')
+        .upload(storagePath, file);
+
+      if (storageError) throw storageError;
+
+      setUploadStatus({ text: 'Step 2: Recording file metadata...', type: 'loading' });
+
+      // 2. Insert into files table
+      const { data: fileRecord, error: fileDbError } = await supabase
+        .from('files')
+        .insert([{
+          product_id: templateId,
+          storage_path: storagePath,
+          original_filename: originalFilename,
+          version_notes: versionNotes || 'Routine update'
+        }])
+        .select('id')
+        .single();
+
+      if (fileDbError) throw fileDbError;
+
+      setUploadStatus({ text: 'Step 3: Linking file to storefront...', type: 'loading' });
+
+      // 3. Update the products table
+      const { error: productUpdateError } = await supabase
+        .from('products')
+        .update({ current_file_id: fileRecord.id })
+        .eq('id', templateId);
+
+      if (productUpdateError) throw productUpdateError;
+
+      setUploadStatus({ text: `Success! ${originalFilename} safely deployed.`, type: 'success' });
       setFile(null); 
+      setVersionNotes('');
       fetchDashboardData(); 
     } catch (error) {
       setUploadStatus({ text: `Upload failed: ${error.message}`, type: 'error' });
@@ -115,7 +165,8 @@ export default function AdminDashboard() {
     try {
       const { data, error } = await supabase.rpc('admin_grant_access', {
         target_email: grantEmail,
-        t_id: parseInt(grantTemplateId)
+        // Assuming your RPC function still expects an integer or handles the UUID
+        t_id: grantTemplateId 
       });
 
       if (error) throw error;
@@ -194,15 +245,19 @@ export default function AdminDashboard() {
               <form onSubmit={handleUpload} className="space-y-6 relative z-10">
                 <div>
                   <select value={templateId} onChange={(e) => setTemplateId(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-400/50 text-sm">
-                    <option value="1">ID 1: E-Commerce Reseller Tracker</option>
-                    <option value="2">ID 2: Options Trading Journal</option>
-                    <option value="3">ID 3: The Story Bible</option>
+                    {productsList.length === 0 ? <option value="">No products available</option> : null}
+                    {productsList.map(p => (
+                      <option key={p.id} value={p.id}>{p.title}</option>
+                    ))}
                   </select>
+                </div>
+                <div>
+                  <input type="text" placeholder="Version Notes (Optional)" value={versionNotes} onChange={(e) => setVersionNotes(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-400/50 text-sm" />
                 </div>
                 <div>
                   <input type="file" required onChange={(e) => setFile(e.target.files[0])} className="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all cursor-pointer text-sm" />
                 </div>
-                <button type="submit" disabled={!file || isUploading} className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-red-400 hover:shadow-[0_0_20px_rgba(248,113,113,0.4)] transition-all duration-300 disabled:opacity-50 mt-2">
+                <button type="submit" disabled={!file || isUploading || productsList.length === 0} className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-red-400 hover:shadow-[0_0_20px_rgba(248,113,113,0.4)] transition-all duration-300 disabled:opacity-50 mt-2">
                   {isUploading ? 'Executing...' : 'Upload Payload'}
                 </button>
               </form>
@@ -231,11 +286,11 @@ export default function AdminDashboard() {
                   className="w-full bg-black/50 border border-red-500/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-red-400/50 text-sm"
                 />
                 <select value={grantTemplateId} onChange={(e) => setGrantTemplateId(e.target.value)} className="w-full bg-black/50 border border-red-500/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-red-400/50 text-sm">
-                  <option value="1">ID 1: E-Commerce Reseller Tracker</option>
-                  <option value="2">ID 2: Options Trading Journal</option>
-                  <option value="3">ID 3: The Story Bible</option>
+                  {productsList.map(p => (
+                    <option key={p.id} value={p.id}>{p.title}</option>
+                  ))}
                 </select>
-                <button type="submit" disabled={isGranting} className="w-full bg-red-500/20 text-red-400 border border-red-500/50 hover:bg-red-500 hover:text-white font-bold py-2 rounded-xl transition-all duration-300 disabled:opacity-50 text-sm">
+                <button type="submit" disabled={isGranting || productsList.length === 0} className="w-full bg-red-500/20 text-red-400 border border-red-500/50 hover:bg-red-500 hover:text-white font-bold py-2 rounded-xl transition-all duration-300 disabled:opacity-50 text-sm">
                   {isGranting ? 'Authorizing...' : 'Force Grant Access'}
                 </button>
               </form>
