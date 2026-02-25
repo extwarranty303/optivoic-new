@@ -34,6 +34,7 @@ export default function ExecutiveTaxEngine() {
 
   const product = {
     id: "executive-tax-engine",
+    dbId: 1, // <-- replace 1 with the actual numeric template_id stored in Supabase for this product
     title: "Executive Tax Engine - Business in a Box for 1099 Pros",
     price: 19.99,
     category: "Essential Business Tools",
@@ -246,7 +247,7 @@ export default function ExecutiveTaxEngine() {
                           {
                             user_id: user.id,
                             user_email: user.email,
-                            template_id: product.id
+                            template_id: product.dbId || product.id
                           }
                         ]);
 
