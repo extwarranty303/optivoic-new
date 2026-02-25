@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../supabaseClient'; 
 import { useNavigate } from 'react-router-dom';
 
-export default function AuthModal({ isOpen, onClose }) {
+export default function AuthModal({ isOpen, onClose, redirectTo }) {
   const navigate = useNavigate();
   const [view, setView] = useState('login'); // 'login', 'signup', or 'forgot'
   const [email, setEmail] = useState('');
@@ -22,7 +22,10 @@ export default function AuthModal({ isOpen, onClose }) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         setMessage({ text: 'Successfully logged in!', type: 'success' });
-        setTimeout(() => { onClose(); navigate('/portal'); }, 1000); 
+        setTimeout(() => {
+          onClose();
+          navigate(redirectTo || '/portal');
+        }, 1000);
 
       } else if (view === 'signup') {
         const { error } = await supabase.auth.signUp({ email, password });
