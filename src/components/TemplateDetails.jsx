@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
+import { Helmet } from 'react-helmet-async';
 
 const NoiseOverlay = () => (
   <div 
@@ -54,6 +55,18 @@ export default function TemplateDetails() {
   return (
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative">
       <NoiseOverlay />
+
+      {/* --- NEW: Dynamic Product SEO --- */}
+      <Helmet>
+        <title>{product.title} | OptiVöic Marketplace</title>
+        <meta name="description" content={product.description} />
+        
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:type" content="product" />
+        <meta property="product:price:amount" content={product.price} />
+        <meta property="product:price:currency" content="USD" />
+      </Helmet>
       
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>

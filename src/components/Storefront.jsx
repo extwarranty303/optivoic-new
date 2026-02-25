@@ -227,6 +227,27 @@ export default function Storefront() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
+      export default function Storefront() {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
+      
+      {/* --- NEW: Global SEO Metadata --- */}
+      <Helmet>
+        <title>OptiVöic | Elite Technology Consulting & Frameworks</title>
+        <meta name="description" content="Engineering Velocity. Elite technology consulting, AI system evaluation, and professional-grade operational frameworks built to scale your revenue." />
+        
+        {/* OpenGraph Tags for nice link previews on Twitter/LinkedIn/Discord */}
+        <meta property="og:title" content="OptiVöic Consulting & Software" />
+        <meta property="og:description" content="Turnkey frameworks and custom automation for instant operational ROI." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://optivoic.com" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
+      <AmbientBackground />
+      <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
       <AmbientBackground />
       <Navbar onOpenAuth={() => setIsAuthOpen(true)} /> {/* Triggers state change */}
       <Hero />
