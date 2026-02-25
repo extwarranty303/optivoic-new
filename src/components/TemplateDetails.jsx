@@ -233,7 +233,10 @@ export default function TemplateDetails() {
                 </div>
               ) : (
                 <div className="bg-white p-4 rounded-2xl shadow-inner">
-                  <PayPalScriptProvider options={{ "client-id": "test", currency: "USD" }}>
+                  <PayPalScriptProvider options={{
+                    "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
+                    currency: "USD"
+                  }}>
                     <PayPalButtons 
                       style={{ layout: "vertical", shape: "rect", color: "black" }}
                       createOrder={(data, actions) => {
