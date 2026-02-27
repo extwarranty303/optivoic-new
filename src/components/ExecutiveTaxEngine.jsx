@@ -294,5 +294,7 @@ export default function ExecutiveTaxEngine() {
       </main>
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />    </div>
+    /* Footer */}
+      <Footer />
   );
 }
