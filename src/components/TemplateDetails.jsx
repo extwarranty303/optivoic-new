@@ -288,12 +288,12 @@ export default function TemplateDetails() {
             </div>
 
           </div>
+        {/* Footer */}
+        <Footer />
         </div>
       </main>
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />
-    {/* Footer */}
-      <Footer />
-    </div>
+
   );
 }
