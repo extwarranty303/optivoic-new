@@ -174,10 +174,9 @@ export default function Consulting() {
 
       </main>
 
+      
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 text-center text-gray-500 text-sm bg-black/50 backdrop-blur-xl relative z-10">
-        <p>© 2026 OptiVöic Consulting & Software. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
