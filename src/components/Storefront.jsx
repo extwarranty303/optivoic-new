@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
 import { usePageMeta } from '../utils/usePageMeta';
+import Footer from './Footer';
 
 // ==========================================
 // 1. DATA STORE 
@@ -246,18 +247,11 @@ export default function Storefront() {
       <BentoServices />
       <InteractiveMarketplace />
       
-      <footer className="border-t border-white/10 py-12 px-8 text-center text-gray-500 text-sm bg-black/50 backdrop-blur-xl relative z-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© 2026 OptiVöic Consulting & Software. All rights reserved.</p>
-          <div className="flex space-x-6 font-medium">
-            <Link to="/terms" className="hover:text-cyan-400 transition-colors">Terms of Service</Link>
-            <Link to="/privacy" className="hover:text-cyan-400 transition-colors">Privacy Policy</Link>
-          </div>
-        </div>
-      </footer>
-
+   
       {/* Render the Modal */}
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
-    </div>
+     {/* Footer */}
+      <Footer />
+  </div>
   );
 }
