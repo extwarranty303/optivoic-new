@@ -128,7 +128,7 @@ export default function TemplateDetails() {
           {/* Hero Section */}
           <div className="mb-16">
             <img
-              src="https://optivoic.com/optivoic-new/src/assets/ecommerce-banner-image.png"
+              src="./assets/ecommerce-banner-image.png"
               alt="Reseller Tracker dashboard screenshot"
               className="w-full rounded-2xl shadow-2xl mb-8"
             />
