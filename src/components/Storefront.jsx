@@ -155,8 +155,7 @@ const InteractiveMarketplace = () => {
           <p className="text-xl text-gray-400">Turnkey frameworks for instant operational ROI.</p>
         </div>
         
-        <div className="flex space-x-2 bg-white/[0.03] backdrop-blur-xl p-2 rounded-full border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.2)] overflow-x-auto">
-          {categories.map(cat => (
+        <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-white/[0.02] border border-white/10 rounded-full p-2 mb-12 backdrop-blur-md">          {categories.map(cat => (
             <button 
               key={cat}
               onClick={() => setActiveTab(cat)}
