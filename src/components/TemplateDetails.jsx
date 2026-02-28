@@ -41,7 +41,6 @@ export default function TemplateDetails() {
     return () => { subscription.unsubscribe(); };
   }, [id]);
 
-  // product dictionary keyed by template ID.  Future improvement: fetch from Supabase instead.
   const productsById = {
     "36a7cc71-0c17-4530-a653-e59a8dbda7a3": {
       title: "The Ultimate E-Commerce Reseller Profit & COGS Tracker",
@@ -94,7 +93,7 @@ export default function TemplateDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative">
+    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative flex flex-col">
       <NoiseOverlay />
 
       {usePageMeta({
@@ -115,7 +114,8 @@ export default function TemplateDetails() {
         {user && <span className="text-xs text-gray-400">Logged in as: {user.email}</span>}
       </nav>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
+      {/* Added flex-grow so the main content pushes the footer to the bottom */}
+      <main className="relative z-10 max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 flex-grow">
         
         {/* LEFT COLUMN: Sales Copy */}
         <div className="lg:col-span-7">
@@ -127,8 +127,9 @@ export default function TemplateDetails() {
 
           {/* Hero Section */}
           <div className="mb-16">
+            {/* FIX 1: Removed the dot to make it an absolute path */}
             <img
-              src="./assets/ecommerce-banner-image.png"
+              src="/assets/ecommerce-banner-image.png"
               alt="Reseller Tracker dashboard screenshot"
               className="w-full rounded-2xl shadow-2xl mb-8"
             />
@@ -289,11 +290,14 @@ export default function TemplateDetails() {
             </div>
 
           </div>
-        {/* Footer */}
-        <Footer />
         </div>
       </main>
 
+      {/* FIX 2: Moved Footer OUTSIDE of <main> and the right-hand column so it stretches across the screen */}
+      <Footer />
+
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />
+    {/* Added missing closing tag for the main screen wrapper */}
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../../supabaseClient';
+import Footer from './Footer';
 
 const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
   const [error, setError] = useState(null);
@@ -113,6 +114,8 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
           </PayPalScriptProvider>
         )}
       </div>
+      /* Footer */}
+      <Footer />
     </div>
   );
 };

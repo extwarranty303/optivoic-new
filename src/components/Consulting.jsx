@@ -174,8 +174,6 @@ export default function Consulting() {
         </section>
 
       </main>
-
-      
       {/* Footer */}
       <Footer />
     </div>

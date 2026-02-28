@@ -40,6 +40,8 @@ export default function Terms() {
           </section>
         </div>
       </main>
+      /* Footer */}
+      <Footer />
     </div>
   );
 }

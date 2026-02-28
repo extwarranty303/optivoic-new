@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import Footer from './Footer';
 
 // --- FALLBACK PRODUCT DATABASE ---
 // This acts as a safety net in case the products table isn't fully populated yet
@@ -290,6 +291,7 @@ export default function ClientPortal() {
 
         </div>
       </main>
+      
     </div>
   );
 }
