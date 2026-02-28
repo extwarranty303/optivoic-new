@@ -114,8 +114,8 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
           </PayPalScriptProvider>
         )}
       </div>
-      /* Footer */}
-      <Footer />
+      {/* Footer */}
+      <Footer />  
     </div>
   );
 };

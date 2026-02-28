@@ -92,17 +92,19 @@ export default function TemplateDetails() {
     deliverables: []
   };
 
+  // BUG FIX 1: React Hooks must be executed at the top level, before the return statement.
+  usePageMeta({
+    title: `${product.title} | OptiVöic Marketplace`,
+    description: product.description,
+    ogType: 'product',
+    priceAmount: product.price.toString(),
+    priceCurrency: 'USD'
+  });
+
   return (
+    // Added flex flex-col so the main content pushes the footer to the absolute bottom
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative flex flex-col">
       <NoiseOverlay />
-
-      {usePageMeta({
-        title: `${product.title} | OptiVöic Marketplace`,
-        description: product.description,
-        ogType: 'product',
-        priceAmount: product.price.toString(),
-        priceCurrency: 'USD'
-      })}
       
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
@@ -114,7 +116,7 @@ export default function TemplateDetails() {
         {user && <span className="text-xs text-gray-400">Logged in as: {user.email}</span>}
       </nav>
 
-      {/* Added flex-grow so the main content pushes the footer to the bottom */}
+      {/* Added flex-grow so the main content claims the vertical space */}
       <main className="relative z-10 max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 flex-grow">
         
         {/* LEFT COLUMN: Sales Copy */}
@@ -127,7 +129,7 @@ export default function TemplateDetails() {
 
           {/* Hero Section */}
           <div className="mb-16">
-            {/* FIX 1: Removed the dot to make it an absolute path */}
+            {/* BUG FIX 2: Removed the dot to make it an absolute path to the root domain */}
             <img
               src="/assets/ecommerce-banner-image.png"
               alt="Reseller Tracker dashboard screenshot"
@@ -293,11 +295,12 @@ export default function TemplateDetails() {
         </div>
       </main>
 
-      {/* FIX 2: Moved Footer OUTSIDE of <main> and the right-hand column so it stretches across the screen */}
+      {/* BUG FIX 3: Moved Footer OUTSIDE of the `<main>` block and grid system so it spans full width */}
       <Footer />
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />
-    {/* Added missing closing tag for the main screen wrapper */}
+      
+    {/* BUG FIX 4: Restored the missing closing tag for the main container */}
     </div>
   );
 }

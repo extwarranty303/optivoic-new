@@ -291,7 +291,8 @@ export default function ClientPortal() {
 
         </div>
       </main>
-      
+      {/* Footer */}
+      <Footer />  
     </div>
   );
 }

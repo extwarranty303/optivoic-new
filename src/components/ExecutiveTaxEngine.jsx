@@ -55,7 +55,8 @@ export default function ExecutiveTaxEngine() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative">
+    // FIX 2a: Added 'flex flex-col' so the layout can push the footer down
+    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative flex flex-col">
       <NoiseOverlay />
 
       {usePageMeta({
@@ -76,7 +77,8 @@ export default function ExecutiveTaxEngine() {
         {user && <span className="text-xs text-gray-400">Logged in as: {user.email}</span>}
       </nav>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
+      {/* FIX 2b: Added 'flex-grow' to main so it claims vertical space and pins the footer to the bottom */}
+      <main className="relative z-10 max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 flex-grow">
         
         {/* LEFT COLUMN: Sales Copy */}
         <div className="lg:col-span-7">
@@ -294,8 +296,12 @@ export default function ExecutiveTaxEngine() {
 
         </div>
       </main>
-      /* Footer */}
+      
+      {/* FIX 1: Fixed the broken comment syntax below so React parses it correctly */}
+      {/* Footer */}
       <Footer />        
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />    </div>
+      
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />    
+    </div>
   );
 }

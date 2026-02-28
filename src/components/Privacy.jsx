@@ -37,8 +37,8 @@ export default function Privacy() {
           </section>
         </div>
       </main>
-      {/* BUG FIX 3: Moved Footer OUTSIDE of the `<main>` block and grid system so it spans full width */}
-      <Footer />
+      {/* Footer */}
+      <Footer />  
     </div>
   );
 }
