@@ -33,19 +33,13 @@ const templates = [
 
 const AmbientBackground = () => (
   <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-[#020202]">
-    {/* 1. The new Space Particle System */}
     <SpaceBackground /> 
-
-    {/* 2. The Noise Texture (Matte Finish) */}
     <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay z-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
-    
-    {/* 3. The Giant Ambient Orbs (Color Gradients) */}
     <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600/20 blur-[120px] rounded-full mix-blend-screen animate-pulse duration-10000 z-0"></div>
     <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-cyan-600/10 blur-[150px] rounded-full mix-blend-screen z-0"></div>
   </div>
 );
 
-// We pass the function prop here so the button can trigger the state in the parent
 const Navbar = ({ onOpenAuth }) => (
   <nav className="fixed w-full border-b border-white/10 py-4 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl z-50 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
     <div className="text-2xl font-black text-white tracking-tighter drop-shadow-lg">
@@ -54,7 +48,6 @@ const Navbar = ({ onOpenAuth }) => (
     <div className="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
       <a href="#marketplace" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">Marketplace</a>
       <Link to="/consulting" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">Consulting</Link>
-      
     </div>
     <button 
       onClick={onOpenAuth} 
@@ -155,14 +148,14 @@ const InteractiveMarketplace = () => {
           <p className="text-xl text-gray-400">Turnkey frameworks for instant operational ROI.</p>
         </div>
         
-        {/* Category Filter */}
+        {/* Category Filter - Scrollbar hidden, items forced to not shrink */}
         <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-white/[0.02] border border-white/10 rounded-full p-2 mb-12 backdrop-blur-md gap-2">
-          {['All', 'Essential Trackers', 'Professional Hubs', 'Enterprise B2B', 'Agency Operations'].map((category) => (
+          {categories.map((category) => (
             <button
               key={category}
-              onClick={() => setActiveCategory(category)}
+              onClick={() => setActiveTab(category)}
               className={`px-6 py-2 rounded-full font-bold text-sm transition-all whitespace-nowrap shrink-0 ${
-                activeCategory === category
+                activeTab === category
                   ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]'
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
               }`}
@@ -225,10 +218,10 @@ const InteractiveMarketplace = () => {
 };
 
 // ==========================================
-// 3. MAIN EXPORT (FIXED)
+// 3. MAIN EXPORT
 // ==========================================
 export default function Storefront() {
-  const [isAuthOpen, setIsAuthOpen] = useState(false); // Controls modal visibility
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
@@ -249,11 +242,11 @@ export default function Storefront() {
       <BentoServices />
       <InteractiveMarketplace />
       
-   
       {/* Render the Modal */}
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
-     {/* Footer */}
+      
+      {/* Footer */}
       <Footer />
-  </div>
+    </div>
   );
 }
