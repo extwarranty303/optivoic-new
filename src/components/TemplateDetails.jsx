@@ -4,6 +4,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
 import { usePageMeta } from '../utils/usePageMeta';
+import Footer from './Footer';
 
 const NoiseOverlay = () => (
   <div 
@@ -127,7 +128,7 @@ export default function TemplateDetails() {
           {/* Hero Section */}
           <div className="mb-16">
             <img
-              src="extwarranty303/optivoic-new/src/assets/ecommerce-banner-image.png"
+              src="https://optivoic.com/optivoic-new/src/assets/ecommerce-banner-image.png"
               alt="Reseller Tracker dashboard screenshot"
               className="w-full rounded-2xl shadow-2xl mb-8"
             />

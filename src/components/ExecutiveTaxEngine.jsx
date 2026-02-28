@@ -4,6 +4,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
 import { usePageMeta } from '../utils/usePageMeta';
+import Footer from './Footer';
 
 const NoiseOverlay = () => (
   <div 
