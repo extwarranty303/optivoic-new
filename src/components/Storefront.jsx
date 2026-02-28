@@ -155,17 +155,19 @@ const InteractiveMarketplace = () => {
           <p className="text-xl text-gray-400">Turnkey frameworks for instant operational ROI.</p>
         </div>
         
-        <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-white/[0.02] border border-white/10 rounded-full p-2 mb-12 backdrop-blur-md">          {categories.map(cat => (
-            <button 
-              key={cat}
-              onClick={() => setActiveTab(cat)}
-              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap ${
-                activeTab === cat 
-                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.4)]' 
+        {/* Category Filter */}
+        <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-white/[0.02] border border-white/10 rounded-full p-2 mb-12 backdrop-blur-md gap-2">
+          {['All', 'Essential Trackers', 'Professional Hubs', 'Enterprise B2B', 'Agency Operations'].map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-6 py-2 rounded-full font-bold text-sm transition-all whitespace-nowrap shrink-0 ${
+                activeCategory === category
+                  ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]'
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
               }`}
             >
-              {cat}
+              {category}
             </button>
           ))}
         </div>
