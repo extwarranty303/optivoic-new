@@ -52,8 +52,9 @@ const Navbar = ({ onOpenAuth }) => (
       OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
     </div>
     <div className="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
-      <Link to="/consulting" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">Consulting</Link>
       <a href="#marketplace" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">Marketplace</a>
+      <Link to="/consulting" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">Consulting</Link>
+      
     </div>
     <button 
       onClick={onOpenAuth} 
