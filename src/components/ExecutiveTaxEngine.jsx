@@ -91,7 +91,7 @@ export default function ExecutiveTaxEngine() {
           {/* Hero Section */}
           <div className="mb-16">
             <img 
-              src="https://placehold.co/1400x700/0a1d37/f4e4bc/png?text=Dashboard+%26+COGS+Mockup" 
+              src="/assets/gig-tax-tracker.png" 
               alt="Executive Tax Engine Dashboard and COGS tab on laptop and iPad" 
               className="w-full rounded-2xl shadow-2xl mb-8"
             />
