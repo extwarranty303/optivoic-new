@@ -168,7 +168,7 @@ export default function Consulting() {
           <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto relative z-10">
             Book a free 30-minute discovery call. We will audit your current stack and build a preliminary roadmap on the spot.
           </p>
-          <a href="mailto:consulting@optivoic.com" className="relative z-10 inline-block bg-white text-black font-bold text-xl py-5 px-14 rounded-full hover:scale-105 hover:shadow-[0_0_50px_-10px_rgba(255,255,255,0.7)] transition-all duration-300">
+          <a href="https://koalendar.com/e/meet-with-derek-crosby-optivoic" className="relative z-10 inline-block bg-white text-black font-bold text-xl py-5 px-14 rounded-full hover:scale-105 hover:shadow-[0_0_50px_-10px_rgba(255,255,255,0.7)] transition-all duration-300">
             Book a Consultation
           </a>
         </section>
