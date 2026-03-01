@@ -228,7 +228,7 @@ const SEOCopySection = () => (
         </ul>
 
         <a 
-          href="https://calendly.com/YOUR_LINK" 
+          href="https://koalendar.com/e/meet-with-derek-crosby-optivoic" 
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.3)] hover:shadow-[0_0_30px_rgba(56,182,255,0.5)] hover:-translate-y-1"
