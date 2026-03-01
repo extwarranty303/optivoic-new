@@ -150,7 +150,7 @@ const SEOCopySection = () => (
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-cyan-500/50 transition-colors group flex flex-col">
         <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
           <img 
-            src="/assets/image1.png" 
+            src="/assets/ai-prompt-engineering.webp" 
             alt="AI Evaluation and Prompt Engineering Services" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -168,7 +168,7 @@ const SEOCopySection = () => (
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-violet-500/50 transition-colors group flex flex-col">
         <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
           <img 
-            src="/assets/image2.png" 
+            src="/assets/ecommerce-market-strategy.webp" 
             alt="E-Commerce Market Strategy and Inventory Management" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -186,7 +186,7 @@ const SEOCopySection = () => (
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-blue-500/50 transition-colors group flex flex-col">
         <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
           <img 
-            src="/assets/image3.png" 
+            src="/assets/nextjs-react-consulting.webp" 
             alt="Next.js and React Database Architecture Consulting" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -205,7 +205,7 @@ const SEOCopySection = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/[0.02] border border-white/5 rounded-[40px] p-12 overflow-hidden relative">
       <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[100px] pointer-events-none"></div>
       
-      <div>
+      <div className="relative z-10">
         <h3 className="text-3xl font-bold text-white mb-6">Why Optivoic for Digital Transformation?</h3>
         <p className="text-gray-400 mb-6 leading-relaxed">
           Professional success is a byproduct of systems. Every <strong>B2B software template</strong> 
@@ -213,7 +213,7 @@ const SEOCopySection = () => (
           When you invest in an Optivoic framework, you are acquiring years of 
           <strong> codified operational expertise</strong>.
         </p>
-        <ul className="space-y-4">
+        <ul className="space-y-4 mb-10">
           {[
             "Focus on immediate ROI and scalability",
             "Battle-tested B2B operational frameworks",
@@ -226,9 +226,22 @@ const SEOCopySection = () => (
             </li>
           ))}
         </ul>
+
+        {/* --- NEW CALENDAR BUTTON HERE --- */}
+        <a 
+          href="https://calendly.com/YOUR_LINK" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.3)] hover:shadow-[0_0_30px_rgba(56,182,255,0.5)] hover:-translate-y-1"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Schedule a Strategy Call
+        </a>
       </div>
 
-      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 space-y-6">
+      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 space-y-6 relative z-10">
         <p className="text-sm italic text-gray-400 leading-relaxed">
           "By digitizing your route planning, tax allocation, and product roadmaps, 
           you free up the mental bandwidth required for high-level creative decisions."
