@@ -198,7 +198,7 @@ const SEOCopySection = () => (
         <h3 className="text-xl font-bold text-white mb-3">Expert-Designed Templates</h3>
         <p className="text-gray-400 text-sm leading-relaxed flex-grow">
           We bridge the gap between complex software and everyday usability. By providing <strong>expert-designed templates 
-        and scalable digital workspaces</strong>, we build "business-in-a-box" systems tailored for consumers, freelancers, and growing entrepreneurs.
+        and scalable digital workspaces</strong>, we build "business-in-a-box" systems tailored for consumers, freelancers, and entrepreneurs.
         </p>
       </div>
 
