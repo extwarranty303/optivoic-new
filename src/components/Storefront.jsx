@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
@@ -227,7 +227,6 @@ const SEOCopySection = () => (
           ))}
         </ul>
 
-        {/* --- NEW CALENDAR BUTTON HERE --- */}
         <a 
           href="https://calendly.com/YOUR_LINK" 
           target="_blank" 
@@ -329,6 +328,17 @@ const InteractiveMarketplace = () => {
 // ==========================================
 export default function Storefront() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  // --- NEW: Tailwind Fallback Injection ---
+  // Guarantees styles will render even if your local CSS import broke.
+  useEffect(() => {
+    if (!document.getElementById('tailwind-cdn')) {
+      const script = document.createElement('script');
+      script.id = 'tailwind-cdn';
+      script.src = 'https://cdn.tailwindcss.com';
+      document.head.appendChild(script);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
