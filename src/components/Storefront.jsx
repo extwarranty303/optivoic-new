@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
 import { usePageMeta } from '../utils/usePageMeta';
 import Footer from './Footer';
+
+// IMPORTANT: Ensure this path matches your global Tailwind CSS file!
+// If your css is in the src folder, it might be import '../index.css' or import './index.css'
+// import '../index.css'; 
 
 // ==========================================
 // 1. DATA STORE 
@@ -146,11 +150,11 @@ const SEOCopySection = () => (
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
       
-      {/* Card 1 with SEO Image */}
+      {/* Card 1 with Custom Saved Image */}
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-cyan-500/50 transition-colors group flex flex-col">
-        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
+        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5 relative">
           <img 
-            src="public/assets/image1.png" 
+            src="/assets/image1.png" 
             alt="AI Evaluation and Prompt Engineering Services" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -164,11 +168,11 @@ const SEOCopySection = () => (
         </p>
       </div>
 
-      {/* Card 2 with SEO Image */}
+      {/* Card 2 with Custom Saved Image */}
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-violet-500/50 transition-colors group flex flex-col">
-        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
+        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5 relative">
           <img 
-            src="public/assets/image2.png" 
+            src="/assets/image2.png" 
             alt="E-Commerce Market Strategy and Inventory Management" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -182,11 +186,11 @@ const SEOCopySection = () => (
         </p>
       </div>
 
-      {/* Card 3 with SEO Image */}
+      {/* Card 3 with Custom Saved Image */}
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-blue-500/50 transition-colors group flex flex-col">
-        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
+        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5 relative">
           <img 
-            src="public/assets/image3.png" 
+            src="/assets/image3.png" 
             alt="Next.js and React Database Architecture Consulting" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -328,6 +332,17 @@ const InteractiveMarketplace = () => {
 // ==========================================
 export default function Storefront() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  // Fallback to inject Tailwind specifically for the Canvas environment preview
+  // This ensures CSS works here, but won't break your local Vite config
+  useEffect(() => {
+    if (!window.tailwind && !document.getElementById('tailwind-cdn')) {
+      const script = document.createElement('script');
+      script.id = 'tailwind-cdn';
+      script.src = 'https://cdn.tailwindcss.com';
+      document.head.appendChild(script);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
