@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
@@ -150,7 +150,7 @@ const SEOCopySection = () => (
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-cyan-500/50 transition-colors group flex flex-col">
         <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
           <img 
-            src="/assets/ai-prompt-engineering.webp" 
+            src="public/assets/image1.png" 
             alt="AI Evaluation and Prompt Engineering Services" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -168,7 +168,7 @@ const SEOCopySection = () => (
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-violet-500/50 transition-colors group flex flex-col">
         <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
           <img 
-            src="/assets/ecommerce-market-strategy.webp" 
+            src="public/assets/image2.png" 
             alt="E-Commerce Market Strategy and Inventory Management" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -186,7 +186,7 @@ const SEOCopySection = () => (
       <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-blue-500/50 transition-colors group flex flex-col">
         <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
           <img 
-            src="/assets/nextjs-react-consulting.webp" 
+            src="public/assets/image3.png" 
             alt="Next.js and React Database Architecture Consulting" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
@@ -228,7 +228,7 @@ const SEOCopySection = () => (
         </ul>
 
         <a 
-          href="https://koalendar.com/e/meet-with-derek-crosby-optivoic" 
+          href="https://calendly.com/YOUR_LINK" 
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.3)] hover:shadow-[0_0_30px_rgba(56,182,255,0.5)] hover:-translate-y-1"
@@ -328,17 +328,6 @@ const InteractiveMarketplace = () => {
 // ==========================================
 export default function Storefront() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-
-  // --- NEW: Tailwind Fallback Injection ---
-  // Guarantees styles will render even if your local CSS import broke.
-  useEffect(() => {
-    if (!document.getElementById('tailwind-cdn')) {
-      const script = document.createElement('script');
-      script.id = 'tailwind-cdn';
-      script.src = 'https://cdn.tailwindcss.com';
-      document.head.appendChild(script);
-    }
-  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
