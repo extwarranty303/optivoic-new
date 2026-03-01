@@ -191,16 +191,15 @@ const SEOCopySection = () => (
         <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5 relative">
           <img 
             src="/assets/image3.png" 
-            alt="Next.js and React Database Architecture Consulting" 
+            alt="Expert Designed Templates and Frameworks" 
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
           />
         </div>
-        <h3 className="text-xl font-bold text-white mb-3">Next.js & React Consulting</h3>
+        <h3 className="text-xl font-bold text-white mb-3">Expert-Designed Templates</h3>
         <p className="text-gray-400 text-sm leading-relaxed flex-grow">
-          We don’t just write code; we solve bottlenecks. Specialized in <strong>Supabase 
-          database architecture</strong> and <strong>Python automation scripts</strong>, 
-          we build "business-in-a-box" systems for 1099 pros and growing enterprises.
+          We bridge the gap between complex software and everyday usability. By providing <strong>expert-designed templates</strong> 
+          and scalable digital workspaces, we build "business-in-a-box" systems tailored for consumers, freelancers, and growing entrepreneurs.
         </p>
       </div>
 
