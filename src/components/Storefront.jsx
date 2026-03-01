@@ -6,7 +6,7 @@ import { usePageMeta } from '../utils/usePageMeta';
 import Footer from './Footer';
 
 // ==========================================
-// 1. DATA STORE (All 13 Original Templates Preserved)
+// 1. DATA STORE 
 // ==========================================
 const templates = [
   { id: "36a7cc71-0c17-4530-a653-e59a8dbda7a3", categoryName: "Essential Trackers", title: "E-Commerce Reseller Profit & COGS Tracker", desc: "Track inventory cost, shipping, platform fees, and final profit margins.", price: 19.99, status: "READY" },
@@ -26,7 +26,7 @@ const templates = [
 ];
 
 // ==========================================
-// 2. MODULAR COMPONENTS (Visual Logic Preserved)
+// 2. MODULAR COMPONENTS
 // ==========================================
 
 const AmbientBackground = () => (
@@ -65,7 +65,6 @@ const Hero = () => (
       </span>
     </div>
 
-    {/* REQUIREMENT: CLEAR H1 HEADING */}
     <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[1.1] max-w-5xl">
       Elite Technology Consulting & <br/>
       <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">Operational Frameworks</span>
@@ -133,33 +132,111 @@ const BentoServices = () => (
   </section>
 );
 
-// REQUIREMENT: 500+ WORD KEYWORD-RICH TEXT (Visually subtle but SEO-strong)
 const SEOCopySection = () => (
-  <section className="py-24 px-8 max-w-5xl mx-auto z-10 relative">
-    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-10 md:p-16 backdrop-blur-sm">
-      <h2 className="text-3xl font-bold text-white mb-8">Scaling Digital Infrastructure with Optivoic</h2>
-      <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed space-y-6">
-        <p>
-          In the rapidly evolving landscape of 2026, <strong>technology consulting</strong> is no longer just about fixing bugs—it is about <strong>engineering velocity</strong>. At Optivoic, we specialize in bridging the gap between complex technical architecture and profitable business operations. Our suite of <strong>operational frameworks</strong> and <strong>custom automation scripts</strong> are designed for founders who need to scale without increasing their cognitive load.
+  <section className="py-24 px-8 max-w-7xl mx-auto z-10 relative">
+    <div className="text-center mb-16">
+      <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter">
+        Scaling Digital Infrastructure
+      </h2>
+      <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+        In the landscape of 2026, technology consulting is about <strong>engineering velocity</strong>. 
+        We bridge the gap between complex architecture and profitable operations.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+      
+      {/* Card 1 with SEO Image */}
+      <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-cyan-500/50 transition-colors group flex flex-col">
+        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
+          <img 
+            src="/assets/image1.png" 
+            alt="AI Evaluation and Prompt Engineering Services" 
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+          />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-3">AI & Prompt Engineering</h3>
+        <p className="text-gray-400 text-sm leading-relaxed flex-grow">
+          The quality of your "AI workforce" depends on the rigor of your testing. We provide 
+          <strong> human-in-the-loop evaluation</strong> for custom GPTs and agentic workflows, 
+          ensuring your systems are accurate, safe, and enterprise-ready.
         </p>
-        <p>
-          Our core expertise lies in <strong>AI evaluation and prompt engineering</strong>. As companies transition to LLM-based workflows, the quality of your "AI workforce" depends entirely on the rigor of your testing. We provide professional-grade <strong>human-in-the-loop evaluation</strong>, ensuring your AI systems are accurate, safe, and efficient. Whether you are building a custom GPT or a complex agentic workflow, our frameworks provide the benchmarking necessary for enterprise-level deployment.
+      </div>
+
+      {/* Card 2 with SEO Image */}
+      <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-violet-500/50 transition-colors group flex flex-col">
+        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
+          <img 
+            src="/assets/image2.png" 
+            alt="E-Commerce Market Strategy and Inventory Management" 
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+          />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-3">E-Commerce Market Strategy</h3>
+        <p className="text-gray-400 text-sm leading-relaxed flex-grow">
+          Data is the lifeblood of retail. Our <strong>inventory management templates</strong> 
+          and COGS trackers help high-volume resellers on eBay, Depop, and Shopify maximize 
+          margins through <strong>SEO-optimized copywriting</strong> and valuation models.
         </p>
-        <p>
-          Beyond AI, Optivoic serves as a premier partner for <strong>e-commerce market strategy</strong> and luxury resale optimization. We understand that data is the lifeblood of modern retail. Our <strong>inventory management templates</strong> and <strong>COGS trackers</strong> are built for high-volume resellers on platforms like eBay, Depop, and Shopify. By utilizing <strong>SEO-optimized copywriting</strong> and data-driven valuation models, we help clients maximize their margins on every transaction.
+      </div>
+
+      {/* Card 3 with SEO Image */}
+      <div className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-blue-500/50 transition-colors group flex flex-col">
+        <div className="w-full h-48 rounded-2xl mb-6 overflow-hidden bg-black/50 border border-white/5">
+          <img 
+            src="/assets/image3.png" 
+            alt="Next.js and React Database Architecture Consulting" 
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+          />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-3">Next.js & React Consulting</h3>
+        <p className="text-gray-400 text-sm leading-relaxed flex-grow">
+          We don’t just write code; we solve bottlenecks. Specialized in <strong>Supabase 
+          database architecture</strong> and <strong>Python automation scripts</strong>, 
+          we build "business-in-a-box" systems for 1099 pros and growing enterprises.
         </p>
-        <p>
-          For developers and tech-heavy organizations, we offer <strong>Next.js and React consulting</strong>, alongside <strong>Supabase database architecture</strong> support. We don't just write code; we solve bottlenecks. From <strong>Python automation scripts</strong> that handle repetitive data entry to <strong>Agile sprint planning hubs</strong> in Notion, our goal is to provide a "business-in-a-box" experience for 1099 professionals and small to mid-sized enterprises.
+      </div>
+
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/[0.02] border border-white/5 rounded-[40px] p-12 overflow-hidden relative">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[100px] pointer-events-none"></div>
+      
+      <div>
+        <h3 className="text-3xl font-bold text-white mb-6">Why Optivoic for Digital Transformation?</h3>
+        <p className="text-gray-400 mb-6 leading-relaxed">
+          Professional success is a byproduct of systems. Every <strong>B2B software template</strong> 
+          in our marketplace is a battle-tested asset used in real-world engagements. 
+          When you invest in an Optivoic framework, you are acquiring years of 
+          <strong> codified operational expertise</strong>.
         </p>
-        <p>
-          Our <strong>business intelligence tools</strong> cater to a wide range of niches, from <strong>options trading journals</strong> to <strong>collectibles portfolio valuation trackers</strong>. We believe that professional success is a byproduct of systems. By digitizing your route planning, tax allocation, and product roadmaps, you free up the mental bandwidth required for high-level creative decisions.
+        <ul className="space-y-4">
+          {[
+            "Focus on immediate ROI and scalability",
+            "Battle-tested B2B operational frameworks",
+            "Seamless Supabase & React integration",
+            "Automated solutions for 1099 professionals"
+          ].map((item, i) => (
+            <li key={i} className="flex items-center text-sm text-gray-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mr-3"></span>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 space-y-6">
+        <p className="text-sm italic text-gray-400 leading-relaxed">
+          "By digitizing your route planning, tax allocation, and product roadmaps, 
+          you free up the mental bandwidth required for high-level creative decisions."
         </p>
-        <p>
-          Why choose Optivoic for your <strong>digital transformation</strong>? Because we focus on ROI. Every <strong>B2B software template</strong> in our marketplace is a battle-tested asset used in real-world consulting engagements. We believe in high-fidelity solutions that are easy to implement. When you invest in an Optivoic framework, you aren't just buying a spreadsheet; you are acquiring years of operational expertise codified into a functional tool.
-        </p>
-        <p>
-          Ready to optimize your workflow? Explore our <strong>Professional Hubs</strong> for team management, our <strong>Essential Trackers</strong> for financial clarity, or contact our agency for bespoke <strong>technical consulting</strong>. Let us handle the engineering so you can focus on the vision. Optivoic: Engineering the future of digital velocity.
-        </p>
+        <div className="flex gap-4">
+           <a href="#marketplace" className="text-cyan-400 font-bold text-sm hover:underline">Explore Hubs →</a>
+           <Link to="/consulting" className="text-white font-bold text-sm hover:underline">Hire the Agency →</Link>
+        </div>
       </div>
     </div>
   </section>
@@ -255,10 +332,7 @@ export default function Storefront() {
       <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
       <Hero />
       <BentoServices />
-      
-      {/* SEOCopySection placed strategically between Services and Marketplace */}
       <SEOCopySection /> 
-      
       <InteractiveMarketplace />
       
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
