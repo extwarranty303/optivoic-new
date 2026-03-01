@@ -3,14 +3,17 @@ import { Link } from 'react-router-dom';
 import Footer from './Footer';
 
 const NoiseOverlay = () => (
-  <div className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+  <div 
+    className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0" 
+    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+  ></div>
 );
 
 export default function Terms() {
   return (
     <div className="min-h-screen bg-[#020202] text-gray-300 font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
       <NoiseOverlay />
-      <div className="fixed top-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-violet-600/5 blur-[150px] rounded-full pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-600/5 blur-[150px] rounded-full pointer-events-none z-0"></div>
 
       <nav className="relative z-50 border-b border-white/10 py-6 px-8 flex items-center bg-black/30 backdrop-blur-2xl">
         <Link to="/" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
@@ -19,28 +22,216 @@ export default function Terms() {
       </nav>
 
       <main className="relative z-10 max-w-4xl mx-auto px-8 py-20">
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Terms of Service</h1>
-        <p className="text-gray-500 mb-12 uppercase tracking-widest text-sm font-bold">Last Updated: February 2026</p>
+        <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">TERMS OF SERVICE</h1>
+        <p className="text-gray-500 mb-2 uppercase tracking-widest text-sm font-bold">OptiVoic Consulting and Software (d/b/a OptiVoic)</p>
+        <p className="text-gray-500 mb-8 uppercase tracking-widest text-sm font-bold">Effective Date: March 1, 2026 | Last Updated: February 28, 2026</p>
+
+        <div className="bg-white/5 border border-white/10 rounded-lg p-6 mb-12">
+          <p className="font-semibold text-white mb-2">Contact Information:</p>
+          <p>Email: <a href="mailto:hello@optivoic.com" className="text-cyan-400 hover:underline">hello@optivoic.com</a></p>
+          <p>Website: <a href="https://optivoic.com" className="text-cyan-400 hover:underline">https://optivoic.com</a></p>
+        </div>
 
         <div className="space-y-10 text-lg leading-relaxed font-light">
+          
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">1. Agreement to Terms</h2>
-            <p>By accessing or using the services, templates, and consulting provided by OptiVöic ("Company", "we", "us", or "our"), you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may not access our services or purchase our digital products.</p>
+            <h2 className="text-2xl font-bold text-white mb-4">1. Acceptance of Terms & User Capacity</h2>
+            <p className="mb-4">These Terms of Service ("Terms") constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you"), and OptiVoic Consulting and Software ("OptiVoic," "we," "us," or "our"), concerning your access to and use of the https://optivoic.com website and any related services, client portals, or digital products (collectively, the "Services").</p>
+            <p className="mb-4">By accessing the Services, you represent and warrant that: (1) you have the legal capacity and you agree to comply with these Terms; (2) you are not a minor in the jurisdiction in which you reside; and (3) your use of the Services will not violate any applicable law or regulation. IF YOU DO NOT AGREE WITH ALL OF THESE TERMS, YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND MUST DISCONTINUE USE IMMEDIATELY.</p>
           </section>
+
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">2. Intellectual Property & Licensing</h2>
-            <p>All digital frameworks, operational templates, code snippets, and site copy provided by OptiVöic are the exclusive, proprietary intellectual property of the Company. Upon purchase, you are granted a revocable, non-exclusive, non-transferable license to use the digital goods solely for your personal or internal business operations.</p>
+            <h2 className="text-2xl font-bold text-white mb-4">2. Privacy Policy Incorporation</h2>
+            <p className="mb-4">We care about data privacy and security. By using the Services, you agree to be bound by our Privacy Policy posted on the Site, which is incorporated into these Terms. Please be advised the Services are hosted in the United States.</p>
           </section>
+
           <section>
-            <h2 className="text-2xl font-bold text-red-400 mb-4">3. Digital Goods & No Refund Policy</h2>
-            <p>Due to the irrevocable and instantly accessible nature of digital goods, software, and downloadable templates, **all sales are final**. We do not offer refunds, exchanges, or cancellations once a secure download link has been generated and accessed.</p>
+            <h2 className="text-2xl font-bold text-white mb-4">3. Products and Services</h2>
+            <p className="mb-4">OptiVoic provides B2C and B2B template systems, organizational tracking tools, and technology consulting services. We make every effort to display as accurately as possible the features, specifications, and details of the products available. However, we do not guarantee that the features, specifications, and details will be completely accurate, reliable, current, or free of errors.</p>
+            
+            <div className="bg-cyan-900/20 border-l-4 border-cyan-500 p-4 mb-4 mt-6">
+              <p className="font-semibold text-white mb-2">Important Disclaimer Regarding Financial and Tax Tools:</p>
+              <p>OptiVoic provides tracking templates, revenue dashboards, and tax organization tools for gig workers, e-commerce sellers, and businesses. <strong>OptiVoic is not a certified public accounting firm, tax advisory firm, or financial advisory service.</strong> The templates and tools are provided for organizational and informational purposes only. You are solely responsible for verifying the accuracy of any calculations, tax liabilities, or financial data generated by our tools with a qualified professional before filing taxes or making financial decisions.</p>
+            </div>
           </section>
+
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">4. Limitation of Liability</h2>
-            <p>OptiVöic provides technical consulting, e-commerce strategy, and digital frameworks "as is" and makes no express or implied guarantees regarding specific financial outcomes, investment returns, or business scaling results.</p>
+            <h2 className="text-2xl font-bold text-white mb-4">4. Client Materials and User Data</h2>
+            <p className="mb-4">During consulting engagements or through your use of the Client Portal, you may provide us with data, documents, system access, or other materials ("Client Materials"). You retain all ownership rights to your Client Materials. By providing Client Materials to OptiVoic, you grant us a non-exclusive, worldwide, royalty-free license to use, process, and transmit such materials solely for the purpose of providing the Services to you.</p>
           </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">5. Artificial Intelligence (AI) Disclaimer and Output Liability</h2>
+            <p className="mb-4">As part of our technology consulting services, we may recommend, build, implement, or interact with Artificial Intelligence (AI) and Machine Learning models. You acknowledge that AI technologies are rapidly evolving and inherently probabilistic. Outputs generated by AI systems may contain errors, inaccuracies, or "hallucinations."</p>
+            <p className="mb-4"><strong>No Liability for AI Output:</strong> OptiVoic makes no warranties or guarantees regarding the absolute accuracy, completeness, or reliability of any output generated by AI systems implemented during our consulting engagements or embedded in custom applications. You are solely responsible for reviewing, verifying, and validating any AI-generated data, code, text, or visual content before relying upon it for business operations or public distribution.</p>
+            <p className="mb-4"><strong>Copyright of Generated Content:</strong> OptiVoic assumes no liability for any copyright infringement, trademark infringement, or intellectual property disputes arising from the output generated by AI models we implement or develop for you. The risk of utilizing AI-generated content rests entirely with the client.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">6. Custom Software & Application Development</h2>
+            <p className="mb-4">If OptiVoic is engaged to build custom software, web applications, or mobile applications ("Custom Builds") for you or your company, the following additional terms apply, unless superseded by a specific Statement of Work (SOW) or Master Services Agreement (MSA):</p>
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-400">
+              <li><strong>App Store Approvals:</strong> OptiVoic does not guarantee that any mobile application developed will be approved for listing on third-party marketplaces, including the Apple App Store or Google Play Store. Rejection by these marketplaces due to their internal policy changes or subjective reviews does not constitute a breach of contract by OptiVoic and does not entitle you to a refund.</li>
+              <li><strong>Third-Party API Dependencies:</strong> Custom Builds frequently rely on third-party APIs (e.g., OpenAI, Stripe, Google Cloud). OptiVoic is not responsible for any app downtime, feature breakage, or financial losses caused by a third-party API changing its endpoints, deprecating features, suffering outages, or altering its pricing structure.</li>
+              <li><strong>Code Ownership and Background IP:</strong> Upon final delivery and receipt of full payment, you will own the final deliverables as defined in your specific contract. However, OptiVoic retains all rights, title, and interest in our "Background IP"—which includes pre-existing code libraries, architectural frameworks, templates, and development methodologies used to create the Custom Build. We grant you a perpetual, non-exclusive license to use this Background IP strictly as incorporated into your final deliverable.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">7. Intellectual Property Rights</h2>
+            <p className="mb-4">Unless otherwise indicated, the Services and all source code, databases, functionality, software, website designs, audio, video, text, photographs, graphics, and template files (collectively, the "Content") and the trademarks, service marks, and logos contained therein (the "Marks") are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws of the United States.</p>
+            <p className="mb-4"><strong>Template License:</strong> When you purchase or download a digital template from OptiVoic, you are granted a limited, non-exclusive, non-transferable license to use the template for your personal or internal business operations. <strong>You are strictly prohibited from reselling, redistributing, sub-licensing, reverse-engineering, or claiming our templates, codebase, or workflows as your own work.</strong></p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">8. Third-Party Platforms and Dependencies</h2>
+            <p className="mb-4">Many of our digital products and consulting solutions integrate with or rely upon third-party platforms (including, but not limited to, Microsoft Excel, Notion, Google Cloud, Gumroad, and PayPal). OptiVoic does not own or control these third-party platforms. We are not responsible for any downtime, data loss, API changes, subscription fees, or service interruptions caused by these third-party providers.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">9. Prohibited Activities & Export Controls</h2>
+            <p className="mb-4">You may not access or use the Services for any purpose other than that for which we make the Services available. You agree not to: circumvent security features, systemically retrieve data to create a database, engage in unauthorized framing, or use the Services as part of any effort to compete with us.</p>
+            <p className="mb-4"><strong>Export Restrictions:</strong> The Services and digital products may be subject to United States export control laws. You represent and warrant that you are not located in a country that is subject to a U.S. government embargo.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">10. Purchases and Refunds</h2>
+            <p className="mb-4"><strong>Digital Products:</strong> Due to the immediate, accessible nature of digital products and downloadable templates, all sales are final and non-refundable unless otherwise explicitly stated in writing on the product page.</p>
+            <p className="mb-4"><strong>Consulting Services:</strong> Refunds, payment schedules, and cancellation policies for B2B technology and AI consulting services will be governed by the specific Statement of Work (SOW) or Master Services Agreement (MSA) executed between you and OptiVoic.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">11. Modifications and Interruptions</h2>
+            <p className="mb-4">We reserve the right to change, modify, or remove the contents of the Services at any time or for any reason at our sole discretion without notice. We will not be liable to you or any third party for any modification, price change, suspension, or discontinuance of the Services.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">12. Disclaimer of Warranties</h2>
+            <p className="mb-4 uppercase font-semibold">The Services are provided on an as-is and as-available basis. You agree that your use of the Services and our digital templates will be at your sole risk.</p>
+            <p className="mb-4">To the fullest extent permitted by law, we disclaim all warranties, express or implied, in connection with the Services and your use thereof, including, without limitation, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">13. Limitation of Liability</h2>
+            <p className="mb-4 text-sm tracking-wide text-gray-400">IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL, EXEMPLARY, INCIDENTAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFIT, LOST REVENUE, LOSS OF DATA, OR OTHER DAMAGES ARISING FROM YOUR USE OF THE SERVICES, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p>
+            <p className="mb-4">Notwithstanding anything to the contrary contained herein, our liability to you for any cause whatsoever and regardless of the form of the action, will at all times be limited to the amount paid, if any, by you to us during the six (6) month period prior to any cause of action arising.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">14. Indemnification</h2>
+            <p className="mb-4">You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys’ fees and expenses, made by any third party due to or arising out of: (1) your use of the Services; (2) breach of these Terms; (3) any breach of your representations and warranties set forth in these Terms; or (4) your violation of the rights of a third party, including but not limited to intellectual property rights.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">15. Force Majeure</h2>
+            <p className="mb-4">OptiVoic shall not be liable for any delay or failure to perform resulting from causes outside its reasonable control, including, but not limited to, acts of God, natural disasters, war, terrorism, riots, embargos, acts of civil or military authorities, fire, floods, accidents, network infrastructure failures, or strikes.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">16. Binding Arbitration and Class Action Waiver</h2>
+            <p className="mb-4 uppercase font-semibold">Please read this section carefully, as it affects your legal rights and requires you to arbitrate disputes with OptiVoic and limits the manner in which you can seek relief.</p>
+            <p className="mb-4">Any dispute, claim, or controversy arising out of or relating to these Terms shall be determined by binding arbitration in St. Johns County, Florida, before one arbitrator. The arbitration shall be administered by the American Arbitration Association (AAA).</p>
+            <p className="mb-4"><strong>Class Action Waiver:</strong> The Parties agree that any arbitration shall be conducted in their individual capacities only and not as a class action or other representative action, and the Parties expressly waive their right to file a class action or seek relief on a class basis.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">17. Governing Law</h2>
+            <p className="mb-4">These Terms and your use of the Services are governed by and construed in accordance with the laws of the State of Florida applicable to agreements made and to be entirely performed within the State of Florida, without regard to its conflict of law principles.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">18. Electronic Communications & Signatures</h2>
+            <p className="mb-4">Visiting the Services, sending us emails, and completing online forms constitute electronic communications. YOU HEREBY AGREE TO THE USE OF ELECTRONIC SIGNATURES, CONTRACTS, ORDERS, AND OTHER RECORDS, AND TO ELECTRONIC DELIVERY OF NOTICES, POLICIES, AND RECORDS OF TRANSACTIONS INITIATED OR COMPLETED BY US OR VIA THE SERVICES.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">19. Data Backup and Assumption of Risk</h2>
+            <p className="mb-4">You are solely responsible for creating and maintaining independent backups of any data, information, or materials you input into OptiVoic templates, tools, or the Client Portal. OptiVoic assumes no liability for the deletion, corruption, or loss of any user data or content resulting from your use of the Services, third-party platform failures, or user error.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">20. Submissions and Feedback</h2>
+            <p className="mb-4">You acknowledge and agree that any questions, comments, suggestions, ideas, feedback, or other information regarding the Services ("Submissions") provided by you to us are non-confidential and shall become our sole property.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">21. Copyright Infringement (DMCA Notice)</h2>
+            <p className="mb-4">We respect the intellectual property rights of others. If you believe that any material available on or through the Services infringes upon any copyright you own or control, please immediately notify our Designated Copyright Agent at hello@optivoic.com with the subject line "DMCA Notice."</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">22. Time Limit to Bring Claims</h2>
+            <p className="mb-4 uppercase font-semibold text-gray-400">YOU AGREE THAT ANY CAUSE OF ACTION OR CLAIM YOU MAY HAVE ARISING OUT OF OR RELATING TO THESE TERMS OF SERVICE OR THE SERVICES MUST BE COMMENCED WITHIN ONE (1) YEAR AFTER THE CAUSE OF ACTION ACCRUES; OTHERWISE, SUCH CAUSE OF ACTION OR CLAIM IS PERMANENTLY BARRED.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">23. International Users and Geographic Restrictions</h2>
+            <p className="mb-4">The Services are controlled, operated, and administered by OptiVoic from our offices within the United States of America. We make no representation that the Services or Content are appropriate or available for use at other locations outside of the United States. If you access the Services from a location outside the United States, you are responsible for compliance with all local laws, regulations, and strictures.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">24. Taxes, VAT, and Duties</h2>
+            <p className="mb-4">All fees and prices displayed on the Services are exclusive of any applicable taxes, levies, import duties, or similar governmental assessments of any nature. You are strictly responsible for paying all Taxes associated with your purchases of templates or consulting services.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">25. Anti-Corruption and Anti-Bribery Compliance</h2>
+            <p className="mb-4">In connection with these Terms and your use of our B2B consulting services, you agree to comply with all applicable anti-corruption and anti-bribery laws, including but not limited to the United States Foreign Corrupt Practices Act (FCPA).</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">26. California Resident Waiver</h2>
+            <p className="mb-4">If you are a California resident, you hereby waive California Civil Code Section 1542, which says: "A general release does not extend to claims that the creditor or releasing party does not know or suspect to exist in his or her favor at the time of executing the release and that, if known by him or her, would have materially affected his or her settlement with the debtor or released party."</p>
+          </section>
+          
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">27. Independent Contractor Status</h2>
+            <p className="mb-4">OptiVoic provides its technology and consulting services strictly as an independent contractor. Nothing in these Terms shall be construed to create a partnership, joint venture, employer-employee, or agency relationship between you and OptiVoic.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">28. Confidentiality</h2>
+            <p className="mb-4">During the course of utilizing the Client Portal or engaging in consulting services, both parties may have access to confidential, proprietary, or trade secret information belonging to the other party ("Confidential Information"). Both parties agree to maintain the strict confidentiality of such information, using at least the same degree of care they use to protect their own confidential data.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">29. No Guarantee of Results</h2>
+            <p className="mb-4">Any revenue, profit, tax savings, or success metrics displayed on our Services, marketing materials, or discussed during consulting engagements are strictly estimates, projections, or historical data. OptiVoic does not guarantee any specific financial outcome, business growth, or return on investment (ROI) resulting from your use of our templates, tracking systems, custom applications, or consulting advice.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">30. Third-Party Links</h2>
+            <p className="mb-4">The Services may contain links to third-party websites or resources. You acknowledge and agree that OptiVoic is not responsible or liable for the availability, accuracy, content, or policies of third-party websites.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">31. Publicity and Marketing Rights</h2>
+            <p className="mb-4">Unless explicitly prohibited by a mutually executed Non-Disclosure Agreement (NDA), you grant OptiVoic the right to use your company name and logo as a reference for marketing or promotional purposes on our website, portfolio, and in other public or private communications with existing or potential OptiVoic clients.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">32. Non-Solicitation of Personnel</h2>
+            <p className="mb-4">During the term of your use of the Services or any consulting engagement, and for a period of twelve (12) months thereafter, you agree not to directly or indirectly solicit, recruit, hire, or engage the services of any OptiVoic employee, contractor, or subcontractor without the express written consent of OptiVoic.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">33. Service Availability and SLA Disclaimer</h2>
+            <p className="mb-4">While we strive for high reliability, OptiVoic makes no representations, warranties, or guarantees regarding the uptime, continuous availability, or specific Service Level Agreements (SLAs) for the Services, including the Client Portal, unless expressly codified in a separate, premium enterprise consulting agreement.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">34. Data Handling Post-Termination</h2>
+            <p className="mb-4">Upon the termination of your account, Client Portal access, or consulting engagement, OptiVoic reserves the right to retain, archive, or permanently delete any Client Materials or user data in accordance with our standard data retention policies. OptiVoic assumes no obligation to maintain or forward any data following the termination of services.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">35. Miscellaneous & Severability</h2>
+            <p className="mb-4">These Terms constitute the entire agreement between you and us. Our failure to exercise or enforce any right or provision of these Terms shall not operate as a waiver. If any provision is determined to be unlawful, void, or unenforceable, that provision is deemed severable and does not affect the validity of any remaining provisions. There is no joint venture, partnership, employment or agency relationship created between you and us as a result of these Terms.</p>
+          </section>
+
         </div>
       </main>
+      
       {/* Footer */}
       <Footer />  
     </div>
