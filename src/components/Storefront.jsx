@@ -230,7 +230,7 @@ const SEOCopySection = () => (
         </ul>
 
         <a 
-          href="https://calendly.com/YOUR_LINK" 
+          href="https://koalendar.com/e/meet-with-optivoic" 
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.3)] hover:shadow-[0_0_30px_rgba(56,182,255,0.5)] hover:-translate-y-1"
@@ -326,19 +326,78 @@ const InteractiveMarketplace = () => {
 };
 
 const SEOClosingSection = () => (
-  <section className="py-24 px-8 max-w-5xl mx-auto z-10 relative border-t border-white/5">
-    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-10 md:p-16 backdrop-blur-sm text-center">
-      <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">Architecting the Future of Your Operations</h2>
-      <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed space-y-6 text-left md:text-center mx-auto">
-        <p>
-          Building a sustainable venture in today's landscape requires more than just dedication; it demands precision-engineered systems. Whether you are an independent creator seeking <strong>expert-designed Notion templates</strong> to organize your content pipeline, or a scaling retailer in need of robust <strong>e-commerce inventory management solutions</strong>, the infrastructure you rely on dictates your ultimate growth ceiling.
-        </p>
-        <p>
-          We specialize in transforming complex operational bottlenecks into streamlined, <strong>scalable digital workspaces for entrepreneurs</strong> and modern enterprises. From optimizing <strong>Next.js and React database architecture</strong> for seamless user experiences, to implementing reliable <strong>freelance tax allocation strategies</strong> for 1099 professionals, our focus remains squarely on eliminating friction from your daily workflow.
-        </p>
-        <p>
-          By adopting comprehensive <strong>business-in-a-box systems</strong> and leveraging custom automation, you reclaim the cognitive bandwidth required to focus on your core vision. Partnering with a premier agency for <strong>technology consulting for growing enterprises</strong> ensures that your backend scales as fast as your ambition. It’s time to transition from managing your tools to letting an engineered ecosystem drive your business forward.
-        </p>
+  <section className="py-24 px-8 max-w-7xl mx-auto z-10 relative border-t border-white/5">
+    <div className="bg-gradient-to-br from-white/[0.04] to-black/40 border border-white/10 rounded-[40px] p-10 md:p-16 backdrop-blur-md overflow-hidden relative">
+      
+      {/* Background Glows for visual depth */}
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-violet-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-[-20%] left-[-10%] w-[40%] h-[40%] bg-cyan-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+        
+        {/* Left Side: The Hook & Primary CTA */}
+        <div>
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">
+            Stop Managing Tools. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Start Scaling Your Vision.</span>
+          </h2>
+          <p className="text-lg text-gray-400 mb-10 leading-relaxed max-w-lg">
+            Building a sustainable venture requires precision-engineered systems. Reclaim your cognitive bandwidth and let a reliable ecosystem drive your business forward.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a href="#marketplace" className="bg-white text-black text-center font-bold py-4 px-8 rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300 hover:-translate-y-1">
+              Explore Systems
+            </a>
+            <Link to="/consulting" className="bg-white/5 border border-white/20 text-white text-center font-bold py-4 px-8 rounded-full hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              Hire the Agency
+            </Link>
+          </div>
+        </div>
+
+        {/* Right Side: Structured Value Pillars (SEO Keywords) */}
+        <div className="space-y-6">
+          
+          {/* Pillar 1 */}
+          <div className="flex gap-5 items-start bg-black/40 border border-white/5 p-6 rounded-2xl hover:border-cyan-500/30 hover:bg-white/[0.02] transition-all duration-300">
+            <div className="mt-1 w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-white mb-2">For Creators & Retailers</h4>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Organize your pipeline with <strong>expert-designed Notion templates</strong> and scale operations using robust <strong>e-commerce inventory management solutions</strong>.
+              </p>
+            </div>
+          </div>
+
+          {/* Pillar 2 */}
+          <div className="flex gap-5 items-start bg-black/40 border border-white/5 p-6 rounded-2xl hover:border-violet-500/30 hover:bg-white/[0.02] transition-all duration-300">
+            <div className="mt-1 w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center shrink-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-violet-400"></span>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-white mb-2">For Growing Enterprises</h4>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Eliminate operational friction with <strong>scalable digital workspaces for entrepreneurs</strong>. We optimize your backend with expert <strong>Next.js and React database architecture</strong>.
+              </p>
+            </div>
+          </div>
+
+          {/* Pillar 3 */}
+          <div className="flex gap-5 items-start bg-black/40 border border-white/5 p-6 rounded-2xl hover:border-blue-500/30 hover:bg-white/[0.02] transition-all duration-300">
+            <div className="mt-1 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-white mb-2">For 1099 Professionals</h4>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Adopt comprehensive <strong>business-in-a-box systems</strong>. Implement reliable <strong>freelance tax allocation strategies</strong> and leverage top-tier <strong>technology consulting for growing enterprises</strong>.
+              </p>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
