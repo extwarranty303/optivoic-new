@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import Storefront from "./components/Storefront";
 import TemplateDetails from "./components/TemplateDetails";
 import ExecutiveTaxEngine from "./components/ExecutiveTaxEngine";
@@ -25,6 +26,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/update-password" element={<UpdatePassword />} /> {/* <-- NEW */}
         </Routes>
+        <Analytics />
       </Router>
   );
 }
