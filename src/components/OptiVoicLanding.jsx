@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const NoiseOverlay = () => (
+  <div
+    className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0"
+    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+  ></div>
+);
+
 const OptiVoicLanding = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [chatMessages, setChatMessages] = useState([
@@ -74,867 +81,514 @@ const OptiVoicLanding = () => {
   };
 
   return (
-    <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', backgroundColor: '#F5F7FA', color: '#2C3E50', lineHeight: '1.6' }}>
-      <style>
-        {`
-          :root {
-            --color-primary: #2180A0;
-            --color-primary-dark: #1a6680;
-            --color-accent: #E67E22;
-            --color-success: #27AE60;
-            --color-bg: #F5F7FA;
-            --color-surface: #FFFFFF;
-            --color-text: #2C3E50;
-            --color-text-light: #7F8C8D;
-            --color-border: #E1E8ED;
-          }
-
-          * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--color-bg);
-            color: var(--color-text);
-            line-height: 1.6;
-          }
-
-          .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-          }
-
-          /* Header */
-          header {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-            color: white;
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          }
-
-          .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
-
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 1px;
-          }
-
-          nav a {
-            color: white;
-            margin-left: 30px;
-            text-decoration: none;
-            font-size: 14px;
-            transition: opacity 0.3s;
-          }
-
-          nav a:hover {
-            opacity: 0.8;
-          }
-
-          /* Hero Section */
-          .hero {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-            color: white;
-            padding: 80px 20px;
-            text-align: center;
-          }
-
-          .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            line-height: 1.2;
-          }
-
-          .hero-subtitle {
-            font-size: 20px;
-            margin-bottom: 30px;
-            opacity: 0.95;
-          }
-
-          .cta-button {
-            display: inline-block;
-            background: var(--color-accent);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-          }
-
-          .cta-button:hover {
-            background: #D35400;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(230, 126, 34, 0.3);
-          }
-
-          /* Tabs */
-          .tabs {
-            display: flex;
-            gap: 10px;
-            margin: 40px 0 30px 0;
-            flex-wrap: wrap;
-          }
-
-          .tab-button {
-            padding: 12px 24px;
-            border: 2px solid var(--color-border);
-            background: white;
-            color: var(--color-text);
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-          }
-
-          .tab-button.active {
-            background: var(--color-primary);
-            color: white;
-            border-color: var(--color-primary);
-          }
-
-          .tab-button:hover {
-            border-color: var(--color-primary);
-          }
-
-          .tab-content {
-            display: none;
-            animation: fadeIn 0.3s;
-          }
-
-          .tab-content.active {
-            display: block;
-          }
-
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-
-          /* Grid */
-          .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin: 40px 0;
-          }
-
-          /* Card */
-          .card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-            border: 1px solid var(--color-border);
-          }
-
-          .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-          }
-
-          .card-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-          }
-
-          .card-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-right: 15px;
-            color: white;
-          }
-
-          .card h3 {
-            color: var(--color-primary);
-            margin-bottom: 10px;
-          }
-
-          .card p {
-            color: var(--color-text-light);
-            font-size: 14px;
-            line-height: 1.6;
-          }
-
-          /* Feature List */
-          .feature-list {
-            list-style: none;
-            margin: 20px 0;
-          }
-
-          .feature-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--color-border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-          }
-
-          .feature-list li:last-child {
-            border-bottom: none;
-          }
-
-          .feature-list li:before {
-            content: "✓";
-            color: var(--color-success);
-            font-weight: bold;
-            font-size: 18px;
-          }
-
-          /* AI Chat Demo */
-          .chat-demo {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin: 40px 0;
-            border: 1px solid var(--color-border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-          }
-
-          .chat-messages {
-            height: 400px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: #F9FAFB;
-            padding: 20px;
-            border-radius: 8px;
-          }
-
-          .message {
-            display: flex;
-            gap: 10px;
-            animation: slideIn 0.3s;
-          }
-
-          @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-
-          .message.user {
-            justify-content: flex-end;
-          }
-
-          .message-bubble {
-            max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            line-height: 1.5;
-          }
-
-          .message.bot .message-bubble {
-            background: var(--color-primary);
-            color: white;
-            border-bottom-left-radius: 4px;
-          }
-
-          .message.user .message-bubble {
-            background: #E8EEF5;
-            color: var(--color-text);
-            border-bottom-right-radius: 4px;
-          }
-
-          .chat-input-area {
-            display: flex;
-            gap: 10px;
-          }
-
-          .chat-input-area input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--color-border);
-            border-radius: 6px;
-            font-size: 14px;
-          }
-
-          .chat-input-area button {
-            padding: 12px 24px;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-          }
-
-          .chat-input-area button:hover {
-            background: var(--color-primary-dark);
-          }
-
-          /* Pricing Table */
-          .pricing-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 30px 0;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-          }
-
-          .pricing-table th {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-            color: white;
-            padding: 20px;
-            text-align: left;
-            font-weight: 600;
-          }
-
-          .pricing-table td {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--color-border);
-          }
-
-          .pricing-table tbody tr:hover {
-            background: var(--color-bg);
-          }
-
-          .highlight-cell {
-            background: linear-gradient(135deg, rgba(33, 128, 160, 0.1) 0%, rgba(26, 102, 128, 0.1) 100%);
-            color: var(--color-primary);
-            font-weight: 600;
-          }
-
-          /* Metrics */
-          .metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 40px 0;
-          }
-
-          .metric-card {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-          }
-
-          .metric-value {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 5px;
-          }
-
-          .metric-label {
-            font-size: 14px;
-            opacity: 0.9;
-          }
-
-          /* Section */
-          section {
-            padding: 60px 20px;
-            background: white;
-            margin-bottom: 20px;
-          }
-
-          section:nth-child(odd) {
-            background: var(--color-bg);
-          }
-
-          section h2 {
-            color: var(--color-primary);
-            font-size: 36px;
-            margin-bottom: 30px;
-            text-align: center;
-          }
-
-          /* Footer */
-          footer {
-            background: var(--color-text);
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-          }
-
-          footer p {
-            margin: 10px 0;
-            font-size: 14px;
-          }
-
-          /* Responsive */
-          @media (max-width: 768px) {
-            .hero h1 {
-              font-size: 36px;
-            }
-
-            .header-content {
-              flex-direction: column;
-              gap: 15px;
-            }
-
-            nav {
-              display: flex;
-              gap: 15px;
-              justify-content: center;
-              flex-wrap: wrap;
-            }
-
-            nav a {
-              margin-left: 0;
-            }
-
-            .chat-messages {
-              height: 300px;
-            }
-
-            .message-bubble {
-              max-width: 85%;
-            }
-          }
-        `}
-      </style>
-
-      <header>
-        <div className="container">
-          <div className="header-content">
-            <Link to="/" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
-              <span>←</span> Back to Storefront
-            </Link>
-            <div className="logo">OptiVoic</div>
-            <nav>
-              <a href="#platform" onClick={(e) => { e.preventDefault(); scrollToSection('platform'); }}>Platform</a>
-              <a href="#pricing" onClick={(e) => { e.preventDefault(); scrollToSection('pricing'); }}>Pricing</a>
-              <a href="#demo" onClick={(e) => { e.preventDefault(); scrollToSection('demo'); }}>AI Demo</a>
-              <a href="#results" onClick={(e) => { e.preventDefault(); scrollToSection('results'); }}>Results</a>
-            </nav>
+    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
+      <NoiseOverlay />
+
+      {/* Ambient Background Orbs */}
+      <div className="fixed top-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-blue-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
+
+      {/* Navbar */}
+      <nav className="relative z-50 border-b border-white/10 py-6 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl shadow-lg">
+        <Link to="/" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
+          <span>←</span> Back to Storefront
+        </Link>
+        <div className="text-xl font-black text-white tracking-tighter drop-shadow-lg">
+          OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
+        </div>
+        <div className="text-sm text-gray-400">AI Website Solutions</div>
+      </nav>
+
+      <main className="relative z-10">
+
+        {/* Hero Section */}
+        <section className="px-8 pt-32 pb-20 max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center mb-8 px-5 py-2 rounded-full border border-violet-500/30 bg-violet-500/10 backdrop-blur-xl">
+            <span className="text-xs font-bold tracking-widest uppercase text-violet-300 flex items-center">
+              <span className="w-2.5 h-2.5 inline-block rounded-full bg-cyan-400 mr-3 animate-pulse"></span>
+              AI-Powered Web Solutions
+            </span>
           </div>
-        </div>
-      </header>
-
-      <section className="hero">
-        <div className="container">
-          <h1>AI-Powered Websites for Home Service Businesses</h1>
-          <p className="hero-subtitle">Convert more leads with intelligent appointment booking, smart qualification, and personalized customer experiences</p>
-          <button className="cta-button" onClick={() => scrollToSection('demo')}>See AI in Action</button>
-        </div>
-      </section>
-
-      <section id="platform">
-        <div className="container">
-          <h2>Our Complete Solution</h2>
-
-          <div className="tabs">
-            <button className={`tab-button ${activeTab === 0 ? 'active' : ''}`} onClick={() => switchTab(0)}>Platform</button>
-            <button className={`tab-button ${activeTab === 1 ? 'active' : ''}`} onClick={() => switchTab(1)}>AI Features</button>
-            <button className={`tab-button ${activeTab === 2 ? 'active' : ''}`} onClick={() => switchTab(2)}>Integration</button>
-          </div>
-
-          {activeTab === 0 && (
-            <div className="tab-content active">
-              <div className="grid">
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">🎨</div>
-                    <h3>Beautiful Design</h3>
-                  </div>
-                  <p>Professional, mobile-optimized websites built with modern tech (React, Vite, Node.js)</p>
-                  <ul className="feature-list">
-                    <li>Mobile-first responsive design</li>
-                    <li>Fast load times (&lt; 2 seconds)</li>
-                    <li>SEO-optimized structure</li>
-                    <li>Accessibility compliant</li>
-                  </ul>
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">🔐</div>
-                    <h3>Secure Infrastructure</h3>
-                  </div>
-                  <p>Enterprise-grade hosting on Supabase with PostgreSQL database</p>
-                  <ul className="feature-list">
-                    <li>99.9% uptime guarantee</li>
-                    <li>SSL/TLS encryption</li>
-                    <li>Regular backups</li>
-                    <li>GDPR compliant</li>
-                  </ul>
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">📊</div>
-                    <h3>Analytics Dashboard</h3>
-                  </div>
-                  <p>Real-time insights into visitor behavior and conversion metrics</p>
-                  <ul className="feature-list">
-                    <li>Visitor tracking &amp; heatmaps</li>
-                    <li>Conversion funnel analysis</li>
-                    <li>Lead source attribution</li>
-                    <li>Monthly performance reports</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 1 && (
-            <div className="tab-content active">
-              <div className="grid">
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">🤖</div>
-                    <h3>Smart Chatbot</h3>
-                  </div>
-                  <p>AI-powered conversational assistant that qualifies leads 24/7</p>
-                  <ul className="feature-list">
-                    <li>Natural language understanding</li>
-                    <li>Service categorization</li>
-                    <li>Emergency detection</li>
-                    <li>Human handoff</li>
-                  </ul>
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">📅</div>
-                    <h3>Appointment Booking</h3>
-                  </div>
-                  <p>Intelligent scheduling that reduces no-shows by 30%</p>
-                  <ul className="feature-list">
-                    <li>Real-time availability</li>
-                    <li>Auto-confirmation SMS</li>
-                    <li>Reminder automation</li>
-                    <li>Calendar integration</li>
-                  </ul>
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">🎯</div>
-                    <h3>Personalization Engine</h3>
-                  </div>
-                  <p>Adaptive content that increases conversion by 15-25%</p>
-                  <ul className="feature-list">
-                    <li>Behavior-based CTAs</li>
-                    <li>Dynamic content reordering</li>
-                    <li>Service recommendations</li>
-                    <li>Location targeting</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 2 && (
-            <div className="tab-content active">
-              <div className="grid">
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">🔗</div>
-                    <h3>CRM Integration</h3>
-                  </div>
-                  <p>Seamlessly sync leads to your existing systems</p>
-                  <ul className="feature-list">
-                    <li>HubSpot integration</li>
-                    <li>Salesforce compatibility</li>
-                    <li>Zapier automation</li>
-                    <li>Webhook support</li>
-                  </ul>
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">📞</div>
-                    <h3>SMS &amp; Email</h3>
-                  </div>
-                  <p>Automated communication that keeps customers informed</p>
-                  <ul className="feature-list">
-                    <li>Appointment reminders</li>
-                    <li>Follow-up sequences</li>
-                    <li>Promotional campaigns</li>
-                    <li>Review requests</li>
-                  </ul>
-                </div>
-
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-icon">⭐</div>
-                    <h3>Review Management</h3>
-                  </div>
-                  <p>Manage and display customer reviews across platforms</p>
-                  <ul className="feature-list">
-                    <li>Google Reviews sync</li>
-                    <li>Yelp integration</li>
-                    <li>Rating aggregation</li>
-                    <li>Reputation monitoring</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section id="demo">
-        <div className="container">
-          <h2>AI Assistant Demo</h2>
-          <p style={{ textAlign: 'center', marginBottom: '30px', color: 'var(--color-text-light)' }}>
-            Click "Try AI Booking" to see our intelligent chatbot in action. This simulates how customers interact with your site 24/7.
+          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-tight drop-shadow-2xl">
+            AI Websites for <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">Home Service Businesses</span>
+          </h1>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+            Convert more leads with intelligent appointment booking, smart qualification, and personalized customer experiences. Built for plumbing, HVAC, electrical, and service professionals.
           </p>
+          <button
+            className="mt-8 bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(56,182,255,0.4)] transition-all"
+            onClick={() => scrollToSection('demo')}
+          >
+            See AI in Action
+          </button>
+        </section>
 
-          <div className="chat-demo">
-            <div className="chat-messages" style={{ height: '400px', overflowY: 'auto', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '15px', background: '#F9FAFB', padding: '20px', borderRadius: '8px' }}>
-              {chatMessages.map((message, index) => (
-                <div key={index} className={`message ${message.sender}`}>
-                  <div className="message-bubble">
-                    {message.text}
+        {/* Platform Section */}
+        <section id="platform" className="py-24 px-8 border-y border-white/5 bg-white/[0.01]">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Our Complete Solution</h2>
+              <p className="text-xl text-gray-400">Professional websites with AI-powered lead conversion</p>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex justify-center gap-4 mb-12 flex-wrap">
+              <button
+                className={`px-6 py-3 rounded-full font-semibold transition-all ${activeTab === 0 ? 'bg-cyan-400/20 text-cyan-400 border border-cyan-400/30' : 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10'}`}
+                onClick={() => switchTab(0)}
+              >
+                Platform
+              </button>
+              <button
+                className={`px-6 py-3 rounded-full font-semibold transition-all ${activeTab === 1 ? 'bg-cyan-400/20 text-cyan-400 border border-cyan-400/30' : 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10'}`}
+                onClick={() => switchTab(1)}
+              >
+                AI Features
+              </button>
+              <button
+                className={`px-6 py-3 rounded-full font-semibold transition-all ${activeTab === 2 ? 'bg-cyan-400/20 text-cyan-400 border border-cyan-400/30' : 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10'}`}
+                onClick={() => switchTab(2)}
+              >
+                Integration
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">🎨</span>
                   </div>
+                  <h3 className="text-xl font-bold mb-4">Beautiful Design</h3>
+                  <p className="text-gray-400 leading-relaxed">Professional, mobile-optimized websites built with modern tech (React, Vite, Node.js)</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Mobile-first responsive design</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Fast load times (&lt; 2 seconds)</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> SEO-optimized structure</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Accessibility compliant</li>
+                  </ul>
                 </div>
-              ))}
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">🔐</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Secure Infrastructure</h3>
+                  <p className="text-gray-400 leading-relaxed">Enterprise-grade hosting on Supabase with PostgreSQL database</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> 99.9% uptime guarantee</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> SSL/TLS encryption</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Regular backups</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> GDPR compliant</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">📊</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Analytics Dashboard</h3>
+                  <p className="text-gray-400 leading-relaxed">Real-time insights into visitor behavior and conversion metrics</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Visitor tracking & heatmaps</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Conversion funnel analysis</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Lead source attribution</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Monthly performance reports</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 1 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">🤖</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Smart Chatbot</h3>
+                  <p className="text-gray-400 leading-relaxed">AI-powered conversational assistant that qualifies leads 24/7</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Natural language understanding</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Service categorization</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Emergency detection</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Human handoff</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">📅</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Appointment Booking</h3>
+                  <p className="text-gray-400 leading-relaxed">Intelligent scheduling that reduces no-shows by 30%</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Real-time availability</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Auto-confirmation SMS</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Reminder automation</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Calendar integration</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Personalization Engine</h3>
+                  <p className="text-gray-400 leading-relaxed">Adaptive content that increases conversion by 15-25%</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Behavior-based CTAs</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Dynamic content reordering</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Service recommendations</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Location targeting</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 2 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">🔗</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">CRM Integration</h3>
+                  <p className="text-gray-400 leading-relaxed">Seamlessly sync leads to your existing systems</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> HubSpot integration</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Salesforce compatibility</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Zapier automation</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Webhook support</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">📞</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">SMS & Email</h3>
+                  <p className="text-gray-400 leading-relaxed">Automated communication that keeps customers informed</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Appointment reminders</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Follow-up sequences</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Promotional campaigns</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Review requests</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                    <span className="text-2xl">⭐</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">Review Management</h3>
+                  <p className="text-gray-400 leading-relaxed">Manage and display customer reviews across platforms</p>
+                  <ul className="mt-6 space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Google Reviews sync</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Yelp integration</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Rating aggregation</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Reputation monitoring</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Demo Section */}
+        <section id="demo" className="py-24 px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">AI Assistant Demo</h2>
+              <p className="text-xl text-gray-400">Click "Try AI Booking" to see our intelligent chatbot in action</p>
             </div>
 
-            <div className="chat-input-area">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Type a message..."
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-              />
-              <button onClick={sendMessage}>Send</button>
-            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
+              <div className="h-96 overflow-y-auto mb-6 bg-black/30 rounded-xl p-6 border border-white/5">
+                {chatMessages.map((message, index) => (
+                  <div key={index} className={`flex gap-3 mb-4 ${message.sender === 'user' ? 'justify-end' : ''}`}>
+                    <div className={`max-w-[70%] p-4 rounded-xl ${message.sender === 'bot' ? 'bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30' : 'bg-white/10 border border-white/20'}`}>
+                      <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-            <div style={{ marginTop: '20px', padding: '15px', background: 'var(--color-bg)', borderRadius: '8px' }}>
-              <p style={{ marginBottom: '10px', fontWeight: '600' }}>💡 Try these messages:</p>
-              <button style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', margin: '5px 0', background: 'white', border: '1px solid var(--color-border)', borderRadius: '6px', cursor: 'pointer' }} onClick={() => sendPredefinedMessage('I have a leaky faucet')}>I have a leaky faucet</button>
-              <button style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', margin: '5px 0', background: 'white', border: '1px solid var(--color-border)', borderRadius: '6px', cursor: 'pointer' }} onClick={() => sendPredefinedMessage('Water heater is broken, need emergency service ASAP')}>Water heater emergency - need service ASAP</button>
-              <button style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', margin: '5px 0', background: 'white', border: '1px solid var(--color-border)', borderRadius: '6px', cursor: 'pointer' }} onClick={() => sendPredefinedMessage('I want to schedule maintenance for Tuesday')}>Schedule maintenance for Tuesday</button>
+              <div className="flex gap-3 mb-6">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Type a message..."
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
+                />
+                <button
+                  onClick={sendMessage}
+                  className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-semibold px-6 py-3 rounded-xl hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all"
+                >
+                  Send
+                </button>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <p className="text-sm font-semibold mb-4 text-gray-300">💡 Try these messages:</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <button
+                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:border-cyan-400/30 transition-all"
+                    onClick={() => sendPredefinedMessage('I have a leaky faucet')}
+                  >
+                    I have a leaky faucet
+                  </button>
+                  <button
+                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:border-cyan-400/30 transition-all"
+                    onClick={() => sendPredefinedMessage('Water heater is broken, need emergency service ASAP')}
+                  >
+                    Water heater emergency
+                  </button>
+                  <button
+                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:border-cyan-400/30 transition-all"
+                    onClick={() => sendPredefinedMessage('I want to schedule maintenance for Tuesday')}
+                  >
+                    Schedule maintenance
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="results">
-        <div className="container">
-          <h2>Proven Results</h2>
+        {/* Results Section */}
+        <section id="results" className="py-24 px-8 border-y border-white/5 bg-white/[0.01]">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Proven Results</h2>
+            </div>
 
-          <div className="metrics">
-            <div className="metric-card">
-              <div className="metric-value">+210%</div>
-              <div className="metric-label">Avg. Lead Increase</div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+              <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 text-center backdrop-blur-xl">
+                <div className="text-4xl font-black mb-2">+210%</div>
+                <div className="text-gray-400">Avg. Lead Increase</div>
+              </div>
+              <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 text-center backdrop-blur-xl">
+                <div className="text-4xl font-black mb-2">15.6%</div>
+                <div className="text-gray-400">Conversion Rate</div>
+              </div>
+              <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 text-center backdrop-blur-xl">
+                <div className="text-4xl font-black mb-2">-30%</div>
+                <div className="text-gray-400">No-Show Rate</div>
+              </div>
+              <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 text-center backdrop-blur-xl">
+                <div className="text-4xl font-black mb-2">23%</div>
+                <div className="text-gray-400">AI Conversion Lift</div>
+              </div>
             </div>
-            <div className="metric-card">
-              <div className="metric-value">15.6%</div>
-              <div className="metric-label">Conversion Rate</div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-value">-30%</div>
-              <div className="metric-label">No-Show Rate</div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-value">23%</div>
-              <div className="metric-label">AI Conversion Lift</div>
+
+            <h3 className="text-2xl font-bold mb-8 text-center">Industry Benchmarks</h3>
+
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-4 font-bold">Service Type</th>
+                    <th className="text-left py-4 font-bold">Avg. Website Conversion</th>
+                    <th className="text-left py-4 font-bold">With OptiVoic AI</th>
+                    <th className="text-left py-4 font-bold">Improvement</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  <tr className="border-b border-white/5">
+                    <td className="py-4 font-semibold">Plumbing</td>
+                    <td className="py-4">15.61%</td>
+                    <td className="py-4 text-cyan-400 font-semibold">19-22%</td>
+                    <td className="py-4 text-green-400 font-semibold">+23%</td>
+                  </tr>
+                  <tr className="border-b border-white/5">
+                    <td className="py-4 font-semibold">HVAC</td>
+                    <td className="py-4">15.11%</td>
+                    <td className="py-4 text-cyan-400 font-semibold">18-21%</td>
+                    <td className="py-4 text-green-400 font-semibold">+23%</td>
+                  </tr>
+                  <tr className="border-b border-white/5">
+                    <td className="py-4 font-semibold">Electrical</td>
+                    <td className="py-4">12-14%</td>
+                    <td className="py-4 text-cyan-400 font-semibold">15-18%</td>
+                    <td className="py-4 text-green-400 font-semibold">+23%</td>
+                  </tr>
+                  <tr>
+                    <td className="py-4 font-semibold">General Services</td>
+                    <td className="py-4">2-5%</td>
+                    <td className="py-4 text-cyan-400 font-semibold">5-8%</td>
+                    <td className="py-4 text-green-400 font-semibold">+60%</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
 
-          <h3 style={{ marginTop: '40px', marginBottom: '20px', color: 'var(--color-primary)' }}>Industry Benchmarks</h3>
-
-          <table className="pricing-table">
-            <thead>
-              <tr>
-                <th>Service Type</th>
-                <th>Avg. Website Conversion</th>
-                <th>With OptiVoic AI</th>
-                <th>Improvement</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Plumbing</strong></td>
-                <td>15.61%</td>
-                <td className="highlight-cell">19-22%</td>
-                <td><strong style={{ color: 'var(--color-success)' }}>+23%</strong></td>
-              </tr>
-              <tr>
-                <td><strong>HVAC</strong></td>
-                <td>15.11%</td>
-                <td className="highlight-cell">18-21%</td>
-                <td><strong style={{ color: 'var(--color-success)' }}>+23%</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Electrical</strong></td>
-                <td>12-14%</td>
-                <td className="highlight-cell">15-18%</td>
-                <td><strong style={{ color: 'var(--color-success)' }}>+23%</strong></td>
-              </tr>
-              <tr>
-                <td><strong>General Services</strong></td>
-                <td>2-5%</td>
-                <td className="highlight-cell">5-8%</td>
-                <td><strong style={{ color: 'var(--color-success)' }}>+60%</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="pricing">
-        <div className="container">
-          <h2>Simple, Transparent Pricing</h2>
-
-          <table className="pricing-table">
-            <thead>
-              <tr>
-                <th>Package</th>
-                <th>Price</th>
-                <th>Setup Time</th>
-                <th>Included</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>MVP</strong></td>
-                <td className="highlight-cell">$2,500</td>
-                <td>10 days</td>
-                <td>Template, AI chatbot, basic booking, local SEO</td>
-              </tr>
-              <tr>
-                <td><strong>Custom (Recommended)</strong></td>
-                <td className="highlight-cell">$4,500</td>
-                <td>20 days</td>
-                <td>Custom design, advanced AI, full integration, analytics</td>
-              </tr>
-              <tr>
-                <td><strong>Enterprise</strong></td>
-                <td className="highlight-cell">$6,500+</td>
-                <td>30 days</td>
-                <td>Everything + CRM integration, mobile app, predictive analytics</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3 style={{ marginTop: '40px', marginBottom: '20px', color: 'var(--color-primary)', textAlign: 'center' }}>Monthly Support Plans</h3>
-
-          <div className="grid">
-            <div className="card">
-              <h3>Basic - $199/mo</h3>
-              <p style={{ color: 'var(--color-text-light)', marginBottom: '20px' }}>Essential care</p>
-              <ul className="feature-list">
-                <li>Hosting &amp; uptime</li>
-                <li>Security updates</li>
-                <li>24/7 monitoring</li>
-                <li>Email support</li>
-              </ul>
+        {/* Pricing Section */}
+        <section id="pricing" className="py-24 px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Simple, Transparent Pricing</h2>
             </div>
 
-            <div className="card">
-              <h3>Professional - $399/mo</h3>
-              <p style={{ color: 'var(--color-text-light)', marginBottom: '20px', fontWeight: '600', color: 'var(--color-primary)' }}>⭐ Most Popular</p>
-              <ul className="feature-list">
-                <li>Everything in Basic</li>
-                <li>Monthly optimization</li>
-                <li>Analytics reviews</li>
-                <li>Priority support</li>
-              </ul>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
+                <h3 className="text-2xl font-bold mb-4">MVP</h3>
+                <div className="text-4xl font-black mb-6 text-cyan-400">$2,500</div>
+                <p className="text-gray-400 mb-6">10 days setup</p>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Template website</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> AI chatbot</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Basic booking</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Local SEO</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 backdrop-blur-xl relative">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-violet-500 text-black text-xs font-bold px-3 py-1 rounded-full">
+                  RECOMMENDED
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Custom</h3>
+                <div className="text-4xl font-black mb-6 text-cyan-400">$4,500</div>
+                <p className="text-gray-400 mb-6">20 days setup</p>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Custom design</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Advanced AI</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Full integration</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Analytics</li>
+                </ul>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
+                <h3 className="text-2xl font-bold mb-4">Enterprise</h3>
+                <div className="text-4xl font-black mb-6 text-cyan-400">$6,500+</div>
+                <p className="text-gray-400 mb-6">30 days setup</p>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Everything in Custom</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> CRM integration</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Mobile app</li>
+                  <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Predictive analytics</li>
+                </ul>
+              </div>
             </div>
 
-            <div className="card">
-              <h3>Enterprise - $599/mo</h3>
-              <p style={{ color: 'var(--color-text-light)', marginBottom: '20px' }}>Full-service growth</p>
-              <ul className="feature-list">
-                <li>Everything in Professional</li>
-                <li>Account manager</li>
-                <li>Strategy sessions</li>
-                <li>24/7 phone support</li>
-              </ul>
+            <div className="text-center">
+              <h3 className="text-2xl font-bold mb-8">Monthly Support Plans</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
+                  <h4 className="text-xl font-bold mb-2">Basic</h4>
+                  <div className="text-2xl font-black mb-4 text-cyan-400">$199/mo</div>
+                  <ul className="space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Hosting & uptime</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Security updates</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> 24/7 monitoring</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Email support</li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 backdrop-blur-xl">
+                  <h4 className="text-xl font-bold mb-2">Professional</h4>
+                  <div className="text-2xl font-black mb-4 text-cyan-400">$399/mo</div>
+                  <div className="text-xs text-cyan-400 font-semibold mb-4">⭐ MOST POPULAR</div>
+                  <ul className="space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Everything in Basic</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Monthly optimization</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Analytics reviews</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Priority support</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
+                  <h4 className="text-xl font-bold mb-2">Enterprise</h4>
+                  <div className="text-2xl font-black mb-4 text-cyan-400">$599/mo</div>
+                  <ul className="space-y-2 text-sm text-gray-300">
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Everything in Professional</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Account manager</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> Strategy sessions</li>
+                    <li className="flex items-center gap-2"><span className="text-cyan-400">✓</span> 24/7 phone support</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section>
-        <div className="container">
-          <h2>Why Choose OptiVoic?</h2>
-
-          <div className="grid">
-            <div className="card">
-              <div className="card-header">
-                <div className="card-icon">⚡</div>
-                <h3>Fast Deployment</h3>
-              </div>
-              <p>Your website launches in 10-30 days, not months. We combine templates with custom coding for speed without sacrificing quality.</p>
+        {/* Why Choose Section */}
+        <section className="py-24 px-8 border-y border-white/5 bg-white/[0.01]">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Why Choose OptiVoic?</h2>
             </div>
 
-            <div className="card">
-              <div className="card-header">
-                <div className="card-icon">🎯</div>
-                <h3>Conversion-Focused</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                  <span className="text-2xl">⚡</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4">Fast Deployment</h3>
+                <p className="text-gray-400 leading-relaxed">Your website launches in 10-30 days, not months. We combine templates with custom coding for speed without sacrificing quality.</p>
               </div>
-              <p>Every element is designed to capture leads and book appointments. Our AI learns from visitor behavior to continuously optimize results.</p>
-            </div>
 
-            <div className="card">
-              <div className="card-header">
-                <div className="card-icon">💰</div>
-                <h3>Smart Pricing</h3>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4">Conversion-Focused</h3>
+                <p className="text-gray-400 leading-relaxed">Every element is designed to capture leads and book appointments. Our AI learns from visitor behavior to continuously optimize results.</p>
               </div>
-              <p>$2,500-$6,500 upfront + monthly support. Transparent costs with guaranteed ROI. No surprise fees or hidden charges.</p>
-            </div>
 
-            <div className="card">
-              <div className="card-header">
-                <div className="card-icon">🚀</div>
-                <h3>Tech Leadership</h3>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                  <span className="text-2xl">💰</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4">Smart Pricing</h3>
+                <p className="text-gray-400 leading-relaxed">$2,500-$6,500 upfront + monthly support. Transparent costs with guaranteed ROI. No surprise fees or hidden charges.</p>
               </div>
-              <p>Built on React, Vite, Supabase, and AI APIs. Modern architecture that scales as your business grows.</p>
-            </div>
 
-            <div className="card">
-              <div className="card-header">
-                <div className="card-icon">🤝</div>
-                <h3>Your Success</h3>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                  <span className="text-2xl">🚀</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4">Tech Leadership</h3>
+                <p className="text-gray-400 leading-relaxed">Built on React, Vite, Supabase, and AI APIs. Modern architecture that scales as your business grows.</p>
               </div>
-              <p>Ongoing optimization and support. We don't hand off your site—we partner with you to drive real business results.</p>
-            </div>
 
-            <div className="card">
-              <div className="card-header">
-                <div className="card-icon">🏆</div>
-                <h3>Proven Expertise</h3>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                  <span className="text-2xl">🤝</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4">Your Success</h3>
+                <p className="text-gray-400 leading-relaxed">Ongoing optimization and support. We don't hand off your site—we partner with you to drive real business results.</p>
               </div>
-              <p>OptiVoic brings template design expertise + custom development + AI integration. Specialized for high-ROI web solutions.</p>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-xl flex items-center justify-center mb-6">
+                  <span className="text-2xl">🏆</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4">Proven Expertise</h3>
+                <p className="text-gray-400 leading-relaxed">OptiVoic brings template design expertise + custom development + AI integration. Specialized for high-ROI web solutions.</p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer>
-        <div className="container">
-          <p>&copy; 2026 OptiVoic. AI-Enhanced Web Solutions for Home Service Businesses.</p>
-          <p>Built for plumbing, HVAC, electrical, and service-based businesses.</p>
-          <p style={{ marginTop: '20px', opacity: '0.7' }}><strong>Derek Crosby</strong> - Founder | derek@optivoic.com</p>
-        </div>
-      </footer>
+        {/* Footer */}
+        <footer className="py-16 px-8 border-t border-white/10">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="text-2xl font-black mb-4 tracking-tighter drop-shadow-lg">
+              OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
+            </div>
+            <p className="text-gray-400 mb-2">AI-Enhanced Web Solutions for Home Service Businesses</p>
+            <p className="text-gray-400 mb-4">Built for plumbing, HVAC, electrical, and service-based businesses</p>
+            <p className="text-sm text-gray-500">
+              <strong>Derek Crosby</strong> - Founder | derek@optivoic.com
+            </p>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 };
