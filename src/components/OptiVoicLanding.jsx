@@ -577,18 +577,7 @@ const OptiVoicLanding = () => {
         </section>
 
         {/* Footer */}
-        <footer className="py-16 px-8 border-t border-white/10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="text-2xl font-black mb-4 tracking-tighter drop-shadow-lg">
-              OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
-            </div>
-            <p className="text-gray-400 mb-2">AI-Enhanced Web Solutions for Home Service Businesses</p>
-            <p className="text-gray-400 mb-4">Built for plumbing, HVAC, electrical, and service-based businesses</p>
-            <p className="text-sm text-gray-500">
-              <strong>Derek Crosby</strong> - Founder | derek@optivoic.com
-            </p>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

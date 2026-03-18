@@ -50,7 +50,7 @@ const Navbar = ({ onOpenAuth }) => (
     <div className="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
       <a href="#marketplace" className="hover:text-white transition-all">Marketplace</a>
       <Link to="/consulting" className="hover:text-white transition-all">Consulting</Link>
-      <Link to="/optivoic" className="hover:text-white transition-all">AI Websites</Link>
+      <Link to="/aiservice" className="hover:text-white transition-all">AI Websites</Link>
     </div>
     <button 
       onClick={onOpenAuth} 
