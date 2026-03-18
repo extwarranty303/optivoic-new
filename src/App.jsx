@@ -9,6 +9,7 @@ import Privacy from "./components/Privacy";
 import ClientPortal from "./components/ClientPortal";
 import AdminDashboard from "./components/AdminDashboard";
 import UpdatePassword from "./components/UpdatePassword"; // <-- NEW
+import OptiVoicLanding from "./components/OptiVoicLanding"; // <-- NEW
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/portal" element={<ClientPortal />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/update-password" element={<UpdatePassword />} /> {/* <-- NEW */}
+          <Route path="/optivoic" element={<OptiVoicLanding />} /> {/* <-- NEW */}
         </Routes>
       </Router>
   );
