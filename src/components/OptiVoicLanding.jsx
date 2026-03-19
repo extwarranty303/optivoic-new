@@ -94,10 +94,12 @@ const OptiVoicLanding = () => {
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
-    setFormStatus('');
+    console.log('Form submitted with data:', contactForm);
+    setFormStatus('loading'); // Add loading state
 
     try {
       // Store contact form submission in Supabase
+      console.log('Storing in Supabase...');
       const { error } = await supabase
         .from('contact_submissions')
         .insert([
@@ -111,14 +113,20 @@ const OptiVoicLanding = () => {
           }
         ]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Data stored successfully');
 
       // Try to send emails (will fail gracefully if EmailJS not configured)
       try {
+        console.log('Attempting to send emails...');
         // Send email to connect@optivoic.com (admin notification)
         await emailjs.send(
-          'service_optivoic', // Replace with your EmailJS service ID
-          'template_admin_notification', // Replace with your admin notification template ID
+          'service_ybjnmon', // Replace with your EmailJS service ID
+          'template_4nsoitr', // Replace with your admin notification template ID
           {
             from_name: contactForm.name,
             from_email: contactForm.email,
@@ -132,14 +140,15 @@ const OptiVoicLanding = () => {
         // Send confirmation email to customer
         await emailjs.send(
           'service_optivoic', // Replace with your EmailJS service ID
-          'template_customer_confirmation', // Replace with your customer confirmation template ID
+          'template_4nsoitr', // Replace with your customer confirmation template ID
           {
             to_name: contactForm.name,
             to_email: contactForm.email,
             message: contactForm.help
           },
-          'your_public_key' // Replace with your EmailJS public key
+          'zwGWddGIv9tp4dG3g' // Replace with your EmailJS public key
         );
+        console.log('Emails sent successfully');
       } catch (emailError) {
         console.warn('Email sending failed (EmailJS not configured):', emailError);
         // Continue with success - data is still stored in database
@@ -148,6 +157,7 @@ const OptiVoicLanding = () => {
       // Reset form
       setContactForm({ name: '', email: '', phone: '', help: '' });
       setFormStatus('success');
+      console.log('Form submission completed successfully');
 
     } catch (error) {
       console.error('Error submitting contact form:', error);
@@ -752,9 +762,9 @@ const OptiVoicLanding = () => {
                 <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold text-lg py-4 px-8 rounded-xl hover:shadow-[0_0_40px_rgba(56,182,255,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={formStatus === 'success'}
+                  disabled={formStatus === 'success' || formStatus === 'loading'}
                 >
-                  {formStatus === 'success' ? 'Message Sent!' : 'Send Message'}
+                  {formStatus === 'loading' ? 'Sending...' : formStatus === 'success' ? 'Message Sent!' : 'Send Message'}
                 </button>
 
                 <p className="text-xs text-gray-400 text-center">
