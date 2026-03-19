@@ -139,7 +139,7 @@ const OptiVoicLanding = () => {
 
         // Send confirmation email to customer
         await emailjs.send(
-          'sservice_ias6cp9', // Replace with your EmailJS service ID
+          'service_ias6cp9', // Replace with your EmailJS service ID
           'template_4nsoitr', // Replace with your customer confirmation template ID
           {
             to_name: contactForm.name,
