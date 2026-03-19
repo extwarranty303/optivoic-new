@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
+import { supabase } from '../supabaseClient';
+import emailjs from '@emailjs/browser';
 
 const NoiseOverlay = () => (
   <div
@@ -15,6 +17,15 @@ const OptiVoicLanding = () => {
     { text: "👋 Hi! Welcome to Thompson Plumbing. I'm here to help schedule your appointment or answer questions about our services. What brings you in today?", sender: 'bot' }
   ]);
   const [chatInput, setChatInput] = useState('');
+
+  // Contact form state
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    help: ''
+  });
+  const [formStatus, setFormStatus] = useState(''); // 'success', 'error', or ''
 
   const conversations = {
     'I have a leaky faucet': {
@@ -81,6 +92,70 @@ const OptiVoicLanding = () => {
     document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setFormStatus('');
+
+    try {
+      // Store contact form submission in Supabase
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([
+          {
+            name: contactForm.name,
+            email: contactForm.email,
+            phone: contactForm.phone,
+            help_request: contactForm.help,
+            submitted_at: new Date().toISOString(),
+            source: 'optivoic_landing_page'
+          }
+        ]);
+
+      if (error) throw error;
+
+      // Send email to connect@optivoic.com (admin notification)
+      await emailjs.send(
+        'service_optivoic', // Replace with your EmailJS service ID
+        'template_admin_notification', // Replace with your admin notification template ID
+        {
+          from_name: contactForm.name,
+          from_email: contactForm.email,
+          phone: contactForm.phone,
+          message: contactForm.help,
+          to_email: 'connect@optivoic.com'
+        },
+        'your_public_key' // Replace with your EmailJS public key
+      );
+
+      // Send confirmation email to customer
+      await emailjs.send(
+        'service_optivoic', // Replace with your EmailJS service ID
+        'template_customer_confirmation', // Replace with your customer confirmation template ID
+        {
+          to_name: contactForm.name,
+          to_email: contactForm.email,
+          message: contactForm.help
+        },
+        'your_public_key' // Replace with your EmailJS public key
+      );
+
+      // Reset form
+      setContactForm({ name: '', email: '', phone: '', help: '' });
+      setFormStatus('success');
+
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      setFormStatus('error');
+    }
+  };
+
+  const handleContactChange = (e) => {
+    setContactForm({
+      ...contactForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
       <NoiseOverlay />
@@ -91,7 +166,7 @@ const OptiVoicLanding = () => {
 
       {/* Navbar */}
       <nav className="relative z-50 border-b border-white/10 py-6 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl shadow-lg">
-        <Link to="/" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
+        <Link to="/aiservice" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
           <span>←</span> Back to Storefront
         </Link>
         <div className="text-xl font-black text-white tracking-tighter drop-shadow-lg">
@@ -117,12 +192,21 @@ const OptiVoicLanding = () => {
           <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
             Convert more leads with intelligent appointment booking, smart qualification, and personalized customer experiences. Built for plumbing, HVAC, electrical, and service professionals.
           </p>
-          <button
-            className="mt-8 bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(56,182,255,0.4)] transition-all"
-            onClick={() => scrollToSection('demo')}
-          >
-            See AI in Action
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+            <button
+              className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(56,182,255,0.4)] transition-all"
+              onClick={() => scrollToSection('demo')}
+            >
+              See AI in Action
+            </button>
+            <button
+              className="bg-white/10 border border-white/20 text-white font-semibold text-lg py-4 px-10 rounded-full hover:bg-white/20 transition-all"
+              onClick={() => scrollToSection('contact')}
+            >
+              Get Started
+            </button>
+          </div>
+        </section>
         </section>
 
         {/* Platform Section */}
@@ -572,6 +656,107 @@ const OptiVoicLanding = () => {
                 <h3 className="text-xl font-bold mb-4">Proven Expertise</h3>
                 <p className="text-gray-400 leading-relaxed">OptiVoic brings template design expertise + custom development + AI integration. Specialized for high-ROI web solutions.</p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Form Section */}
+        <section id="contact" className="py-24 px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Ready to Increase Your Service Appointments?</h2>
+              <p className="text-xl text-gray-400">Get a custom AI-powered website designed specifically for home service businesses like yours</p>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
+              <form onSubmit={handleContactSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={contactForm.name}
+                      onChange={handleContactChange}
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={contactForm.email}
+                      onChange={handleContactChange}
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={contactForm.phone}
+                    onChange={handleContactChange}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                    How Can We Help? *
+                  </label>
+                  <textarea
+                    name="help"
+                    value={contactForm.help}
+                    onChange={handleContactChange}
+                    required
+                    rows={5}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none resize-none"
+                    placeholder="Tell us about your home service business (plumbing, HVAC, electrical, etc.), current challenges with appointment booking, your goals for online lead generation, and any specific features you need..."
+                  />
+                </div>
+
+                {formStatus === 'success' && (
+                  <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-4">
+                    <p className="text-green-400 font-semibold">✅ Thank you! Your message has been sent successfully.</p>
+                    <p className="text-green-300 text-sm mt-1">We'll review your home service business needs and get back to you within 24 hours with a custom AI website proposal. A confirmation email has been sent to {contactForm.email}.</p>
+                  </div>
+                )}
+
+                {formStatus === 'error' && (
+                  <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
+                    <p className="text-red-400 font-semibold">❌ Sorry, there was an error sending your message.</p>
+                    <p className="text-red-300 text-sm mt-1">Please try again or contact us directly at connect@optivoic.com</p>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold text-lg py-4 px-8 rounded-xl hover:shadow-[0_0_40px_rgba(56,182,255,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={formStatus === 'success'}
+                >
+                  {formStatus === 'success' ? 'Message Sent!' : 'Send Message'}
+                </button>
+
+                <p className="text-xs text-gray-400 text-center">
+                  By submitting this form, you agree to receive communications from OptiVoic.
+                  We'll send a copy of this message to your email address.
+                </p>
+              </form>
             </div>
           </div>
         </section>
