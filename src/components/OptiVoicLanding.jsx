@@ -125,7 +125,7 @@ const OptiVoicLanding = () => {
         console.log('Attempting to send emails...');
         // Send email to connect@optivoic.com (admin notification)
         await emailjs.send(
-          'service_ybjnmon', // Replace with your EmailJS service ID
+          'service_ias6cp9', // Replace with your EmailJS service ID
           'template_4nsoitr', // Replace with your admin notification template ID
           {
             from_name: contactForm.name,
@@ -134,12 +134,12 @@ const OptiVoicLanding = () => {
             message: contactForm.help,
             to_email: 'connect@optivoic.com'
           },
-          'your_public_key' // Replace with your EmailJS public key
+          'zwGWddGIv9tp4dG3g' // Replace with your EmailJS public key
         );
 
         // Send confirmation email to customer
         await emailjs.send(
-          'service_optivoic', // Replace with your EmailJS service ID
+          'sservice_ias6cp9', // Replace with your EmailJS service ID
           'template_4nsoitr', // Replace with your customer confirmation template ID
           {
             to_name: contactForm.name,
