@@ -213,7 +213,6 @@ const OptiVoicLanding = () => {
             </button>
           </div>
         </section>
-        </section>
 
         {/* Platform Section */}
         <section id="platform" className="py-24 px-8 border-y border-white/5 bg-white/[0.01]">
