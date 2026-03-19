@@ -113,31 +113,37 @@ const OptiVoicLanding = () => {
 
       if (error) throw error;
 
-      // Send email to connect@optivoic.com (admin notification)
-      await emailjs.send(
-        'service_optivoic', // Replace with your EmailJS service ID
-        'template_admin_notification', // Replace with your admin notification template ID
-        {
-          from_name: contactForm.name,
-          from_email: contactForm.email,
-          phone: contactForm.phone,
-          message: contactForm.help,
-          to_email: 'connect@optivoic.com'
-        },
-        'your_public_key' // Replace with your EmailJS public key
-      );
+      // Try to send emails (will fail gracefully if EmailJS not configured)
+      try {
+        // Send email to connect@optivoic.com (admin notification)
+        await emailjs.send(
+          'service_optivoic', // Replace with your EmailJS service ID
+          'template_admin_notification', // Replace with your admin notification template ID
+          {
+            from_name: contactForm.name,
+            from_email: contactForm.email,
+            phone: contactForm.phone,
+            message: contactForm.help,
+            to_email: 'connect@optivoic.com'
+          },
+          'your_public_key' // Replace with your EmailJS public key
+        );
 
-      // Send confirmation email to customer
-      await emailjs.send(
-        'service_optivoic', // Replace with your EmailJS service ID
-        'template_customer_confirmation', // Replace with your customer confirmation template ID
-        {
-          to_name: contactForm.name,
-          to_email: contactForm.email,
-          message: contactForm.help
-        },
-        'your_public_key' // Replace with your EmailJS public key
-      );
+        // Send confirmation email to customer
+        await emailjs.send(
+          'service_optivoic', // Replace with your EmailJS service ID
+          'template_customer_confirmation', // Replace with your customer confirmation template ID
+          {
+            to_name: contactForm.name,
+            to_email: contactForm.email,
+            message: contactForm.help
+          },
+          'your_public_key' // Replace with your EmailJS public key
+        );
+      } catch (emailError) {
+        console.warn('Email sending failed (EmailJS not configured):', emailError);
+        // Continue with success - data is still stored in database
+      }
 
       // Reset form
       setContactForm({ name: '', email: '', phone: '', help: '' });
