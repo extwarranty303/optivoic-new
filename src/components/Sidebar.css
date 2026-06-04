@@ -1,10 +1,11 @@
 :root {
-  --primary-accent: #2E67F8; /* Electric Blue */
+  --primary-accent: #2E67F8;
   --sidebar-bg: rgba(10, 10, 12, 0.98);
+  --sidebar-width: 260px;
 }
 
 .optivoic-sidebar {
-  width: 260px;
+  width: var(--sidebar-width);
   height: 100vh;
   background: var(--sidebar-bg);
   border-right: 1px solid var(--primary-accent);
@@ -15,6 +16,30 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.optivoic-sidebar.collapsed {
+  width: 80px;
+  padding: 20px 10px;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--primary-accent);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  border-radius: 6px;
+}
+
+.sidebar-toggle:hover {
+  color: white;
+  transform: scale(1.1);
+  background: rgba(46, 103, 248, 0.1);
 }
 
 .sidebar-logo {
@@ -56,7 +81,13 @@
 
 /* Main content accommodation for fixed sidebar */
 .main-content {
-  margin-left: 260px;
+  margin-left: var(--sidebar-width);
   min-height: 100vh;
-  width: calc(100% - 260px);
+  width: calc(100% - var(--sidebar-width));
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.optivoic-sidebar.collapsed ~ .main-content {
+  margin-left: 80px;
+  width: calc(100% - 80px);
 }

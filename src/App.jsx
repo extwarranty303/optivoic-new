@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
+import FullscreenNav from "./components/FullscreenNav";
 import Storefront from "./components/Storefront";
 import TemplateDetails from "./components/TemplateDetails";
 import ExecutiveTaxEngine from "./components/ExecutiveTaxEngine";
@@ -9,15 +9,14 @@ import Terms from "./components/Terms";
 import Privacy from "./components/Privacy";
 import ClientPortal from "./components/ClientPortal";
 import AdminDashboard from "./components/AdminDashboard";
-import UpdatePassword from "./components/UpdatePassword"; // <-- NEW
-import OptiVoicLanding from "./components/OptiVoicLanding"; // <-- NEW
+import UpdatePassword from "./components/UpdatePassword";
+import OptiVoicLanding from "./components/OptiVoicLanding";
 
 
 function App() {
   return (
       <Router>
-        <Sidebar />
-        <main className="main-content">
+        <FullscreenNav />
         <Routes>
           <Route path="/" element={<Storefront />} />
           <Route path="/marketplace" element={<Storefront />} />
@@ -31,7 +30,6 @@ function App() {
           <Route path="/update-password" element={<UpdatePassword />} /> {/* <-- NEW */}
           <Route path="/aiservice" element={<OptiVoicLanding />} /> {/* <-- NEW */}
         </Routes>
-        </main>
       </Router>
   );
 }

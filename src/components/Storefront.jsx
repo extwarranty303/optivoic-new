@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
 import { usePageMeta } from '../utils/usePageMeta';
+import ServiceGrid from './ServiceGrid';
 import Footer from './Footer';
 
 // IMPORTANT: Ensure this path matches your global Tailwind CSS file!
@@ -10,24 +11,9 @@ import Footer from './Footer';
 // import '../index.css'; 
 
 // ==========================================
-// 1. DATA STORE 
+// 1. DATA STORE (moved to ServiceGrid)
 // ==========================================
-const templates = [
-  { id: "36a7cc71-0c17-4530-a653-e59a8dbda7a3", categoryName: "Essential Trackers", title: "E-Commerce Reseller Profit & COGS Tracker", desc: "Track inventory cost, shipping, platform fees, and final profit margins.", price: 19.99, status: "READY" },
-  { id: "526dcf30-0990-458e-bba7-b9f1c7e99078", categoryName: "Essential Trackers", title: "Optivoic Executive Tax Engine", desc: "Business-in-a-Box spreadsheet for 1099 pros. Track income, calculate quarterly taxes, and map deductions automatically.", price: 19.99, status: "READY", route: "/tax-engine" },
-  { id: 2, categoryName: "Essential Trackers", title: "Options Trading & Premium Journal", desc: "Log strike prices, premiums, expiration dates, and win/loss ratios.", price: 14.99, status: "COMING SOON" },
-  { id: 3, categoryName: "Essential Trackers", title: "The 'Story Bible' for Fiction", desc: "Centralized Notion workspace for writers to track character arcs and world-building.", price: 19.99, status: "COMING SOON" },
-  { id: 4, categoryName: "Essential Trackers", title: "Collectibles Portfolio Valuation Tracker", desc: "Track acquisition costs and market values for high-end collectibles.", price: 14.99, status: "COMING SOON" },
-  { id: 5, categoryName: "Essential Trackers", title: "Digital Nomad Route Planner", desc: "Notion/Sheets budgeter for campground reservations and connectivity ratings.", price: 24.99, status: "COMING SOON" },
-  { id: 6, categoryName: "Professional Hubs", title: "AI Prompt Testing Sandbox", desc: "Workspace for prompt engineers to track versions and rate efficiency.", price: 29.99, status: "COMING SOON" },
-  { id: 7, categoryName: "Professional Hubs", title: "Freelance Tax Allocator", desc: "Input multiple income streams and auto-calculate estimated quarterly taxes.", price: 24.99, status: "READY", route: "/tax-engine" },
-  { id: 8, categoryName: "Professional Hubs", title: "CS Degree Organizer", desc: "Notion hub featuring syllabus mapping, code snippet storage, and GPA calculation.", price: 29.99, status: "COMING SOON" },
-  { id: 9, categoryName: "Professional Hubs", title: "Agile Sprint Planning Hub", desc: "Template including a product backlog, active sprint board, and retrospectives.", price: 34.99, status: "COMING SOON" },
-  { id: 10, categoryName: "Professional Hubs", title: "30-60-90 Day Onboarding Portal", desc: "Notion HR template with department intros, access checklists, and milestones.", price: 34.99, status: "COMING SOON" },
-  { id: 11, categoryName: "Enterprise B2B", title: "Software RFP Vendor Matrix", desc: "Complex, weighted Excel matrix for evaluating software vendors.", price: 49.99, status: "COMING SOON" },
-  { id: 12, categoryName: "Enterprise B2B", title: "Product Launch Roadmap", desc: "Framework to align stakeholders, map dependencies, and track GTM strategies.", price: 54.99, status: "COMING SOON" },
-  { id: 13, categoryName: "Enterprise B2B", title: "IT Change Management Playbook", desc: "Step-by-step framework for rolling out enterprise software and training.", price: 59.99, status: "COMING SOON" }
-];
+// Templates data is now in ServiceGrid.jsx for centralized management
 
 // ==========================================
 // 2. MODULAR COMPONENTS
@@ -257,75 +243,6 @@ const SEOCopySection = () => (
   </section>
 );
 
-const InteractiveMarketplace = () => {
-  const [activeTab, setActiveTab] = useState("All");
-  const navigate = useNavigate(); 
-  const categories = ["All", "Essential Trackers", "Professional Hubs", "Enterprise B2B"];
-  const filteredTemplates = activeTab === "All" ? templates : templates.filter(t => t.categoryName === activeTab);
-
-  return (
-    <section id="marketplace" className="py-32 px-8 max-w-7xl mx-auto border-t border-white/5 relative z-10">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-        <div className="mb-8 md:mb-0">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">Digital Marketplace</h2>
-          <p className="text-xl text-gray-400">Turnkey frameworks for instant operational ROI.</p>
-        </div>
-        <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden bg-white/[0.02] border border-white/10 rounded-full p-2 mb-12 backdrop-blur-md gap-2">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveTab(category)}
-              className={`px-6 py-2 rounded-full font-bold text-sm transition-all whitespace-nowrap shrink-0 ${
-                activeTab === category
-                  ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]'
-                  : 'text-gray-400 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredTemplates.map((item) => (
-          <div 
-            key={item.id} 
-            className={`group relative flex flex-col p-8 rounded-3xl border transition-all duration-500 ${
-              item.status === 'READY' 
-                ? 'bg-white/[0.03] backdrop-blur-xl border-white/10 hover:bg-white/[0.06] hover:border-cyan-400/40 hover:-translate-y-3' 
-                : 'bg-black/50 border-white/5 opacity-60 grayscale cursor-not-allowed'
-            }`}
-          >
-            <div className="flex justify-between items-start mb-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">{item.categoryName}</span>
-              {item.status === 'READY' ? (
-                <span className="bg-cyan-400/10 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full border border-cyan-400/30">Available</span>
-              ) : (
-                <span className="bg-white/5 text-gray-500 text-xs font-bold px-3 py-1 rounded-full border border-white/10">In Dev</span>
-              )}
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-4">{item.title}</h3>
-            <p className="text-gray-300 leading-relaxed mb-10 flex-grow">{item.desc}</p>
-            <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/10">
-              <span className="text-2xl font-light text-white">${item.price}</span>
-              <button 
-                disabled={item.status !== 'READY'}
-                onClick={() => navigate(item.route || `/template/${item.id}`)}
-                className={`px-5 py-2 text-sm rounded-full font-semibold transition-all ${
-                  item.status === 'READY' ? 'bg-white text-black hover:bg-cyan-400' : 'bg-white/5 text-gray-500'
-                }`}
-              >
-                {item.status === 'READY' ? 'View Details' : 'Waitlist'}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
-
 const SEOClosingSection = () => (
   <section className="py-24 px-8 max-w-7xl mx-auto z-10 relative border-t border-white/5">
     <div className="bg-gradient-to-br from-white/[0.04] to-black/40 border border-white/10 rounded-[40px] p-10 md:p-16 backdrop-blur-md overflow-hidden relative">
@@ -437,7 +354,7 @@ export default function Storefront() {
       <Hero />
       <BentoServices />
       <SEOCopySection /> 
-      <InteractiveMarketplace />
+      <ServiceGrid />
       <SEOClosingSection />
       
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
