@@ -10,8 +10,9 @@
 /* Hamburger Toggle Button */
 .fullscreen-nav-toggle {
   position: fixed;
-  top: 30px;
-  right: 40px;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
   z-index: 1001;
   width: 48px;
   height: 48px;
@@ -364,8 +365,9 @@
   .fullscreen-nav-toggle {
     width: 44px;
     height: 44px;
-    top: 20px;
-    right: 25px;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
   }
 
   .fullscreen-nav-content {
