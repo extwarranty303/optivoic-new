@@ -64,36 +64,20 @@ connect@optivoic.com
 6. Go to "Email Templates"
 7. For each template, copy the **Template ID** (looks like: `template_abc123def`)
 
-## Step 5: Update the Code
-In `src/components/OptiVoicLanding.jsx`, replace these placeholder values:
+## Step 5: Configure Environment Variables
+Create a root `.env` file in the project root and add the following values:
 
-```javascript
-// Replace these lines in handleContactSubmit:
-await emailjs.send(
-  'service_optivoic', // ← Replace with your Service ID
-  'template_admin_notification', // ← Replace with your admin template ID
-  {
-    from_name: contactForm.name,
-    from_email: contactForm.email,
-    phone: contactForm.phone,
-    message: contactForm.help,
-    to_email: 'connect@optivoic.com'
-  },
-  'your_public_key' // ← Replace with your Public Key
-);
-
-// And for the customer email:
-await emailjs.send(
-  'service_optivoic', // ← Replace with your Service ID
-  'template_customer_confirmation', // ← Replace with your customer template ID
-  {
-    to_name: contactForm.name,
-    to_email: contactForm.email,
-    message: contactForm.help
-  },
-  'your_public_key' // ← Replace with your Public Key
-);
+```env
+VITE_EMAILJS_SERVICE_ID=service_optivoic
+VITE_EMAILJS_ADMIN_TEMPLATE_ID=template_admin_notification
+VITE_EMAILJS_CUSTOMER_TEMPLATE_ID=template_customer_confirmation
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
+VITE_EMAILJS_ADMIN_TO=connect@optivoic.com
 ```
+
+This app reads EmailJS settings from Vite environment variables, so you do not need to hardcode secrets directly in `src/components/OptiVoicLanding.jsx`.
+
+After adding or changing `.env`, restart the Vite dev server.
 
 ## Step 6: Test
 1. Deploy your changes

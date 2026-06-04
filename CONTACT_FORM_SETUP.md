@@ -17,7 +17,8 @@ The contact form stores submissions in Supabase and sends emails to both connect
    - Service ID
    - Two Template IDs
    - Public Key
-5. **Update Code** in `OptiVoicLanding.jsx` with your actual credentials
+5. **Create a root `.env` file** and add your EmailJS values
+6. **Update Code** in `src/components/OptiVoicLanding.jsx` only if you want to change the variable names or templates
 
 ## Current Implementation Status
 

@@ -25,7 +25,20 @@ const OptiVoicLanding = () => {
     phone: '',
     help: ''
   });
-  const [formStatus, setFormStatus] = useState(''); // 'success', 'error', or ''
+  const [formStatus, setFormStatus] = useState(''); // 'success', 'error', 'loading', or ''
+  const [submittedEmail, setSubmittedEmail] = useState('');
+
+  const emailjsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const emailjsAdminTemplateId = import.meta.env.VITE_EMAILJS_ADMIN_TEMPLATE_ID;
+  const emailjsCustomerTemplateId = import.meta.env.VITE_EMAILJS_CUSTOMER_TEMPLATE_ID;
+  const emailjsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+  const emailjsAdminRecipient = import.meta.env.VITE_EMAILJS_ADMIN_TO || 'connect@optivoic.com';
+  const isEmailjsConfigured = Boolean(
+    emailjsServiceId &&
+    emailjsAdminTemplateId &&
+    emailjsCustomerTemplateId &&
+    emailjsPublicKey
+  );
 
   const conversations = {
     'I have a leaky faucet': {
@@ -120,41 +133,44 @@ const OptiVoicLanding = () => {
 
       console.log('Data stored successfully');
 
-      // Try to send emails (will fail gracefully if EmailJS not configured)
-      try {
-        console.log('Attempting to send emails...');
-        // Send email to connect@optivoic.com (admin notification)
-        await emailjs.send(
-          'service_ias6cp9', // Replace with your EmailJS service ID
-          'template_4nsoitr', // Replace with your admin notification template ID
-          {
-            from_name: contactForm.name,
-            from_email: contactForm.email,
-            phone: contactForm.phone,
-            message: contactForm.help,
-            to_email: 'connect@optivoic.com'
-          },
-          'zwGWddGIv9tp4dG3g' // Replace with your EmailJS public key
-        );
+      if (!isEmailjsConfigured) {
+        console.warn('EmailJS is not fully configured. Skipping email sends.');
+      } else {
+        try {
+          console.log('Attempting to send emails...');
+          // Send email to connect@optivoic.com (admin notification)
+          await emailjs.send(
+            emailjsServiceId,
+            emailjsAdminTemplateId,
+            {
+              from_name: contactForm.name,
+              from_email: contactForm.email,
+              phone: contactForm.phone,
+              message: contactForm.help,
+              to_email: emailjsAdminRecipient
+            },
+            emailjsPublicKey
+          );
 
-        // Send confirmation email to customer
-        await emailjs.send(
-          'service_ias6cp9', // Replace with your EmailJS service ID
-          'template_4nsoitr', // Replace with your customer confirmation template ID
-          {
-            to_name: contactForm.name,
-            to_email: contactForm.email,
-            message: contactForm.help
-          },
-          'zwGWddGIv9tp4dG3g' // Replace with your EmailJS public key
-        );
-        console.log('Emails sent successfully');
-      } catch (emailError) {
-        console.warn('Email sending failed (EmailJS not configured):', emailError);
-        // Continue with success - data is still stored in database
+          // Send confirmation email to customer
+          await emailjs.send(
+            emailjsServiceId,
+            emailjsCustomerTemplateId,
+            {
+              to_name: contactForm.name,
+              to_email: contactForm.email,
+              message: contactForm.help
+            },
+            emailjsPublicKey
+          );
+          console.log('Emails sent successfully');
+        } catch (emailError) {
+          console.warn('Email sending failed:', emailError);
+          // Continue with success - data is still stored in database
+        }
       }
 
-      // Reset form
+      setSubmittedEmail(contactForm.email);
       setContactForm({ name: '', email: '', phone: '', help: '' });
       setFormStatus('success');
       console.log('Form submission completed successfully');
@@ -748,7 +764,7 @@ const OptiVoicLanding = () => {
                 {formStatus === 'success' && (
                   <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-4">
                     <p className="text-green-400 font-semibold">✅ Thank you! Your message has been sent successfully.</p>
-                    <p className="text-green-300 text-sm mt-1">We'll review your home service business needs and get back to you within 24 hours with a custom AI website proposal. A confirmation email has been sent to {contactForm.email}.</p>
+                    <p className="text-green-300 text-sm mt-1">We'll review your home service business needs and get back to you within 24 hours with a custom AI website proposal. A confirmation email has been sent to {submittedEmail || 'your email address'}.</p>
                   </div>
                 )}
 
