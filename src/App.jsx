@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
 import Storefront from "./components/Storefront";
 import TemplateDetails from "./components/TemplateDetails";
 import ExecutiveTaxEngine from "./components/ExecutiveTaxEngine";
@@ -15,8 +16,11 @@ import OptiVoicLanding from "./components/OptiVoicLanding"; // <-- NEW
 function App() {
   return (
       <Router>
+        <Sidebar />
+        <main className="main-content">
         <Routes>
           <Route path="/" element={<Storefront />} />
+          <Route path="/marketplace" element={<Storefront />} />
           <Route path="/template/:id" element={<TemplateDetails />} />
           <Route path="/tax-engine" element={<ExecutiveTaxEngine />} />
           <Route path="/consulting" element={<Consulting />} />
@@ -27,6 +31,7 @@ function App() {
           <Route path="/update-password" element={<UpdatePassword />} /> {/* <-- NEW */}
           <Route path="/aiservice" element={<OptiVoicLanding />} /> {/* <-- NEW */}
         </Routes>
+        </main>
       </Router>
   );
 }
