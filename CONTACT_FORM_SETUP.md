@@ -1,31 +1,46 @@
-# Contact Form Email Setup
+# Contact Form — Setup and Configuration
 
-The contact form stores submissions in Supabase and sends emails to both connect@optivoic.com and the customer.
+The contact form stores submissions in Supabase and sends emails to both `connect@optivoic.com` and the submitting user via EmailJS.
 
-## Quick Setup (Recommended)
+## Quick Setup
 
-**Follow the detailed guide in `EMAILJS_SETUP.md`** for complete step-by-step instructions.
+1. Configure Supabase table using `contact_submissions_setup.sql` (open in Supabase SQL editor or run with psql if self-hosted).
+2. Create an EmailJS account and service (see `EMAILJS_SETUP.md`).
+3. Add the required environment variables to a root `.env` (see example below).
+4. Restart the dev server after changing `.env`.
 
-## Summary of Steps
+## Required environment variables
 
-1. **Create EmailJS Account** at [emailjs.com](https://emailjs.com)
-2. **Add Email Service** (Gmail recommended)
-3. **Create Two Email Templates:**
-   - Admin notification (to connect@optivoic.com)
-   - Customer confirmation (to the person who submitted the form)
-4. **Get Your Credentials:**
-   - Service ID
-   - Two Template IDs
-   - Public Key
-5. **Create a root `.env` file** and add your EmailJS values
-6. **Update Code** in `src/components/OptiVoicLanding.jsx` only if you want to change the variable names or templates
+Add these to your `.env` at project root:
 
-## Current Implementation Status
+```env
+VITE_SUPABASE_URL=<your-supabase-url>
+VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
 
-- ✅ Form UI and validation
-- ✅ Supabase data storage
-- ✅ EmailJS integration (needs credentials)
-- ✅ Success/error handling
-- ✅ Responsive design
+VITE_EMAILJS_SERVICE_ID=service_optivoic
+VITE_EMAILJS_ADMIN_TEMPLATE_ID=template_admin_notification
+VITE_EMAILJS_CUSTOMER_TEMPLATE_ID=template_customer_confirmation
+VITE_EMAILJS_PUBLIC_KEY=<your_emailjs_public_key>
+VITE_EMAILJS_ADMIN_TO=connect@optivoic.com
+```
 
-Once you configure the EmailJS credentials, the contact form will send emails automatically!
+## Supabase table
+
+Use the provided `contact_submissions_setup.sql` to create the table and indexes used by the app. The SQL file is in the project root.
+
+## Code locations
+
+- Contact form and EmailJS calls: `src/components/OptiVoicLanding.jsx`
+- Supabase client (frontend): `src/supabaseClient.js`
+- Server/root client helper: `supabaseClient.js`
+
+## Testing
+
+1. Start dev server: `npm run dev`
+2. Open the landing page and submit the contact form
+3. Confirm a record appears in Supabase and that EmailJS logs show the sent emails
+
+## Troubleshooting
+
+- If records aren't saved: verify `VITE_SUPABASE_*` values and CORS settings in Supabase.
+- If emails don't send: check EmailJS dashboard and ensure template variable names match the payload.
