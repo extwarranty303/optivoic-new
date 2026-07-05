@@ -156,13 +156,21 @@ export default function ClientPortal() {
         </nav>
 
           {isAdmin && (
-            <Link 
-              to="/admin" 
-              className="hidden sm:flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 text-xs font-bold px-3 py-1.5 rounded transition-all tracking-widest uppercase"
-            >
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-              Admin Panel
-            </Link>
+            <div className="hidden sm:flex items-center gap-2">
+              <Link 
+                to="/admin" 
+                className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 text-xs font-bold px-3 py-1.5 rounded transition-all tracking-widest uppercase"
+              >
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                Admin Panel
+              </Link>
+              <Link 
+                to="/blog-admin" 
+                className="flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:text-cyan-300 text-xs font-bold px-3 py-1.5 rounded transition-all tracking-widest uppercase"
+              >
+                Blog Admin
+              </Link>
+            </div>
           )}
 
           <span className="text-sm text-gray-400 font-mono hidden md:block">{user?.email}</span>

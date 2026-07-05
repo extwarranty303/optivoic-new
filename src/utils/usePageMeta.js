@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 export function usePageMeta({
   title,
   description,
+  keywords,
+  canonical,
+  robots,
   ogTitle,
   ogDescription,
   ogType,
@@ -11,6 +14,7 @@ export function usePageMeta({
   ogImage,
   priceAmount,
   priceCurrency,
+  jsonLd,
 }) {
   useEffect(() => {
     if (title) document.title = title;
@@ -30,7 +34,20 @@ export function usePageMeta({
       el.setAttribute(attr, value);
     };
 
+    const setLinkRel = (rel, href) => {
+      if (!href) return;
+      let el = document.head.querySelector(`link[rel="${rel}"]`);
+      if (!el) {
+        el = document.createElement('link');
+        el.setAttribute('rel', rel);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('href', href);
+    };
+
     setMeta("meta[name='description']", 'content', description);
+    setMeta("meta[name='keywords']", 'content', keywords);
+    setMeta("meta[name='robots']", 'content', robots);
     setMeta("meta[property='og:title']", 'content', ogTitle || title);
     setMeta("meta[property='og:description']", 'content', ogDescription || description);
     setMeta("meta[property='og:type']", 'content', ogType);
@@ -38,5 +55,19 @@ export function usePageMeta({
     setMeta("meta[property='og:image']", 'content', ogImage);
     setMeta("meta[property='product:price:amount']", 'content', priceAmount);
     setMeta("meta[property='product:price:currency']", 'content', priceCurrency);
-  }, [title, description, ogTitle, ogDescription, ogType, ogUrl, ogImage, priceAmount, priceCurrency]);
+    setLinkRel('canonical', canonical);
+
+    let scriptTag = document.getElementById('optivoic-structured-data');
+    if (jsonLd) {
+      if (!scriptTag) {
+        scriptTag = document.createElement('script');
+        scriptTag.id = 'optivoic-structured-data';
+        scriptTag.type = 'application/ld+json';
+        document.head.appendChild(scriptTag);
+      }
+      scriptTag.textContent = JSON.stringify(jsonLd);
+    } else if (scriptTag) {
+      scriptTag.remove();
+    }
+  }, [title, description, keywords, canonical, robots, ogTitle, ogDescription, ogType, ogUrl, ogImage, priceAmount, priceCurrency, jsonLd]);
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import Footer from './Footer';
+import { isAuthorizedAdmin } from '../utils/adminAccess';
 
 const NoiseOverlay = () => (
   <div className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
@@ -47,14 +48,9 @@ export default function AdminDashboard() {
         return;
       } 
       
-      // SECURE CHECK: Is this email dynamically on the VIP list in the database?
-      const { data: adminData } = await supabase
-        .from('admins')
-        .select('email')
-        .eq('email', session.user.email)
-        .maybeSingle();
+      const isAdmin = await isAuthorizedAdmin(session.user.email);
 
-      if (!adminData) {
+      if (!isAdmin) {
         navigate('/portal'); 
         return;
       }

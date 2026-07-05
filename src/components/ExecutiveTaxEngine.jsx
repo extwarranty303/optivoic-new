@@ -40,7 +40,7 @@ export default function ExecutiveTaxEngine() {
     id: "526dcf30-0990-458e-bba7-b9f1c7e99078", // slug/UUID; templates table uses strings only
 
     title: "Executive Tax Engine - Business in a Box for 1099 Pros",
-    price: 19.99,
+    price: 24.99,
     category: "Essential Business Tools",
     format: "Excel & Google Sheets",
     description: "Stop guessing your 1099 taxes. The Executive Tax Engine is a powerful, automated template designed to track fragmented income, calculate quarterly tax liability, and map deductions for stress-free tax season.",
@@ -199,6 +199,14 @@ export default function ExecutiveTaxEngine() {
               <li className="flex items-start gap-4">
                 <span className="text-gold font-bold">✓</span>
                 <span><strong>Step-by-step Instructions</strong> built right into the dashboard</span>
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="text-gold font-bold">✓</span>
+                <span><strong>Comprehensive PDF user guide and FAQ</strong> for setup, usage, and common questions</span>
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="text-gold font-bold">✓</span>
+                <span><strong>Slide presentation deck</strong> for walkthroughs, onboarding, or client training</span>
               </li>
               <li className="flex items-start gap-4">
                 <span className="text-gold font-bold">✓</span>

@@ -23,8 +23,12 @@ export default function Consulting() {
         <Link to="/" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
           <span>←</span> Back to Storefront
         </Link>
-        <div className="text-xl font-black text-white tracking-tighter drop-shadow-lg">
-          OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
+        <div className="flex items-center gap-4 text-sm text-gray-300">
+          <Link to="/blog" className="hover:text-white">Blog</Link>
+          <Link to="/faq" className="hover:text-white">FAQ</Link>
+          <div className="text-xl font-black text-white tracking-tighter drop-shadow-lg">
+            OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
+          </div>
         </div>
       </nav>
 

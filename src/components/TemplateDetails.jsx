@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
 import { usePageMeta } from '../utils/usePageMeta';
 import Footer from './Footer';
+import { sendPurchaseEmail } from '../utils/purchaseEmail';
 
 const NoiseOverlay = () => (
   <div 
@@ -44,7 +45,7 @@ export default function TemplateDetails() {
   const productsById = {
     "36a7cc71-0c17-4530-a653-e59a8dbda7a3": {
       title: "The Ultimate E-Commerce Reseller Profit & COGS Tracker",
-      price: 19.99,
+      price: 24.99,
       category: "Essential Business Trackers",
       format: "Excel & Google Sheets",
       description: "Stop guessing your true profit margins. Built specifically for serious resellers handling fine jewelry, designer toys, and vintage clothing, this automated system eliminates hidden fee leaks and turns chaotic inventory into clear, actionable business intelligence.",
@@ -206,6 +207,18 @@ export default function TemplateDetails() {
                   <span>{item}</span>
                 </li>
               ))}
+              <li className="flex items-start gap-4">
+                <span className="text-gold font-bold">✓</span>
+                <span><strong>Comprehensive PDF user guide and FAQ</strong> designed to help you implement and troubleshoot quickly.</span>
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="text-gold font-bold">✓</span>
+                <span><strong>Slide presentation deck</strong> you can use to walk through the workflow, explain the system, or train a team.</span>
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="text-gold font-bold">✓</span>
+                <span><strong>Ongoing support</strong> so the system keeps delivering value as your business evolves.</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -257,19 +270,25 @@ export default function TemplateDetails() {
                       onApprove={async (data, actions) => {
                         const details = await actions.order.capture();
                         
-                        const { error } = await supabase.from('purchases').insert([
+                        const { data: purchaseData, error } = await supabase.from('purchases').insert([
                           {
                             user_id: user.id,
                             user_email: user.email,
                             template_id: id 
                           }
-                        ]);
+                        ]).select('id').single();
 
                         if (error) {
                           alert("Payment succeeded, but there was an error generating your link. Please contact support.");
                           console.error(error);
                         } else {
-                          alert(`Success! Thank you, ${details.payer.name.given_name}. Redirecting to your secure portal...`);
+                          await sendPurchaseEmail({
+                            purchase: purchaseData,
+                            userEmail: user.email,
+                            templateId: id,
+                            productTitle: product.title
+                          });
+                          alert(`Success! Thank you, ${details.payer.name.given_name}. Your download link is on the way and your asset is ready in the portal.`);
                           navigate('/portal');
                         }
                       }}

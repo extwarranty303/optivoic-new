@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import SpaceBackground from './SpaceBackground';
 import { usePageMeta } from '../utils/usePageMeta';
-import ServiceGrid from './ServiceGrid';
 import Footer from './Footer';
 
 // IMPORTANT: Ensure this path matches your global Tailwind CSS file!
@@ -30,12 +29,14 @@ const AmbientBackground = () => (
 
 const Navbar = ({ onOpenAuth }) => (
   <nav className="fixed w-full border-b border-white/10 py-4 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl z-50 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
-    <div className="text-2xl font-black text-white tracking-tighter drop-shadow-lg">
+    <Link to="/" className="text-2xl font-black text-white tracking-tighter drop-shadow-lg hover:opacity-90 transition-opacity">
       OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
-    </div>
+    </Link>
     <div className="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
-      <a href="#marketplace" className="hover:text-white transition-all">Marketplace</a>
+      <Link to="/marketplace" className="hover:text-white transition-all">Marketplace</Link>
       <Link to="/consulting" className="hover:text-white transition-all">Consulting</Link>
+      <Link to="/blog" className="hover:text-white transition-all">Blog</Link>
+      <Link to="/faq" className="hover:text-white transition-all">FAQ</Link>
       <Link to="/aiservice" className="hover:text-white transition-all">AI Websites</Link>
     </div>
     <button 
@@ -49,28 +50,35 @@ const Navbar = ({ onOpenAuth }) => (
 
 const Hero = () => (
   <section className="relative pt-48 pb-32 px-8 flex flex-col items-center text-center z-10 border-b border-white/5">
-    <div className="inline-flex items-center mb-8 px-5 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-xl">
-      <span className="text-xs font-bold tracking-widest uppercase text-gray-300 flex items-center">
+    <div className="inline-flex items-center mb-8 px-5 py-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 backdrop-blur-xl">
+      <span className="text-xs font-bold tracking-widest uppercase text-cyan-300 flex items-center">
         <span className="w-2.5 h-2.5 inline-block rounded-full bg-cyan-400 mr-3 animate-pulse"></span>
-        Accepting New Clients
+        Technology Consulting • AI Automation • Business Templates
       </span>
     </div>
 
-    <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[1.1] max-w-5xl">
-      Elite Technology Consulting & <br/>
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">Operational Frameworks</span>
+    <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[1.1] max-w-6xl">
+      The <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">top marketplace</span> for AI automation, technology consulting, and operational frameworks.
     </h1>
     
-    <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-3xl font-light leading-relaxed">
-      Optivoic delivers high-velocity business automation, AI prompt engineering, and scalable e-commerce strategies for modern digital enterprises.
+    <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-4xl font-light leading-relaxed">
+      Explore ready-to-use templates for resellers, 1099 professionals, and growing teams, or hire Optivoic for custom AI systems, web builds, automation, and digital transformation strategy.
     </p>
+
+    <div className="flex flex-wrap justify-center gap-4 mb-8">
+      {['Technology Consulting Agency','AI Automation','Reseller Templates','Business Frameworks','E-Commerce Systems','Workflow Automation'].map((item) => (
+        <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-gray-300 backdrop-blur-xl">
+          {item}
+        </span>
+      ))}
+    </div>
     
     <div className="flex flex-col sm:flex-row gap-6">
-      <a href="#marketplace" className="bg-white text-black font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all">
-        Browse Frameworks
-      </a>
+      <Link to="/marketplace" className="bg-white text-black font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all">
+        Explore the Marketplace
+      </Link>
       <Link to="/consulting" className="bg-white/[0.05] border border-white/20 backdrop-blur-xl text-white font-bold text-lg py-4 px-10 rounded-full hover:bg-white/10 transition-all">
-        Hire the Agency
+        Book a Strategy Call
       </Link>
     </div>
   </section>
@@ -191,52 +199,57 @@ const SEOCopySection = () => (
 
     </div>
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/[0.02] border border-white/5 rounded-[40px] p-12 overflow-hidden relative">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[100px] pointer-events-none"></div>
-      
-      <div className="relative z-10">
-        <h3 className="text-3xl font-bold text-white mb-6">Why Optivoic for Digital Transformation?</h3>
-        <p className="text-gray-400 mb-6 leading-relaxed">
-          Professional success is a byproduct of systems. Every <strong>B2B software template</strong> 
-          in our marketplace is a battle-tested asset used in real-world engagements. 
-          When you invest in an Optivoic framework, you are acquiring years of 
-          <strong> codified operational expertise</strong>.
-        </p>
-        <ul className="space-y-4 mb-10">
-          {[
-            "Focus on immediate ROI and scalability",
-            "Battle-tested B2B operational frameworks",
-            "Seamless Supabase & React integration",
-            "Automated solutions for 1099 professionals"
-          ].map((item, i) => (
-            <li key={i} className="flex items-center text-sm text-gray-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mr-3"></span>
-              {item}
-            </li>
-          ))}
-        </ul>
+  </section>
+);
 
-        <a 
-          href="https://koalendar.com/e/meet-with-optivoic" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.3)] hover:shadow-[0_0_30px_rgba(56,182,255,0.5)] hover:-translate-y-1"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          Schedule a Strategy Call
-        </a>
-      </div>
+const MarketplaceOverviewSection = () => (
+  <section className="py-24 px-8 max-w-7xl mx-auto z-10 relative border-t border-white/5">
+    <div className="bg-gradient-to-br from-white/[0.05] to-black/40 border border-white/10 rounded-[40px] p-10 md:p-16 backdrop-blur-md overflow-hidden relative">
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-[-20%] left-[-10%] w-[40%] h-[40%] bg-violet-600/10 blur-[100px] rounded-full pointer-events-none"></div>
 
-      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 space-y-6 relative z-10">
-        <p className="text-sm italic text-gray-400 leading-relaxed">
-          "By digitizing your route planning, tax allocation, and product roadmaps, 
-          you free up the mental bandwidth required for high-level creative decisions."
-        </p>
-        <div className="flex gap-4">
-           <a href="#marketplace" className="text-cyan-400 font-bold text-sm hover:underline">Explore Hubs →</a>
-           <Link to="/consulting" className="text-white font-bold text-sm hover:underline">Hire the Agency →</Link>
+      <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 items-center relative z-10">
+        <div>
+          <div className="inline-flex items-center px-4 py-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 text-cyan-300 text-xs font-semibold uppercase tracking-[0.25em] mb-6">
+            Optivoic Marketplace
+          </div>
+          <h3 className="text-3xl md:text-4xl font-black text-white mb-6 leading-tight">
+            Why Optivoic for Digital Transformation?
+          </h3>
+          <p className="text-lg text-gray-400 leading-relaxed mb-6">
+            The marketplace is where we package our most practical systems into easy-to-use templates and workflows. Whether you are running a reseller business, managing client projects, or organizing your finances, each package is designed to turn complex operations into a repeatable daily routine.
+          </p>
+          <p className="text-lg text-gray-400 leading-relaxed mb-8">
+            From profit trackers to professional hubs, every product is built to help you move faster, stay organized, and make better decisions without the overwhelm.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link to="/marketplace" className="bg-white text-black text-center font-bold py-4 px-8 rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300 hover:-translate-y-1">
+              Explore the Marketplace
+            </Link>
+            <Link to="/reseller-command-center" className="bg-white/5 border border-white/20 text-white text-center font-bold py-4 px-8 rounded-full hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              See the Reseller Package
+            </Link>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link to="/blog" className="text-sm text-cyan-300 hover:text-cyan-200 underline underline-offset-4">Read the Blog</Link>
+            <Link to="/faq" className="text-sm text-cyan-300 hover:text-cyan-200 underline underline-offset-4">Browse the FAQ</Link>
+          </div>
+        </div>
+
+        <div className="bg-black/35 border border-white/10 rounded-3xl p-8 space-y-6">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300 mb-3">What you get</p>
+            <ul className="space-y-3 text-gray-300 text-sm leading-relaxed">
+              <li className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-cyan-400"></span><span>Turnkey templates for revenue, ops, and workflow clarity.</span></li>
+              <li className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-cyan-400"></span><span>Simple systems that save time and support daily execution.</span></li>
+              <li className="flex items-start gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-cyan-400"></span><span>Practical tools designed to raise efficiency and protect margins.</span></li>
+            </ul>
+          </div>
+          <div className="border-t border-white/10 pt-5">
+            <p className="text-sm italic text-gray-400 leading-relaxed">
+              “The right system doesn’t just organize work. It makes growth feel manageable.”
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -264,9 +277,9 @@ const SEOClosingSection = () => (
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <a href="#marketplace" className="bg-white text-black text-center font-bold py-4 px-8 rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300 hover:-translate-y-1">
+            <Link to="/marketplace" className="bg-white text-black text-center font-bold py-4 px-8 rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300 hover:-translate-y-1">
               Explore Systems
-            </a>
+            </Link>
             <Link to="/consulting" className="bg-white/5 border border-white/20 text-white text-center font-bold py-4 px-8 rounded-full hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
               Hire the Agency
             </Link>
@@ -341,20 +354,23 @@ export default function Storefront() {
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
       {usePageMeta({
-        title: 'Optivoic | Tech Consulting, AI Frameworks & Business Automation',
-        description: 'Elite technology consulting and operational frameworks. Specialists in AI prompt engineering, Python automation, and e-commerce growth strategies.',
-        ogTitle: 'Optivoic | Engineering Velocity',
-        ogDescription: 'Professional-grade operational frameworks and AI system evaluation built to scale your revenue.',
+        title: 'Optivoic | Technology Consulting Agency for AI Automation & Business Templates',
+        description: 'Optivoic is a technology consulting agency for AI automation, custom web systems, reseller templates, and business frameworks that help teams grow faster.',
+        keywords: 'technology consulting agency, AI automation agency, business templates, reseller templates, custom web development, workflow automation, e-commerce systems',
+        canonical: 'https://www.optivoic.com/',
+        robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+        ogTitle: 'Optivoic | Technology Consulting Agency for AI Automation & Business Templates',
+        ogDescription: 'Professional-grade operational frameworks, AI automation, and digital systems built to scale revenue and simplify daily execution.',
         ogType: 'website',
-        ogUrl: 'https://optivoic.com'
+        ogUrl: 'https://www.optivoic.com/'
       })}
 
       <AmbientBackground />
       <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
       <Hero />
+      <MarketplaceOverviewSection />
       <BentoServices />
       <SEOCopySection /> 
-      <ServiceGrid />
       <SEOClosingSection />
       
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
