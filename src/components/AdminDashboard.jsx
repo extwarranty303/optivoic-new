@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   // Dashboard Data State
   const [purchases, setPurchases] = useState([]);
   const [vaultFiles, setVaultFiles] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [projects, setProjects] = useState([]);
   
   // NEW: Dynamic Products State
@@ -74,6 +75,9 @@ export default function AdminDashboard() {
 
     const { data: pData } = await supabase.from('purchases').select('*').order('created_at', { ascending: false });
     if (pData) setPurchases(pData);
+
+    const { data: oData } = await supabase.from('orders').select('total_amount_cents').eq('status', 'completed');
+    if (oData) setOrders(oData);
 
     // Assuming you are keeping the bucket named 'templates'
     const { data: fData } = await supabase.storage.from('templates').list();
@@ -162,7 +166,7 @@ export default function AdminDashboard() {
     try {
       const { data, error } = await supabase.rpc('admin_grant_access', {
         target_email: grantEmail,
-        // Assuming your RPC function still expects an integer or handles the UUID
+        // The new function expects the product ID (text)
         t_id: grantTemplateId 
       });
 
@@ -186,7 +190,7 @@ export default function AdminDashboard() {
 
   const uniqueTemplateClients = new Set(purchases.map(p => p.user_email)).size;
   const uniqueConsultingClients = new Set(projects.map(p => p.client_email)).size;
-  const totalVolume = (purchases.length * 19.99).toFixed(2);
+  const totalVolume = (orders.reduce((sum, order) => sum + order.total_amount_cents, 0) / 100).toFixed(2);
 
   return (
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-red-500 selection:text-white relative overflow-x-hidden pb-20">
@@ -367,7 +371,7 @@ export default function AdminDashboard() {
                       <td className="py-4 text-gray-200">{purchase.user_email}</td>
                       <td className="py-4 text-center">
                         <span className="bg-white/10 text-white px-2 py-0.5 rounded text-xs font-mono">
-                          #{purchase.template_id}
+                          #{purchase.product_id}
                         </span>
                       </td>
                       <td className="py-4 text-right">

@@ -208,13 +208,13 @@ export default function ClientPortal() {
             ) : (
               purchases.map((purchase) => {
                 // Dynamically pull title from DB, fallback to local DB if not found
-                const dbProduct = dynamicProducts[purchase.template_id];
-                const fallbackProduct = TEMPLATES_DB[purchase.template_id];
+                const dbProduct = dynamicProducts[purchase.product_id];
+                const fallbackProduct = TEMPLATES_DB[purchase.product_id];
                 
-                const title = dbProduct ? dbProduct.title : (fallbackProduct ? fallbackProduct.title : `Asset #${purchase.template_id}`);
+                const title = dbProduct ? dbProduct.title : (fallbackProduct ? fallbackProduct.title : `Asset #${purchase.product_id}`);
                 const category = fallbackProduct ? fallbackProduct.category : "Digital Asset";
                 
-                const isDownloading = downloadingId === purchase.template_id;
+                const isDownloading = downloadingId === purchase.product_id;
 
                 return (
                   <div key={purchase.id} className="bg-white/[0.02] border border-white/10 backdrop-blur-xl rounded-2xl p-6 hover:bg-white/[0.04] transition-all group">
@@ -229,7 +229,7 @@ export default function ClientPortal() {
                         </p>
                       </div>
                       <button 
-                        onClick={() => handleDownload(purchase.template_id)}
+                        onClick={() => handleDownload(purchase.product_id)}
                         disabled={isDownloading}
                         className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-400 hover:text-black font-bold py-3 px-8 rounded-full transition-all text-sm whitespace-nowrap disabled:opacity-50 shadow-[0_0_15px_rgba(56,182,255,0.1)] group-hover:shadow-[0_0_20px_rgba(56,182,255,0.3)]"
                       >

@@ -21,7 +21,7 @@ export default function DownloadPage() {
         const { data: product } = await supabase
           .from('products')
           .select('current_file_id')
-          .eq('id', purchase.template_id)
+          .eq('id', purchase.product_id)
           .maybeSingle();
 
         if (!product?.current_file_id) throw new Error('No downloadable file is linked to this purchase yet.');

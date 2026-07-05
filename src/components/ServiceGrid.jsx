@@ -1,29 +1,43 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 import './ServiceGrid.css';
-
-const templates = [
-  { id: "36a7cc71-0c17-4530-a653-e59a8dbda7a3", categoryName: "Essential Trackers", title: "E-Commerce Reseller Profit & COGS Tracker", desc: "Track inventory cost, shipping, platform fees, and final profit margins.", price: 24.99, status: "READY", icon: "📊", active: true },
-  { id: "reseller-command-center", categoryName: "Essential Trackers", title: "Reseller Command Center", desc: "Move from auction sourcing to resale with a simple daily workflow that keeps profits and operations clear.", price: 49.99, status: "READY", route: "/reseller-command-center", icon: "🛍️", active: true },
-  { id: "526dcf30-0990-458e-bba7-b9f1c7e99078", categoryName: "Essential Trackers", title: "Optivoic Executive Tax Engine", desc: "Business-in-a-Box spreadsheet for 1099 pros. Track income, calculate quarterly taxes, and map deductions automatically.", price: 24.99, status: "READY", route: "/tax-engine", icon: "💼", active: true },
-  { id: 2, categoryName: "Essential Trackers", title: "Options Trading & Premium Journal", desc: "Log strike prices, premiums, expiration dates, and win/loss ratios.", price: 14.99, status: "COMING SOON", icon: "📈", active: true },
-  { id: 3, categoryName: "Essential Trackers", title: "The 'Story Bible' for Fiction", desc: "Centralized Notion workspace for writers to track character arcs and world-building.", price: 19.99, status: "COMING SOON", icon: "📖", active: true },
-  { id: 4, categoryName: "Essential Trackers", title: "Collectibles Portfolio Valuation Tracker", desc: "Track acquisition costs and market values for high-end collectibles.", price: 14.99, status: "COMING SOON", icon: "💎", active: true },
-  { id: 5, categoryName: "Essential Trackers", title: "Digital Nomad Route Planner", desc: "Notion/Sheets budgeter for campground reservations and connectivity ratings.", price: 24.99, status: "COMING SOON", icon: "✈️", active: true },
-  { id: 6, categoryName: "Professional Hubs", title: "AI Prompt Testing Sandbox", desc: "Workspace for prompt engineers to track versions and rate efficiency.", price: 29.99, status: "COMING SOON", icon: "🤖", active: true },
-  { id: 7, categoryName: "Professional Hubs", title: "Freelance Tax Allocator", desc: "Input multiple income streams and auto-calculate estimated quarterly taxes.", price: 24.99, status: "READY", route: "/tax-engine", icon: "💰", active: true },
-  { id: 8, categoryName: "Professional Hubs", title: "CS Degree Organizer", desc: "Notion hub featuring syllabus mapping, code snippet storage, and GPA calculation.", price: 29.99, status: "COMING SOON", icon: "🎓", active: true },
-  { id: 9, categoryName: "Professional Hubs", title: "Agile Sprint Planning Hub", desc: "Template including a product backlog, active sprint board, and retrospectives.", price: 34.99, status: "COMING SOON", icon: "🚀", active: true },
-  { id: 10, categoryName: "Professional Hubs", title: "30-60-90 Day Onboarding Portal", desc: "Notion HR template with department intros, access checklists, and milestones.", price: 34.99, status: "COMING SOON", icon: "👥", active: true },
-  { id: 11, categoryName: "Enterprise B2B", title: "Software RFP Vendor Matrix", desc: "Complex, weighted Excel matrix for evaluating software vendors.", price: 49.99, status: "COMING SOON", icon: "⚙️", active: true },
-  { id: 12, categoryName: "Enterprise B2B", title: "Product Launch Roadmap", desc: "Framework to align stakeholders, map dependencies, and track GTM strategies.", price: 54.99, status: "COMING SOON", icon: "🎯", active: true },
-  { id: 13, categoryName: "Enterprise B2B", title: "IT Change Management Playbook", desc: "Step-by-step framework for rolling out enterprise software and training.", price: 59.99, status: "COMING SOON", icon: "📋", active: true }
-];
 
 const ServiceGrid = () => {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const categories = ["All", "Essential Trackers", "Professional Hubs", "Enterprise B2B"];
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      // NOTE: You'll need to add columns like 'desc', 'icon', 'categoryName' to your 'products' table
+      // or handle this data mapping differently.
+      const { data, error } = await supabase.from('products').select('*').eq('is_active', true);
+      
+      if (error) {
+        console.error("Error fetching products:", error);
+        setLoading(false);
+        return;
+      }
+
+      if (data) {
+        // Map DB fields to component fields
+        const formattedTemplates = data.map(p => ({
+          ...p,
+          desc: p.description,
+          categoryName: p.category_name,
+          price: (p.price_cents / 100).toFixed(2),
+          status: p.current_file_id ? 'READY' : 'COMING SOON' // Example logic
+        }));
+        setTemplates(formattedTemplates);
+      }
+      setLoading(false);
+    };
+    fetchProducts();
+  }, []);
 
   const filteredTemplates = (activeCategory === "All"
     ? templates
@@ -62,6 +76,9 @@ const ServiceGrid = () => {
         </div>
       </div>
 
+      {loading && <div className="text-center p-10 text-white">Loading Marketplace...</div>}
+
+      {!loading && (
       <div className="service-grid">
         {filteredTemplates.map((item, index) => (
           <div
@@ -97,6 +114,7 @@ const ServiceGrid = () => {
           </div>
         ))}
       </div>
+      )}
     </section>
   );
 };

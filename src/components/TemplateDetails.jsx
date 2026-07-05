@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
@@ -17,15 +17,36 @@ const NoiseOverlay = () => (
 export default function TemplateDetails() {
   const { id } = useParams(); 
   const navigate = useNavigate();
+
+  // Product data state
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   
   // Authentication State
   const [user, setUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     // scroll to top when component mounts
     window.scrollTo({ top: 0, behavior: 'auto' });
+
+    const fetchProduct = async () => {
+      if (!id) return;
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
+        console.error('Error fetching product', error);
+        setProduct(null); // Or navigate to a 404 page
+      } else {
+        setProduct(data);
+      }
+      setLoading(false);
+    };
 
     // Check if user is logged in when the page loads
     const checkUser = async () => {
@@ -33,6 +54,8 @@ export default function TemplateDetails() {
       setUser(session?.user || null);
     };
     checkUser();
+
+    fetchProduct();
 
     // Listen for login/logout changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -42,65 +65,34 @@ export default function TemplateDetails() {
     return () => { subscription.unsubscribe(); };
   }, [id]);
 
-  const productsById = {
-    "36a7cc71-0c17-4530-a653-e59a8dbda7a3": {
-      title: "The Ultimate E-Commerce Reseller Profit & COGS Tracker",
-      price: 24.99,
-      category: "Essential Business Trackers",
-      format: "Excel & Google Sheets",
-      description: "Stop guessing your true profit margins. Built specifically for serious resellers handling fine jewelry, designer toys, and vintage clothing, this automated system eliminates hidden fee leaks and turns chaotic inventory into clear, actionable business intelligence.",
-      heroHeading: "Stop Guessing Your Profit Margins. Start Knowing Exactly What You Make.",
-      heroSub: "The \"Business in a Box\" spreadsheet built for serious resellers who flip luxury, collectibles, and vintage goods.",
-      problemCopy: [
-        "You're losing money to hidden platform fees and shipping costs.",
-        "You're flying blind on profit margins and inventory ROI.",
-        "Your books break every time someone deletes a cell or overwrites a formula.",
-        "You're stuck toggling between a dozen tabs just to get one accurate report."
-      ],
-      features: [
-        "Automated COGS & Net Profit Calculations: Instantly see exactly what you make after costs.",
-        "Dynamic Platform Fee Deductions: Pre-loaded algorithms for eBay, Poshmark, Mercari, Etsy, Depop, and more.",
-        "Inventory Master to Sales Log Syncing: Dropdown menus seamlessly connect your stock to your sales.",
-        "Built-in Payment Processing Fees: Automatically calculates standard transaction fees (e.g., 2.9% + $0.30) so you never miss a cent.",
-        "Executive Dashboard: Real-time visualization of your Total Revenue and Total Profit."
-      ],
-      whoFor: [
-        { title: "E-Commerce Resellers", subtitle: "(eBay, Poshmark, Mercari, Vintage Flippers)" },
-        { title: "Gig Economy Sellers", subtitle: "(Etsy shops, small wholesale stores)" },
-        { title: "Collectors & Flippers", subtitle: "(Antiques, luxury watches, hype sneakers)" },
-        { title: "Retail Arbitrage Entrepreneurs", subtitle: "(Thrift flips, clearance arbitrage)" }
-      ],
-      deliverables: [
-        "1x Optivoic E-Commerce Reseller Profit & COGS Tracker (Blank Master Template)",
-        "1x Pre-filled example file so you can hit the ground running",
-        "Step-by-step \"Start Here\" instructions built into the dashboard",
-        "Universal formatting: Google Sheets, Excel or Mac Numbers"
-      ]
-    }
-  };
-
-  const product = productsById[id] || {
-    title: "Unknown Template",
-    price: 0,
-    category: "",
-    format: "",
-    description: "",
-    features: [],
-    heroHeading: "",
-    heroSub: "",
-    problemCopy: [],
-    whoFor: [],
-    deliverables: []
-  };
-
   // BUG FIX 1: React Hooks must be executed at the top level, before the return statement.
   usePageMeta({
-    title: `${product.title} | OptiVöic Marketplace`,
-    description: product.description,
+    title: `${product?.title || 'Loading...'} | OptiVöic Marketplace`,
+    description: product?.description,
     ogType: 'product',
-    priceAmount: product.price.toString(),
+    priceAmount: product ? (product.price_cents / 100).toFixed(2) : '0',
     priceCurrency: 'USD'
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center">
+        <p className="text-xl animate-pulse">Loading Product Details...</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center text-center p-8">
+        <div>
+          <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
+          <p className="text-gray-400 mb-6">The product you are looking for does not exist or has been moved.</p>
+          <Link to="/marketplace" className="text-cyan-400 hover:underline">← Back to Marketplace</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     // Added flex flex-col so the main content pushes the footer to the absolute bottom
@@ -124,7 +116,7 @@ export default function TemplateDetails() {
         <div className="lg:col-span-7">
           <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 backdrop-blur-sm">
             <span className="text-xs font-bold uppercase tracking-widest text-cyan-400">
-              {product.category}
+              {product.category_name || "Digital Product"}
             </span>
           </div>
 
@@ -137,10 +129,10 @@ export default function TemplateDetails() {
               className="w-full rounded-2xl shadow-2xl mb-8"
             />
             <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight drop-shadow-lg leading-tight">
-              {product.heroHeading || product.title}
+              {product.hero_heading || product.title}
             </h1>
             <p className="text-xl text-gray-300 mb-6 font-light">
-              {product.heroSub || product.description}
+              {product.hero_sub || product.description}
             </p>
           </div>
 
@@ -148,7 +140,7 @@ export default function TemplateDetails() {
           <div className="mb-16 bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
             <h2 className="text-3xl font-bold mb-6 text-cyan-400">⚠️ Why Reseller Spreadsheets Fail You</h2>
             <div className="space-y-4 text-gray-300">
-              {product.problemCopy.map((line, i) => (
+              {product.problem_copy?.map((line, i) => (
                 <p key={i} className="text-lg leading-relaxed">{line}</p>
               ))}
             </div>
@@ -164,7 +156,7 @@ export default function TemplateDetails() {
             </div>
 
             <div className="space-y-6">
-              {product.features.map((feature, idx) => {
+              {product.features?.map((feature, idx) => {
                 const [title, description] = feature.split(': ');
                 return (
                   <div key={idx} className="bg-slate-900/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700">
@@ -188,7 +180,7 @@ export default function TemplateDetails() {
           <div className="mb-16">
             <h2 className="text-3xl font-bold mb-8 text-cyan-400 text-center">🎯 Who is this for?</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              {product.whoFor.map((who, i) => (
+              {product.who_for?.map((who, i) => (
                 <div key={i} className="p-6 bg-slate-900/50 rounded-2xl border border-slate-700 text-center">
                   <h3 className="text-lg font-bold text-cyan-300 mb-2">{who.title}</h3>
                   <p className="text-gray-400 text-sm">{who.subtitle}</p>
@@ -201,7 +193,7 @@ export default function TemplateDetails() {
           <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
             <h2 className="text-3xl font-bold mb-8 text-cyan-400 text-center">🛡️ What You Get</h2>
             <ul className="space-y-4 text-gray-300 text-lg">
-              {product.deliverables.map((item, i) => (
+              {product.deliverables?.map((item, i) => (
                 <li key={i} className="flex items-start gap-4">
                   <span className="text-gold font-bold">✓</span>
                   <span>{item}</span>
@@ -230,10 +222,10 @@ export default function TemplateDetails() {
             <div className="flex justify-between items-end mb-8 pb-8 border-b border-white/10">
               <div>
                 <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-1">Instant Download</p>
-                <p className="text-white font-medium">{product.format}</p>
+                <p className="text-white font-medium">{product.format || 'Digital File'}</p>
               </div>
               <div className="text-4xl font-light text-white drop-shadow-md">
-                ${product.price}
+                ${(product.price_cents / 100).toFixed(2)}
               </div>
             </div>
 
@@ -261,7 +253,7 @@ export default function TemplateDetails() {
                           purchase_units: [{
                             description: product.title,
                             amount: { 
-                              value: product.price.toString(),
+                              value: (product.price_cents / 100).toFixed(2),
                               currency_code: "USD"
                             }
                           }]
@@ -274,7 +266,7 @@ export default function TemplateDetails() {
                           {
                             user_id: user.id,
                             user_email: user.email,
-                            template_id: id 
+                            product_id: id 
                           }
                         ]).select('id').single();
 
@@ -317,7 +309,7 @@ export default function TemplateDetails() {
       {/* BUG FIX 3: Moved Footer OUTSIDE of the `<main>` block and grid system so it spans full width */}
       <Footer />
 
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={`/template/${id}`} />
       
     {/* BUG FIX 4: Restored the missing closing tag for the main container */}
     </div>

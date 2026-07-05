@@ -270,7 +270,7 @@ export default function ExecutiveTaxEngine() {
                           {
                             user_id: user.id,
                             user_email: user.email,
-                            template_id: templateId
+                            product_id: templateId
                           }
                         ]);
 
