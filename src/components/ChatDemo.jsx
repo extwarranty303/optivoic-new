@@ -28,23 +28,67 @@ const ChatDemo = () => {
     setChatMessages(prev => [...prev, { id: nextId.current++, text, sender }]);
   };
 
+  // Function to call the OpenAI API
+  const callOpenAIChatAPI = async (userMessage, currentChatHistory) => {
+    // IMPORTANT: In a production app, you should proxy this API call through your own backend server
+    // to protect your API key. Exposing API keys in frontend code is a security risk.
+    const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+    if (!OPENAI_API_KEY) {
+      console.error("VITE_OPENAI_API_KEY is not set. Please add it to your .env file.");
+      return "I'm sorry, my AI is not configured. Please contact support.";
+    }
+
+    const messagesForAPI = [
+      { "role": "system", "content": "You are a helpful assistant for Thompson Plumbing. Your goal is to schedule appointments or answer questions about plumbing services. Be concise, professional, and always try to guide the user towards booking a service. If you need more information, ask for it. Do not make up contact details or prices." },
+      ...currentChatHistory.map(msg => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      })),
+      { "role": "user", "content": userMessage }
+    ];
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: messagesForAPI,
+          temperature: 0.7,
+          max_tokens: 150,
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error.message || `API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error("Error calling OpenAI API:", error);
+      return "I'm sorry, I'm having trouble connecting to my AI right now. Please try again later or call us directly.";
+    }
+  };
+
+  const processBotResponse = async (userMessage) => {
+    setIsBotTyping(true);
+    const botResponse = await callOpenAIChatAPI(userMessage, chatMessages);
+    addMessage(botResponse, 'bot');
+    setIsBotTyping(false);
+  };
+
   const handleSendMessage = (messageText) => {
     const text = messageText.trim();
     if (!text) return;
 
     addMessage(text, 'user');
     setChatInput('');
-    setIsBotTyping(true);
-    
-    setTimeout(() => {
-      const response = conversations[text];
-      if (response) {
-        addMessage(response.bot, 'bot');
-      } else {
-        addMessage(`I understand you're asking about "${text.toLowerCase()}". For complex questions, one of our team members can help—would you like us to call you back?`, 'bot');
-      }
-      setIsBotTyping(false);
-    }, 500);
+    processBotResponse(text);
   };
 
   return (
@@ -94,20 +138,6 @@ const ChatDemo = () => {
               Send
             </button>
           </div>
-
-          {/* New function to handle bot response asynchronously */}
-          const processBotResponse = async (userMessage) => {
-            setIsBotTyping(true);
-            try {
-              // Pass the current chat history to the AI for context
-              const botResponse = await callOpenAIChatAPI(userMessage, chatMessages);
-              addMessage(botResponse, 'bot');
-            } catch (error) {
-              console.error("Failed to get AI response:", error);
-              addMessage("I'm sorry, I couldn't get a response from the AI. Please try again.", 'bot');
-            }
-            setIsBotTyping(false);
-          };
 
           <div className="bg-white/5 border border-white/10 rounded-xl p-6">
             <p className="text-sm font-semibold mb-4 text-gray-300">💡 Try these messages:</p>
