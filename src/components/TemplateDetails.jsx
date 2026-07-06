@@ -277,7 +277,6 @@ export default function TemplateDetails() {
                           await sendPurchaseEmail({
                             purchase: purchaseData,
                             userEmail: user.email,
-                            templateId: id,
                             productTitle: product.title
                           });
                           alert(`Success! Thank you, ${details.payer.name.given_name}. Your download link is on the way and your asset is ready in the portal.`);

@@ -4,29 +4,8 @@ import Footer from './Footer';
 import { usePageMeta } from '../utils/usePageMeta';
 import { supabase } from '../supabaseClient';
 
-const fallbackPosts = [
-  {
-    title: 'Technology Consulting Agency: What the Best Firms Do Differently',
-    slug: 'technology-consulting-agency-what-the-best-firms-do-differently',
-    excerpt: 'A breakdown of how modern technology consulting agencies create value through systems, automation, and clear execution.',
-    keywords: 'technology consulting agency, AI automation agency, custom technology consulting'
-  },
-  {
-    title: 'AI Automation Agency Services That Actually Improve Operations',
-    slug: 'ai-automation-agency-services-that-actually-improve-operations',
-    excerpt: 'Learn where AI automation creates the strongest ROI for growing businesses and how to avoid overbuilding the wrong systems.',
-    keywords: 'AI automation agency, workflow automation, business automation'
-  },
-  {
-    title: 'Why Reseller Templates and Business Frameworks Matter for Modern Teams',
-    slug: 'why-reseller-templates-and-business-frameworks-matter',
-    excerpt: 'Why packaged systems are helping resellers, founders, and consultants move faster without sacrificing quality.',
-    keywords: 'reseller templates, business templates, operational frameworks'
-  }
-];
-
 export default function BlogPage() {
-  const [posts, setPosts] = useState(fallbackPosts);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

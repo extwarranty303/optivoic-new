@@ -4,24 +4,6 @@ import Footer from './Footer';
 import { usePageMeta } from '../utils/usePageMeta';
 import { supabase } from '../supabaseClient';
 
-const fallbackPosts = {
-  'technology-consulting-agency-what-the-best-firms-do-differently': {
-    title: 'Technology Consulting Agency: What the Best Firms Do Differently',
-    description: 'A practical look at how top technology consulting agencies create value with strategy, implementation, and systems thinking.',
-    content: 'The best technology consulting agencies don’t just recommend tools—they simplify operations, connect strategy to execution, and build systems that create measurable momentum. For founders and operators, the difference is often in clarity, delivery, and the ability to turn complexity into a repeatable process.'
-  },
-  'ai-automation-agency-services-that-actually-improve-operations': {
-    title: 'AI Automation Agency Services That Actually Improve Operations',
-    description: 'How AI automation agencies create real ROI by solving difficult workflow problems and reducing repetitive manual effort.',
-    content: 'Real AI automation work starts with identifying the bottlenecks that cost you time and margin. The strongest agencies focus on practical automation that improves daily operations instead of chasing flashy tools that add complexity.'
-  },
-  'why-reseller-templates-and-business-frameworks-matter': {
-    title: 'Why Reseller Templates and Business Frameworks Matter for Modern Teams',
-    description: 'Why packaged business frameworks are helping modern resellers, consultants, and service businesses operate with more focus and less friction.',
-    content: 'Reseller templates and business frameworks matter because they standardize the work that would otherwise remain scattered across notes, spreadsheets, and memory. When the system is clear, execution becomes easier and growth becomes more predictable.'
-  }
-};
-
 export default function BlogPost() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
@@ -35,11 +17,7 @@ export default function BlogPost() {
         .eq('slug', slug)
         .maybeSingle();
 
-      if (data) {
-        setPost(data);
-      } else {
-        setPost(fallbackPosts[slug] || null);
-      }
+      setPost(data);
       setLoading(false);
     };
 

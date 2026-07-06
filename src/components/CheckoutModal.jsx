@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../../supabaseClient';
+import { sendPurchaseEmail } from '../utils/purchaseEmail';
 import Footer from './Footer';
 
 const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
@@ -35,19 +36,28 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
       if (orderError) throw orderError;
 
       // 3. Create the Purchase access record in Supabase
-      const { error: purchaseError } = await supabase
+      const { data: purchaseData, error: purchaseError } = await supabase
         .from('purchases')
         .insert([{
           order_id: orderData.id,
           product_id: template.id,
-          user_id: user.id
-        }]);
+          user_id: user.id,
+          user_email: user.email
+        }])
+        .select('id')
+        .single();
 
       if (purchaseError) {
         // Note: If this fails but the order succeeded, you'd handle it via admin review
         console.error("Purchase record failed, but order was captured:", purchaseError);
         throw new Error("Payment succeeded, but we couldn't unlock the template. Please contact support.");
       }
+
+      await sendPurchaseEmail({
+        purchase: purchaseData,
+        userEmail: user.email,
+        productTitle: template.title,
+      });
 
       // 4. Success! Close modal and notify parent
       onSuccess();

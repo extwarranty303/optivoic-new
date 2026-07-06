@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
 import { usePageMeta } from '../utils/usePageMeta';
 import Footer from './Footer';
+import { sendPurchaseEmail } from '../utils/purchaseEmail';
 
 const NoiseOverlay = () => (
   <div 
@@ -15,18 +16,39 @@ const NoiseOverlay = () => (
 
 export default function ExecutiveTaxEngine() {
   const navigate = useNavigate();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const location = useLocation();
+  const productId = "526dcf30-0990-458e-bba7-b9f1c7e99078";
 
   useEffect(() => {
     // scroll to top when component mounts
     window.scrollTo({ top: 0, behavior: 'auto' });
 
+    const fetchProduct = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', productId)
+        .single();
+
+      if (error || !data) {
+        console.error('Error fetching product', error);
+        setProduct(null);
+      } else {
+        setProduct(data);
+      }
+      setLoading(false);
+    };
+
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user || null);
     };
+
+    fetchProduct();
     checkUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
@@ -36,36 +58,26 @@ export default function ExecutiveTaxEngine() {
     return () => { authListener.subscription.unsubscribe(); };
   }, []);
 
-  const product = {
-    id: "526dcf30-0990-458e-bba7-b9f1c7e99078", // slug/UUID; templates table uses strings only
+  usePageMeta({
+    title: `${product?.title || 'Loading...'} | OptiVöic`,
+    description: product?.description,
+    ogType: 'product',
+    priceAmount: product ? (product.price_cents / 100).toFixed(2) : '0',
+    priceCurrency: 'USD'
+  });
 
-    title: "Executive Tax Engine - Business in a Box for 1099 Pros",
-    price: 24.99,
-    category: "Essential Business Tools",
-    format: "Excel & Google Sheets",
-    description: "Stop guessing your 1099 taxes. The Executive Tax Engine is a powerful, automated template designed to track fragmented income, calculate quarterly tax liability, and map deductions for stress-free tax season.",
-    features: [
-      "Schedule C Auto-Mapper (CPA Replacement): Automatically aggregates expenses and maps them to IRS Form 1040 Schedule C line numbers for instant TurboTax integration.",
-      "Smart Reseller Inventory & COGS Tracker: Automatically calculates Net Profit, Profit Margin %, and exact ROI % for every item with color-coded statuses.",
-      "Idiot-Proof Smart Lock Technology: Master formulas and dashboards are mathematically locked so you cannot break them while logging unlimited data.",
-      "Live Real-Time Tax Dashboard: Watch your Estimated Quarterly Tax Liability update instantly as you log expenses.",
-      "2026 IRS Mileage & Home Office Automations: Automatically multiplies business drives by 72.5¢/mile and calculates Home Office Deduction using IRS Simplified Method.",
-      "1-Click Professional Invoice Generator: Create clean, formatted invoices with auto-calculated taxes and subtotals—save as PDF in one keystroke."
-    ]
-  };
+  if (loading) {
+    return <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center"><p className="text-xl animate-pulse">Loading Product Details...</p></div>;
+  }
+
+  if (!product) {
+    return <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center"><p>Product not found.</p></div>;
+  }
 
   return (
     // FIX 2a: Added 'flex flex-col' so the layout can push the footer down
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative flex flex-col">
       <NoiseOverlay />
-
-      {usePageMeta({
-        title: product.title,
-        description: product.description,
-        ogType: 'product',
-        priceAmount: product.price,
-        priceCurrency: 'USD'
-      })}
       
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
@@ -84,7 +96,7 @@ export default function ExecutiveTaxEngine() {
         <div className="lg:col-span-7">
           <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 backdrop-blur-sm">
             <span className="text-xs font-bold uppercase tracking-widest text-cyan-400">
-              {product.category}
+              {product.category_name}
             </span>
           </div>
 
@@ -96,10 +108,10 @@ export default function ExecutiveTaxEngine() {
               className="w-full rounded-2xl shadow-2xl mb-8"
             />
             <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight drop-shadow-lg leading-tight">
-              Stop Guessing Your 1099 Taxes. Start Running Your Business.
+              {product.hero_heading || product.title}
             </h1>
             <p className="text-xl text-gray-300 mb-6 font-light">
-              The "Business in a Box" Spreadsheet for Freelancers, Gig Workers, and E-Commerce Resellers.
+              {product.hero_sub || product.description}
             </p>
           </div>
 
@@ -141,7 +153,7 @@ export default function ExecutiveTaxEngine() {
             </div>
 
             <div className="space-y-6">
-              {product.features.map((feature, idx) => {
+              {product.features?.map((feature, idx) => {
                 const [title, description] = feature.split(': ');
                 return (
                   <div key={idx} className="bg-slate-900/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700">
@@ -223,10 +235,10 @@ export default function ExecutiveTaxEngine() {
             <div className="flex justify-between items-end mb-8 pb-8 border-b border-white/10">
               <div>
                 <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-1">Instant Digital Download</p>
-                <p className="text-white font-medium">{product.format}</p>
+                <p className="text-white font-medium">{product.format || 'Digital File'}</p>
               </div>
               <div className="text-4xl font-light text-white drop-shadow-md">
-                ${product.price}
+                ${(product.price_cents / 100).toFixed(2)}
               </div>
             </div>
 
@@ -253,31 +265,31 @@ export default function ExecutiveTaxEngine() {
                         return actions.order.create({
                           purchase_units: [{
                             description: product.title,
-                            amount: { value: product.price.toString() }
+                            amount: { value: (product.price_cents / 100).toFixed(2) }
                           }]
                         });
                       }}
                       onApprove={async (data, actions) => {
                         const details = await actions.order.capture();
-                        
-                        // ensure we only send a number when it's available
-                        const templateId =
-                          typeof product.dbId === 'number' && !isNaN(product.dbId)
-                            ? product.dbId
-                            : product.id;
 
-                        const { error } = await supabase.from('purchases').insert([
+                        const { data: purchaseData, error } = await supabase.from('purchases').insert([
                           {
                             user_id: user.id,
                             user_email: user.email,
-                            product_id: templateId
+                            product_id: product.id
                           }
-                        ]);
+                        ]).select('id').single();
 
                         if (error) {
                           alert("Payment succeeded, but there was an error generating your link. Please contact support.");
                           console.error(error);
                         } else {
+                          // Send the confirmation email
+                          await sendPurchaseEmail({
+                            purchase: purchaseData,
+                            userEmail: user.email,
+                            productTitle: product.title,
+                          });
                           alert(`Success! Thank you, ${details.payer.name.given_name}. Redirecting to your secure portal...`);
                           navigate('/portal');
                         }
@@ -309,7 +321,7 @@ export default function ExecutiveTaxEngine() {
       {/* Footer */}
       <Footer />        
       
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={location.pathname} />    
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo="/tax-engine" />    
     </div>
   );
 }

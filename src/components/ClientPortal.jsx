@@ -3,18 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import Footer from './Footer';
 
-// --- FALLBACK PRODUCT DATABASE ---
-// This acts as a safety net in case the products table isn't fully populated yet
-const TEMPLATES_DB = {
-  "executive-tax-engine": { category: "Essential Business Tools", title: "Executive Tax Engine" },
-  1: { category: "Essential Trackers", title: "E-Commerce Reseller Profit & COGS Tracker" },
-  2: { category: "Essential Trackers", title: "Options Trading & Premium Journal" },
-  3: { category: "Essential Trackers", title: "The 'Story Bible' for Fiction" },
-  4: { category: "Essential Trackers", title: "Collectibles Portfolio Valuation Tracker" },
-  5: { category: "Essential Trackers", title: "Digital Nomad Route Planner" },
-  6: { category: "Professional Hubs", title: "AI Prompt Testing Sandbox" }
-};
-
 const NoiseOverlay = () => (
   <div className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
 );
@@ -24,7 +12,7 @@ export default function ClientPortal() {
   const [loading, setLoading] = useState(true);
   const [purchases, setPurchases] = useState([]);
   const [projects, setProjects] = useState([]); 
-  const [dynamicProducts, setDynamicProducts] = useState({}); // NEW: Holds live DB products
+  const [products, setProducts] = useState({});
   const [downloadingId, setDownloadingId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false); 
   const navigate = useNavigate();
@@ -50,11 +38,11 @@ export default function ClientPortal() {
       if (userPurchases) setPurchases(userPurchases);
 
       // 3. Fetch Live Products to map to purchases
-      const { data: prodData } = await supabase.from('products').select('id, title');
+      const { data: prodData } = await supabase.from('products').select('id, title, category_name');
       if (prodData) {
         const prodMap = {};
         prodData.forEach(p => { prodMap[p.id] = p; });
-        setDynamicProducts(prodMap);
+        setProducts(prodMap);
       }
 
       // 4. SECURE CHECK: Is user in the admins table?
@@ -208,11 +196,10 @@ export default function ClientPortal() {
             ) : (
               purchases.map((purchase) => {
                 // Dynamically pull title from DB, fallback to local DB if not found
-                const dbProduct = dynamicProducts[purchase.product_id];
-                const fallbackProduct = TEMPLATES_DB[purchase.product_id];
+                const product = products[purchase.product_id];
                 
-                const title = dbProduct ? dbProduct.title : (fallbackProduct ? fallbackProduct.title : `Asset #${purchase.product_id}`);
-                const category = fallbackProduct ? fallbackProduct.category : "Digital Asset";
+                const title = product ? product.title : `Asset #${purchase.product_id}`;
+                const category = product ? product.category_name : "Digital Asset";
                 
                 const isDownloading = downloadingId === purchase.product_id;
 

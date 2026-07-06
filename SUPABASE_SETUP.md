@@ -57,6 +57,7 @@ Set these in Vercel or your local environment:
 - `id` uuid primary key default `gen_random_uuid()`
 - `user_id` uuid references `auth.users(id)` not null
 - `product_id` text references `products(id)` not null
+- `user_email` text
 - `order_id` uuid references `orders(id)`
 - `created_at` timestamptz default `now()`
 
