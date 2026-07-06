@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../supabaseClient';
 import { sendPurchaseEmail } from '../utils/purchaseEmail';
-import Footer from './Footer';
 
 const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
   const [error, setError] = useState(null);
@@ -49,7 +48,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
 
       if (purchaseError) {
         // Note: If this fails but the order succeeded, you'd handle it via admin review
-        console.error("Purchase record failed, but order was captured:", purchaseError);
+        console.error(`Critical: Purchase record failed for order_id: ${orderData.id}. User has paid but does not have access.`, purchaseError);
         throw new Error("Payment succeeded, but we couldn't unlock the template. Please contact support.");
       }
 
@@ -104,8 +103,10 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
             Processing your transaction and unlocking your template...
           </div>
         ) : (
-          <PayPalScriptProvider options={{ 
-            "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", // Replace with your real Client ID in your .env file
+          <PayPalScriptProvider options={{
+            // IMPORTANT: Ensure VITE_PAYPAL_CLIENT_ID is set in your .env for production.
+            // The "test" fallback is for development only and will cause real transactions to fail.
+            "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
             currency: "USD" 
           }}>
             <PayPalButtons 
@@ -124,8 +125,6 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
           </PayPalScriptProvider>
         )}
       </div>
-      {/* Footer */}
-      <Footer />  
     </div>
   );
 };

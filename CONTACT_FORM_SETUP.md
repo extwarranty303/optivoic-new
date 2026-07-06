@@ -31,8 +31,7 @@ Use the provided `contact_submissions_setup.sql` to create the table and indexes
 ## Code locations
 
 - Contact form and EmailJS calls: `src/components/OptiVoicLanding.jsx`
-- Supabase client (frontend): `src/supabaseClient.js`
-- Server/root client helper: `supabaseClient.js`
+- **Supabase client**: `src/supabaseClient.js`. This is the single client used by the application.
 
 ## Testing
 

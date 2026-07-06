@@ -5,18 +5,22 @@ import { usePageMeta } from '../utils/usePageMeta';
 
 const faqs = [
   {
+    id: 'what-is-consulting',
     question: 'What does a technology consulting agency actually do?',
     answer: 'A technology consulting agency helps businesses choose, implement, and optimize the right systems for growth, including AI automation, web architecture, and workflow processes.'
   },
   {
+    id: 'how-can-ai-help',
     question: 'How can AI automation improve my operations?',
     answer: 'AI automation can reduce repetitive manual work, improve consistency, and free up your team to focus on higher-value work.'
   },
   {
+    id: 'are-templates-for-resellers',
     question: 'Are the marketplace templates suitable for resellers?',
     answer: 'Yes. Our reseller templates are designed to help resellers organize sourcing, profitability, inventory, and daily execution in a simple system.'
   },
   {
+    id: 'do-you-offer-support',
     question: 'Do you offer support after purchase?',
     answer: 'Yes. Each package includes the template, a PDF guide and FAQ, a slide presentation, and ongoing support to help you get the most from the product.'
   }
@@ -42,7 +46,7 @@ export default function FaqPage() {
 
         <div className="space-y-6">
           {faqs.map((faq) => (
-            <div key={faq.question} className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
+            <div key={faq.id} className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
               <h2 className="text-xl font-bold mb-3">{faq.question}</h2>
               <p className="text-gray-400 leading-relaxed">{faq.answer}</p>
             </div>

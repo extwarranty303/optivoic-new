@@ -107,9 +107,11 @@ Set these in Vercel or your local environment:
 Create a storage bucket named `templates` with public access disabled.
 
 ## 5. Security
-- Enable Row Level Security (RLS) as needed.
+- **CRITICAL: Enable and configure Row Level Security (RLS) for all tables.**
 - The admin panel and portal currently rely on authenticated users plus the `admins` table for authorization.
-- For production, add RLS policies to limit access. For example:
+- Since database operations (inserts, updates) are performed directly from the client-side code, RLS is the primary mechanism preventing unauthorized data access and modification.
+- **Example RLS Policies for Production:**
   - Users should only be able to see their own `purchases` and `orders`.
   - Public users should only be able to read `blog_posts` with a 'published' status.
-  - Only authenticated users should be able to create `contact_submissions`.
+  - Authenticated users should only be able to create `contact_submissions` for themselves.
+  - Users should only be able to create `orders` and `purchases` linked to their own `user_id`.

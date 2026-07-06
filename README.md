@@ -36,6 +36,9 @@ VITE_EMAILJS_ADMIN_TEMPLATE_ID=template_admin_notification
 VITE_EMAILJS_CUSTOMER_TEMPLATE_ID=template_customer_confirmation
 VITE_EMAILJS_PUBLIC_KEY=<your_emailjs_public_key>
 VITE_EMAILJS_ADMIN_TO=connect@optivoic.com
+
+# Optional, for e-commerce functionality
+VITE_PAYPAL_CLIENT_ID=<your-paypal-client-id>
 ```
 
 After changing `.env`, restart the dev server.
@@ -47,8 +50,7 @@ After changing `.env`, restart the dev server.
 
 **Where to look in the code**
 
-- Supabase client (root): `supabaseClient.js`
-- Frontend client (src): `src/supabaseClient.js`
+- **Supabase client**: `src/supabaseClient.js`. This is the single source of truth for the Supabase client.
 - Contact form UI and EmailJS usage: `src/components/OptiVoicLanding.jsx`
 
 If something in these docs looks out of date, open an issue or edit the Markdown directly.

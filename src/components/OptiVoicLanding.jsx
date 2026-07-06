@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Footer from './Footer';
 import { supabase } from '../supabaseClient';
 import emailjs from '@emailjs/browser';
+import ChatDemo from './ChatDemo';
 
 const NoiseOverlay = () => (
   <div
@@ -13,10 +14,6 @@ const NoiseOverlay = () => (
 
 const OptiVoicLanding = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [chatMessages, setChatMessages] = useState([
-    { text: "👋 Hi! Welcome to Thompson Plumbing. I'm here to help schedule your appointment or answer questions about our services. What brings you in today?", sender: 'bot' }
-  ]);
-  const [chatInput, setChatInput] = useState('');
 
   // Contact form state
   const [contactForm, setContactForm] = useState({
@@ -27,6 +24,7 @@ const OptiVoicLanding = () => {
   });
   const [formStatus, setFormStatus] = useState(''); // 'success', 'error', 'loading', or ''
   const [submittedEmail, setSubmittedEmail] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
 
   const emailjsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
   const emailjsAdminTemplateId = import.meta.env.VITE_EMAILJS_ADMIN_TEMPLATE_ID;
@@ -40,63 +38,6 @@ const OptiVoicLanding = () => {
     emailjsPublicKey
   );
 
-  const conversations = {
-    'I have a leaky faucet': {
-      bot: 'Got it! A leaky faucet repair. That\'s one of our most common services. Just to help prioritize this—is the leak active right now, or is it intermittent?',
-      nextResponses: ['Active leak', 'Intermittent']
-    },
-    'Active leak': {
-      bot: 'I can get someone out to you this week. What day works best for you—Monday, Wednesday, or Thursday between 9am-5pm?'
-    },
-    'Intermittent': {
-      bot: 'Good news—intermittent leaks are usually an easy fix. We can schedule a routine visit. What\'s your availability next week?'
-    },
-    'Water heater is broken, need emergency service ASAP': {
-      bot: '⚠️ Emergency detected—water heater failure. I\'m flagging this as urgent. We have availability TODAY between 2-4pm or tomorrow morning 8-11am. Which works?'
-    },
-    'Schedule maintenance for Tuesday': {
-      bot: 'Perfect! I\'ve got Tuesday open. What time works best—morning (8-12pm) or afternoon (1-5pm)? And what service do you need maintenance on?'
-    },
-    'morning (8-12pm)': {
-      bot: 'Excellent! Let me confirm your appointment:\n\n📅 Tuesday, 8:00 AM\n📍 Your location\n🔧 System maintenance\n\nWe\'ll send you an SMS reminder 24 hours before and again 1 hour before arrival. Sound good?'
-    },
-    'afternoon (1-5pm)': {
-      bot: 'Great! Let me confirm your appointment:\n\n📅 Tuesday, 2:00 PM\n📍 Your location\n🔧 System maintenance\n\nWe\'ll send you an SMS reminder 24 hours before and again 1 hour before arrival. Sound good?'
-    },
-    'yes': {
-      bot: '✅ Appointment confirmed! One of our technicians will be there Tuesday. Check your email for the full confirmation details. Questions? Call us anytime!'
-    },
-    'no': {
-      bot: 'No problem! What time would work better for you? Or would you prefer a different day?'
-    }
-  };
-
-  const addMessage = (text, sender) => {
-    setChatMessages(prev => [...prev, { text, sender }]);
-  };
-
-  const sendMessage = () => {
-    const text = chatInput.trim();
-    if (!text) return;
-
-    addMessage(text, 'user');
-    setChatInput('');
-
-    setTimeout(() => {
-      const response = conversations[text];
-      if (response) {
-        addMessage(response.bot, 'bot');
-      } else {
-        addMessage('I understand you\'re asking about ' + text.toLowerCase() + '. For complex questions, one of our team members can help—would you like us to call you back?', 'bot');
-      }
-    }, 500);
-  };
-
-  const sendPredefinedMessage = (message) => {
-    setChatInput(message);
-    sendMessage();
-  };
-
   const switchTab = (tabIndex) => {
     setActiveTab(tabIndex);
   };
@@ -108,6 +49,7 @@ const OptiVoicLanding = () => {
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     setFormStatus('loading'); // Add loading state
+    setEmailSent(false);
 
     try {
       // Store contact form submission in Supabase
@@ -157,6 +99,7 @@ const OptiVoicLanding = () => {
             },
             emailjsPublicKey
           );
+          setEmailSent(true);
         } catch (emailError) {
           console.warn('Email sending failed:', emailError);
           // Continue with success - data is still stored in database
@@ -404,67 +347,7 @@ const OptiVoicLanding = () => {
         </section>
 
         {/* Demo Section */}
-        <section id="demo" className="py-24 px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">AI Assistant Demo</h2>
-              <p className="text-xl text-gray-400">Click "Try AI Booking" to see our intelligent chatbot in action</p>
-            </div>
-
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
-              <div className="h-96 overflow-y-auto mb-6 bg-black/30 rounded-xl p-6 border border-white/5">
-                {chatMessages.map((message, index) => (
-                  <div key={index} className={`flex gap-3 mb-4 ${message.sender === 'user' ? 'justify-end' : ''}`}>
-                    <div className={`max-w-[70%] p-4 rounded-xl ${message.sender === 'bot' ? 'bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30' : 'bg-white/10 border border-white/20'}`}>
-                      <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex gap-3 mb-6">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  placeholder="Type a message..."
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
-                />
-                <button
-                  onClick={sendMessage}
-                  className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-semibold px-6 py-3 rounded-xl hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all"
-                >
-                  Send
-                </button>
-              </div>
-
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <p className="text-sm font-semibold mb-4 text-gray-300">💡 Try these messages:</p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <button
-                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:border-cyan-400/30 transition-all"
-                    onClick={() => sendPredefinedMessage('I have a leaky faucet')}
-                  >
-                    I have a leaky faucet
-                  </button>
-                  <button
-                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:border-cyan-400/30 transition-all"
-                    onClick={() => sendPredefinedMessage('Water heater is broken, need emergency service ASAP')}
-                  >
-                    Water heater emergency
-                  </button>
-                  <button
-                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:border-cyan-400/30 transition-all"
-                    onClick={() => sendPredefinedMessage('I want to schedule maintenance for Tuesday')}
-                  >
-                    Schedule maintenance
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <ChatDemo />
 
         {/* Results Section */}
         <section id="results" className="py-24 px-8 border-y border-white/5 bg-white/[0.01]">
@@ -760,7 +643,10 @@ const OptiVoicLanding = () => {
                 {formStatus === 'success' && (
                   <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-4">
                     <p className="text-green-400 font-semibold">✅ Thank you! Your message has been sent successfully.</p>
-                    <p className="text-green-300 text-sm mt-1">We'll review your home service business needs and get back to you within 24 hours with a custom AI website proposal. A confirmation email has been sent to {submittedEmail || 'your email address'}.</p>
+                    <p className="text-green-300 text-sm mt-1">
+                      We'll review your home service business needs and get back to you within 24 hours with a custom AI website proposal.
+                      {emailSent && ` A confirmation email has been sent to ${submittedEmail}.`}
+                    </p>
                   </div>
                 )}
 
