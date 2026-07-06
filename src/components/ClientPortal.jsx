@@ -195,7 +195,6 @@ export default function ClientPortal() {
               </div>
             ) : (
               purchases.map((purchase) => {
-                // Dynamically pull title from DB, fallback to local DB if not found
                 const product = products[purchase.product_id];
                 
                 const title = product ? product.title : `Asset #${purchase.product_id}`;
