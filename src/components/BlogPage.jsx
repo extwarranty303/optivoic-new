@@ -29,14 +29,14 @@ export default function BlogPage() {
     title: 'Blog | Optivoic Technology Consulting & AI Automation',
     description: 'Read practical articles about AI automation, technology consulting, reseller templates, and efficient business systems.',
     keywords: 'technology consulting agency, AI automation agency, blog, reseller templates, business frameworks',
-    canonical: '<https://www.optivoic.com/blog>',
+    canonical: 'https://www.optivoic.com/blog',
     robots: 'index, follow',
     jsonLd: {
-      '@context': '<https://schema.org>',
+      '@context': 'https://schema.org',
       '@type': 'Blog',
       name: 'Optivoic Blog',
       description: 'Practical content for growth-minded teams focused on technology consulting, AI automation, and reseller systems.',
-      url: '<https://www.optivoic.com/blog>'
+      url: 'https://www.optivoic.com/blog'
     }
   });
 

@@ -41,8 +41,8 @@ export default function FaqPage() {
         </div>
 
         <div className="space-y-6">
-          {faqs.map((faq, index) => (
-            <div key={index} className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
+          {faqs.map((faq) => (
+            <div key={faq.question} className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
               <h2 className="text-xl font-bold mb-3">{faq.question}</h2>
               <p className="text-gray-400 leading-relaxed">{faq.answer}</p>
             </div>

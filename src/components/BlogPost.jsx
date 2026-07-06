@@ -31,7 +31,7 @@ export default function BlogPost() {
     canonical: `https://www.optivoic.com/blog/${slug}`,
     robots: 'index, follow',
     jsonLd: post ? {
-      '@context': '<https://schema.org>',
+      '@context': 'https://schema.org',
       '@type': 'Article',
       headline: post.title,
       description: post.meta_description || post.description || post.excerpt,
@@ -44,7 +44,7 @@ export default function BlogPost() {
         name: 'Optivoic',
         logo: {
           '@type': 'ImageObject',
-          url: '<https://www.optivoic.com/assets/optivoic-logo.png>'
+          url: 'https://www.optivoic.com/assets/optivoic-logo.png'
         }
       },
       mainEntityOfPage: `https://www.optivoic.com/blog/${slug}`,

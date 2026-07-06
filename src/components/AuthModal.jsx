@@ -36,7 +36,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
       } else if (view === 'forgot') {
         // --- NEW: Password Reset Request ---
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: 'http://localhost:5173/update-password',
+          redirectTo: `${window.location.origin}/update-password`,
         });
         if (error) throw error;
         setMessage({ text: 'Password reset link sent! Check your email.', type: 'success' });

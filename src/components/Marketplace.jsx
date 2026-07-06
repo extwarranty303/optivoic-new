@@ -98,17 +98,17 @@ export default function Marketplace() {
     }
   }, []);
 
+  usePageMeta({
+    title: 'Digital Marketplace | OptiVoic Frameworks & Templates',
+    description: 'Browse professional-grade business workspaces, automated trackers, and personal productivity hubs designed to reclaim your time and structure your daily routines.',
+    ogTitle: 'OptiVoic | Digital Marketplace',
+    ogDescription: 'Codified business and personal frameworks built to optimize your life and career.',
+    ogType: 'website',
+    ogUrl: 'https://optivoic.com/marketplace'
+  });
+
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
-      {usePageMeta({
-        title: 'Digital Marketplace | OptiVoic Frameworks & Templates',
-        description: 'Browse professional-grade business workspaces, automated trackers, and personal productivity hubs designed to reclaim your time and structure your daily routines.',
-        ogTitle: 'OptiVoic | Digital Marketplace',
-        ogDescription: 'Codified business and personal frameworks built to optimize your life and career.',
-        ogType: 'website',
-        ogUrl: 'https://optivoic.com/marketplace'
-      })}
-
       <AmbientBackground />
       <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
       <MarketplaceHero />

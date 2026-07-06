@@ -107,12 +107,10 @@ const OptiVoicLanding = () => {
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted with data:', contactForm);
     setFormStatus('loading'); // Add loading state
 
     try {
       // Store contact form submission in Supabase
-      console.log('Storing in Supabase...');
       const { error } = await supabase
         .from('contact_submissions')
         .insert([
@@ -121,7 +119,6 @@ const OptiVoicLanding = () => {
             email: contactForm.email,
             phone: contactForm.phone,
             help_request: contactForm.help,
-            submitted_at: new Date().toISOString(),
             source: 'optivoic_landing_page'
           }
         ]);
@@ -131,13 +128,10 @@ const OptiVoicLanding = () => {
         throw error;
       }
 
-      console.log('Data stored successfully');
-
       if (!isEmailjsConfigured) {
         console.warn('EmailJS is not fully configured. Skipping email sends.');
       } else {
         try {
-          console.log('Attempting to send emails...');
           // Send email to connect@optivoic.com (admin notification)
           await emailjs.send(
             emailjsServiceId,
@@ -163,7 +157,6 @@ const OptiVoicLanding = () => {
             },
             emailjsPublicKey
           );
-          console.log('Emails sent successfully');
         } catch (emailError) {
           console.warn('Email sending failed:', emailError);
           // Continue with success - data is still stored in database
@@ -173,7 +166,6 @@ const OptiVoicLanding = () => {
       setSubmittedEmail(contactForm.email);
       setContactForm({ name: '', email: '', phone: '', help: '' });
       setFormStatus('success');
-      console.log('Form submission completed successfully');
 
     } catch (error) {
       console.error('Error submitting contact form:', error);
@@ -703,12 +695,13 @@ const OptiVoicLanding = () => {
               <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                    <label htmlFor="name" className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
                       Full Name *
                     </label>
                     <input
                       type="text"
                       name="name"
+                      id="name"
                       value={contactForm.name}
                       onChange={handleContactChange}
                       required
@@ -717,12 +710,13 @@ const OptiVoicLanding = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                    <label htmlFor="email" className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
                       Email Address *
                     </label>
                     <input
                       type="email"
                       name="email"
+                      id="email"
                       value={contactForm.email}
                       onChange={handleContactChange}
                       required
@@ -733,12 +727,13 @@ const OptiVoicLanding = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                  <label htmlFor="phone" className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
                     Phone Number
                   </label>
                   <input
                     type="tel"
                     name="phone"
+                    id="phone"
                     value={contactForm.phone}
                     onChange={handleContactChange}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
@@ -747,12 +742,13 @@ const OptiVoicLanding = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
+                  <label htmlFor="help" className="block text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest">
                     How Can We Help? *
                   </label>
                   <textarea
                     name="help"
                     value={contactForm.help}
+                    id="help"
                     onChange={handleContactChange}
                     required
                     rows={5}

@@ -69,8 +69,8 @@ export default function ResellerCommandCenter() {
           <div className="mb-16 bg-white/[0.02] border border-white/10 rounded-3xl p-8 md:p-10 backdrop-blur-xl shadow-2xl">
             <h2 className="text-3xl font-bold mb-6 text-cyan-400">Why this template package works</h2>
             <div className="space-y-4 text-gray-300 text-lg leading-relaxed">
-              {workflows.map((item, index) => (
-                <p key={index} className="flex items-start gap-3">
+              {workflows.map((item) => (
+                <p key={item} className="flex items-start gap-3">
                   <span className="text-cyan-400 font-bold">✓</span>
                   <span>{item}</span>
                 </p>
@@ -87,9 +87,9 @@ export default function ResellerCommandCenter() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              {modules.map((module, index) => (
-                <div key={index} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg shadow-black/20">
-                  <h3 className="text-lg font-semibold text-white mb-2">{module}</h3>
+              {modules.map((moduleText) => (
+                <div key={moduleText} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg shadow-black/20">
+                  <h3 className="text-lg font-semibold text-white mb-2">{moduleText}</h3>
                   <p className="text-sm text-gray-400">A streamlined step that keeps your workflow simple and profitable.</p>
                 </div>
               ))}

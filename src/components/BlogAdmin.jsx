@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+autheeimport React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import Footer from './Footer';
@@ -150,31 +150,31 @@ export default function BlogAdmin() {
           <form onSubmit={handleSubmit} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-8 backdrop-blur-xl space-y-5">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">Title</label>
-                <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+                <label htmlFor="title" className="text-sm text-gray-400 mb-2 block">Title</label>
+                <input id="title" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
               </div>
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">Slug</label>
-                <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+                <label htmlFor="slug" className="text-sm text-gray-400 mb-2 block">Slug</label>
+                <input id="slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Excerpt</label>
-              <textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} rows="3" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+              <label htmlFor="excerpt" className="text-sm text-gray-400 mb-2 block">Excerpt</label>
+              <textarea id="excerpt" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} rows="3" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Content</label>
-              <textarea required value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows="10" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+              <label htmlFor="content" className="text-sm text-gray-400 mb-2 block">Content</label>
+              <textarea id="content" required value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows="10" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
               <p className="text-xs text-gray-500 mt-2">Approx. {contentWordCount} words</p>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">Category</label>
-                <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+                <label htmlFor="category" className="text-sm text-gray-400 mb-2 block">Category</label>
+                <input id="category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
               </div>
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">Status</label>
-                <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3">
+                <label htmlFor="status" className="text-sm text-gray-400 mb-2 block">Status</label>
+                <select id="status" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3">
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>
                 </select>
@@ -182,17 +182,17 @@ export default function BlogAdmin() {
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">Keywords</label>
-                <input value={form.keywords} onChange={(e) => setForm({ ...form, keywords: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+                <label htmlFor="keywords" className="text-sm text-gray-400 mb-2 block">Keywords</label>
+                <input id="keywords" value={form.keywords} onChange={(e) => setForm({ ...form, keywords: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
               </div>
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">Featured Image</label>
-                <input value={form.featured_image} onChange={(e) => setForm({ ...form, featured_image: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+                <label htmlFor="featured_image" className="text-sm text-gray-400 mb-2 block">Featured Image</label>
+                <input id="featured_image" value={form.featured_image} onChange={(e) => setForm({ ...form, featured_image: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Meta Description</label>
-              <textarea value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} rows="3" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
+              <label htmlFor="meta_description" className="text-sm text-gray-400 mb-2 block">Meta Description</label>
+              <textarea id="meta_description" value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} rows="3" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3" />
             </div>
             <div className="flex flex-wrap gap-3">
               <button type="submit" disabled={saving} className="rounded-full bg-cyan-500 px-5 py-3 font-semibold text-black">{saving ? 'Publishing…' : editingId ? 'Update Article' : 'Publish Article'}</button>

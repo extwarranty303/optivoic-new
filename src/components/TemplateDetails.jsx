@@ -5,7 +5,6 @@ import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
 import { usePageMeta } from '../utils/usePageMeta';
 import Footer from './Footer';
-import { sendPurchaseEmail } from '../utils/purchaseEmail';
 
 const NoiseOverlay = () => (
   <div 
@@ -140,8 +139,8 @@ export default function TemplateDetails() {
           <div className="mb-16 bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
             <h2 className="text-3xl font-bold mb-6 text-cyan-400">⚠️ Why Reseller Spreadsheets Fail You</h2>
             <div className="space-y-4 text-gray-300">
-              {product.problem_copy?.map((line, i) => (
-                <p key={i} className="text-lg leading-relaxed">{line}</p>
+              {product.problem_copy?.map((line) => (
+                <p key={line} className="text-lg leading-relaxed">{line}</p>
               ))}
             </div>
           </div>
@@ -156,10 +155,10 @@ export default function TemplateDetails() {
             </div>
 
             <div className="space-y-6">
-              {product.features?.map((feature, idx) => {
+              {product.features?.map((feature) => {
                 const [title, description] = feature.split(': ');
                 return (
-                  <div key={idx} className="bg-slate-900/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700">
+                  <div key={title} className="bg-slate-900/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700">
                     <h3 className="text-xl font-bold mb-3 text-cyan-300">✅ {title}</h3>
                     <p className="text-gray-300 leading-relaxed">{description}</p>
                   </div>
@@ -180,8 +179,8 @@ export default function TemplateDetails() {
           <div className="mb-16">
             <h2 className="text-3xl font-bold mb-8 text-cyan-400 text-center">🎯 Who is this for?</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              {product.who_for?.map((who, i) => (
-                <div key={i} className="p-6 bg-slate-900/50 rounded-2xl border border-slate-700 text-center">
+              {product.who_for?.map((who) => (
+                <div key={who.title} className="p-6 bg-slate-900/50 rounded-2xl border border-slate-700 text-center">
                   <h3 className="text-lg font-bold text-cyan-300 mb-2">{who.title}</h3>
                   <p className="text-gray-400 text-sm">{who.subtitle}</p>
                 </div>
@@ -193,8 +192,8 @@ export default function TemplateDetails() {
           <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
             <h2 className="text-3xl font-bold mb-8 text-cyan-400 text-center">🛡️ What You Get</h2>
             <ul className="space-y-4 text-gray-300 text-lg">
-              {product.deliverables?.map((item, i) => (
-                <li key={i} className="flex items-start gap-4">
+              {product.deliverables?.map((item) => (
+                <li key={item} className="flex items-start gap-4">
                   <span className="text-gold font-bold">✓</span>
                   <span>{item}</span>
                 </li>
@@ -260,27 +259,21 @@ export default function TemplateDetails() {
                         });
                       }}
                       onApprove={async (data, actions) => {
-                        const details = await actions.order.capture();
-                        
-                        const { data: purchaseData, error } = await supabase.from('purchases').insert([
-                          {
-                            user_id: user.id,
-                            user_email: user.email,
-                            product_id: id 
-                          }
-                        ]).select('id').single();
-
-                        if (error) {
-                          alert("Payment succeeded, but there was an error generating your link. Please contact support.");
-                          console.error(error);
-                        } else {
-                          await sendPurchaseEmail({
-                            purchase: purchaseData,
-                            userEmail: user.email,
-                            productTitle: product.title
+                        try {
+                          const { error } = await supabase.functions.invoke('process-order', {
+                            body: { orderId: data.orderID, productId: id },
                           });
-                          alert(`Success! Thank you, ${details.payer.name.given_name}. Your download link is on the way and your asset is ready in the portal.`);
+
+                          if (error) {
+                            throw new Error(`Payment processing failed: ${error.message}`);
+                          }
+                          
+                          alert(`Success! Thank you for your purchase. Your download link is on the way and your asset is ready in the portal.`);
                           navigate('/portal');
+
+                        } catch (error) {
+                          alert(`An error occurred: ${error.message}. Please contact support if you were charged.`);
+                          console.error(error);
                         }
                       }}
                     />
