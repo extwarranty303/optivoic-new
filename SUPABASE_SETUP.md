@@ -87,13 +87,14 @@ Set these in Vercel or your local environment:
 - `created_at` timestamptz default `now()`
 
 #### `contact_submissions` (New, based on `OptiVoicLanding.jsx`)
-- `id` uuid primary key default `gen_random_uuid()`
-- `name` text
-- `email` text
+- `id` integer primary key (auto-incrementing)
+- `name` text not null
+- `email` text not null
 - `phone` text
-- `help_request` text
-- `source` text
-- `created_at` timestamptz default `now()`
+- `help_request` text not null
+- `submitted_at` timestamptz default `now()`
+- `source` text default 'optivoic_landing_page'
+- `status` text default 'new'
 
 #### `projects`
 - `id` uuid primary key default `gen_random_uuid()`

@@ -2,7 +2,7 @@ create or replace function get_user_purchases_with_products(p_user_id uuid)
 returns table (
   id uuid,
   created_at timestamptz,
-  product_id uuid,
+  product_id text,
   product_title text,
   product_category text
 ) as $$
