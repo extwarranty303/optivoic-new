@@ -163,7 +163,7 @@ const BentoServices = () => (
         </div>
       </div>
     </div>
-  </section>
+  </div>
 );
 
 const SEOCopySection = () => (
