@@ -1,22 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageMeta } from '../utils/usePageMeta';
-
-const NoiseOverlay = () => (
-  <div
-    className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0"
-    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
-  ></div>
-);
+import { supabase } from '../supabaseClient';
+import CheckoutModal from './CheckoutModal';
 
 export default function ResellerCommandCenter() {
+  // --- State for purchase flow ---
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [template, setTemplate] = useState(null);
+
+  // --- IMPORTANT: This ID must match the one in your database and TemplateCard.jsx ---
+  const RESELLER_COMMAND_CENTER_ID = 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6'; // Placeholder UUID
+
+  useEffect(() => {
+    // Fetch the template data and user session when the component mounts
+    const fetchData = async () => {
+      // Fetch the template details
+      const { data: templateData, error: templateError } = await supabase
+        .from('templates')
+        .select('*')
+        .eq('id', RESELLER_COMMAND_CENTER_ID)
+        .single();
+
+      if (templateData) {
+        setTemplate(templateData);
+      } else {
+        console.error("Could not fetch Reseller Command Center template data:", templateError);
+      }
+
+      // Fetch the current user
+      const { data: { user: userData } } = await supabase.auth.getUser();
+      setUser(userData);
+    };
+
+    fetchData();
+  }, []);
+
   usePageMeta({
     title: 'Reseller Command Center | OptiVoic Marketplace',
     description: 'A daily workflow system that helps resellers move from auction sourcing to resale with clarity, speed, and stronger profits.',
     ogType: 'product',
-    priceAmount: '49.99',
+    priceAmount: '39.99', // Corrected price
     priceCurrency: 'USD'
   });
+
+  const handlePurchaseSuccess = () => {
+    console.log("Purchase successful!");
+    setIsCheckoutOpen(false);
+    // Optionally, redirect to a thank you page or dashboard
+  };
 
   const workflows = [
     'Track every auction win, listing, and sale in one place.',
@@ -33,20 +66,8 @@ export default function ResellerCommandCenter() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative flex flex-col">
-      <NoiseOverlay />
-
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-600/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-violet-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
-
-      <nav className="relative z-50 border-b border-white/10 py-6 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl">
-        <Link to="/marketplace" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
-          <span>←</span> Back to Marketplace
-        </Link>
-        <span className="text-xs uppercase tracking-[0.3em] text-gray-400">Template Package</span>
-      </nav>
-
-      <main className="relative z-10 max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 flex-grow">
+    <>
+      <main className="max-w-7xl mx-auto px-8 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 pt-0">
         <div className="lg:col-span-7">
           <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 backdrop-blur-sm">
             <span className="text-xs font-bold uppercase tracking-widest text-cyan-400">
@@ -112,27 +133,38 @@ export default function ResellerCommandCenter() {
                 <p className="text-white font-semibold">Excel & Google Sheets</p>
                 <p className="text-gray-400">Clean layouts, smart categories, and clear daily steps</p>
               </div>
-              <div className="text-4xl font-black text-cyan-400">$39.99</div>
+              <div className="text-4xl font-black text-cyan-400">${template ? (template.price_cents / 100).toFixed(2) : '39.99'}</div>
             </div>
 
             <ul className="space-y-3 text-gray-300 mb-8">
               <li className="flex items-start gap-3"><span className="text-cyan-400">•</span><span>From auction sourcing to resale execution in one place</span></li>
               <li className="flex items-start gap-3"><span className="text-cyan-400">•</span><span>Simple structure for daily workflows and follow-up tasks</span></li>
               <li className="flex items-start gap-3"><span className="text-cyan-400">•</span><span>Built to help you grow revenue while protecting margins</span></li>
-              <li className="flex items-start gap-3"><span className="text-cyan-400">•</span><span>Includes the full template, PDF user guide + FAQ, slide presentation, and ongoing support</span></li>
+              <li className="flex items-start gap-3"><span className="text-cyan-400">•</span><span>Includes the full template, PDF user guide, and ongoing support</span></li>
             </ul>
 
             <div className="flex flex-col gap-3">
-              <Link to="/marketplace" className="text-center rounded-full bg-cyan-500 px-5 py-3 font-semibold text-black transition hover:bg-cyan-400">
-                Explore Marketplace
-              </Link>
-              <Link to="/" className="text-center rounded-full border border-white/20 px-5 py-3 font-semibold text-white transition hover:border-cyan-400/40 hover:text-cyan-300">
-                Back to Storefront
-              </Link>
+              <button 
+                onClick={() => setIsCheckoutOpen(true)} 
+                disabled={!template}
+                className="text-center rounded-full bg-cyan-500 px-5 py-4 font-semibold text-black transition hover:bg-cyan-400 disabled:bg-gray-600 disabled:cursor-not-allowed"
+              >
+                Purchase Now
+              </button>
             </div>
           </div>
         </div>
       </main>
-    </div>
+
+      {template && (
+        <CheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          template={template}
+          user={user}
+          onSuccess={handlePurchaseSuccess}
+        />
+      )}
+    </>
   );
 }

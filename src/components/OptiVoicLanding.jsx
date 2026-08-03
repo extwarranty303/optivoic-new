@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Footer from './Footer';
 import { supabase } from '../supabaseClient';
 import emailjs from '@emailjs/browser';
 import ChatDemo from './ChatDemo';
@@ -130,17 +129,6 @@ const OptiVoicLanding = () => {
       {/* Ambient Background Orbs */}
       <div className="fixed top-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-blue-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
-
-      {/* Navbar */}
-      <nav className="relative z-50 border-b border-white/10 py-6 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl shadow-lg">
-        <Link to="/aiservice" className="text-gray-400 hover:text-cyan-400 font-semibold flex items-center gap-2 transition-colors">
-          <span>←</span> Back to Storefront
-        </Link>
-        <div className="text-xl font-black text-white tracking-tighter drop-shadow-lg">
-          OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
-        </div>
-        <div className="text-sm text-gray-400">AI Website Solutions</div>
-      </nav>
 
       <main className="relative z-10">
 
@@ -673,9 +661,6 @@ const OptiVoicLanding = () => {
             </div>
           </div>
         </section>
-
-        {/* Footer */}
-        <Footer />
       </main>
     </div>
   );

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SpaceBackground from './SpaceBackground';
 import Footer from './Footer';
+import AuthModal from './AuthModal';
 
 const AmbientBackground = () => (
   <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-[#020202]">
@@ -12,7 +13,7 @@ const AmbientBackground = () => (
   </div>
 );
 
-const Navbar = ({ navAction }) => {
+const Navbar = ({ onLoginClick }) => {
   const location = useLocation();
   const navLinks = [
     { path: "/marketplace", label: "Marketplace" },
@@ -38,17 +39,29 @@ const Navbar = ({ navAction }) => {
           </Link>
         ))}
       </div>
-      {navAction}
+      <button 
+        onClick={onLoginClick} 
+        className="bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-semibold px-6 py-2 rounded-full transition-all duration-300 backdrop-blur-md"
+      >
+        Client Login
+      </button>
     </nav>
   );
 };
 
-const Layout = ({ children, navAction }) => {
+const Layout = ({ children }) => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
       <AmbientBackground />
-      <Navbar navAction={navAction} />
-      <main>{children}</main>
+      <Navbar onLoginClick={() => setIsAuthOpen(true)} />
+      {/* Add padding-top to account for the fixed navbar height */}
+      <main className="relative z-10 pt-20">
+        {children}
+      </main>
+      {/* The AuthModal is now managed by the global Layout */}
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       <Footer />
     </div>
   );

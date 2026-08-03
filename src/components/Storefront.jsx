@@ -4,7 +4,6 @@ import AuthModal from './AuthModal';
 import { motion } from 'framer-motion';
 import SpaceBackground from './SpaceBackground';
 import { usePageMeta } from '../utils/usePageMeta';
-import Layout from './Layout';
 
 const Hero = () => (
   <section className="relative pt-48 pb-32 px-8 flex flex-col items-center text-center z-10 border-b border-white/5">
@@ -226,7 +225,6 @@ const SEOClosingSection = () => (
 // 3. MAIN EXPORT
 // ==========================================
 export default function Storefront() {
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   // Fallback to inject Tailwind specifically for the Canvas environment preview
   // This ensures CSS works here, but won't break your local Vite config
@@ -252,20 +250,11 @@ export default function Storefront() {
   });
 
   return (
-    <Layout navAction={
-      <button 
-        onClick={() => setIsAuthOpen(true)} 
-        className="bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-semibold px-6 py-2 rounded-full transition-all duration-300 backdrop-blur-md"
-      >
-        Client Login
-      </button>
-    }>
+    <>
         <Hero />
         <ValuePropsSection />
         <MarketplaceOverviewSection />
         <SEOClosingSection />
-        
-        <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
-    </Layout>
+    </>
   );
 }
