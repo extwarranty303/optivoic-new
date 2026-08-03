@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import conversations from '../data/chat-flow.json'; // No longer needed for AI API
 
+import { supabase } from '../supabaseClient'; // Import the Supabase client
 // These suggestions will now be sent as user input to the AI
 const suggestions = [
   { label: 'Leaky Faucet', message: 'I have a leaky faucet' },
@@ -30,14 +31,7 @@ const ChatDemo = () => {
 
   // Function to call the OpenAI API
   const callOpenAIChatAPI = async (userMessage, currentChatHistory) => {
-    // IMPORTANT: In a production app, you should proxy this API call through your own backend server
-    // to protect your API key. Exposing API keys in frontend code is a security risk.
-    const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-    if (!OPENAI_API_KEY) {
-      console.error("VITE_OPENAI_API_KEY is not set. Please add it to your .env file.");
-      return "I'm sorry, my AI is not configured. Please contact support.";
-    }
-
+    // Construct the payload for the AI, including a system prompt and the chat history
     const messagesForAPI = [
       { "role": "system", "content": "You are a helpful assistant for Thompson Plumbing. Your goal is to schedule appointments or answer questions about plumbing services. Be concise, professional, and always try to guide the user towards booking a service. If you need more information, ask for it. Do not make up contact details or prices." },
       ...currentChatHistory.map(msg => ({
@@ -46,31 +40,24 @@ const ChatDemo = () => {
       })),
       { "role": "user", "content": userMessage }
     ];
-
+    
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: messagesForAPI,
-          temperature: 0.7,
-          max_tokens: 150,
-        })
+      // Invoke the Supabase Edge Function instead of calling OpenAI directly
+      const { data, error } = await supabase.functions.invoke('chat-proxy', {
+        body: { messages: messagesForAPI },
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error.message || `API error: ${response.status}`);
+      
+      if (error) {
+        throw error;
       }
-
-      const data = await response.json();
-      return data.choices[0].message.content;
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      return data.reply;
     } catch (error) {
-      console.error("Error calling OpenAI API:", error);
+      console.error("Error calling Supabase Function:", error);
       return "I'm sorry, I'm having trouble connecting to my AI right now. Please try again later or call us directly.";
     }
   };

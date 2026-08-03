@@ -13,50 +13,26 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
   const priceInDollars = (template.price_cents / 100).toFixed(2);
 
   const handleApprove = async (data, actions) => {
+    setIsProcessing(true);
+    setError(null);
+
     try {
-      setIsProcessing(true);
-      
-      // 1. Capture the funds via PayPal
-      const details = await actions.order.capture();
-      const transactionId = details.purchase_units[0].payments.captures[0].id;
+      // The client's only job is to get the approved PayPal Order ID.
+      // All verification and database operations will happen securely on the backend.
+      const paypalOrderId = data.orderID;
 
-      // 2. Create the Order in Supabase
-      const { data: orderData, error: orderError } = await supabase
-        .from('orders')
-        .insert([{
-          user_id: user.id,
-          paypal_transaction_id: transactionId,
-          total_amount_cents: template.price_cents,
-          status: 'completed'
-        }])
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // 3. Create the Purchase access record in Supabase
-      const { data: purchaseData, error: purchaseError } = await supabase
-        .from('purchases')
-        .insert([{
-          order_id: orderData.id,
-          product_id: template.id,
-          user_id: user.id,
-          user_email: user.email
-        }])
-        .select('id')
-        .single();
-
-      if (purchaseError) {
-        // Note: If this fails but the order succeeded, you'd handle it via admin review
-        console.error(`Critical: Purchase record failed for order_id: ${orderData.id}. User has paid but does not have access.`, purchaseError);
-        throw new Error("Payment succeeded, but we couldn't unlock the template. Please contact support.");
-      }
-
-      await sendPurchaseEmail({
-        purchase: purchaseData,
-        userEmail: user.email,
-        productTitle: template.title,
+      // Invoke the 'process-order' Supabase Edge Function
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('process-order', {
+        body: { 
+          orderId: paypalOrderId,
+          productId: template.id 
+        },
       });
+
+      if (functionError) {
+        // This error could be from network issues or a problem within the function itself.
+        throw new Error(functionData?.error || functionError.message);
+      }
 
       // 4. Success! Close modal and notify parent
       onSuccess();
