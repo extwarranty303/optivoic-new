@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { isAuthorizedAdmin } from '../utils/adminAccess';
+import { notifyIndexNow } from '../utils/indexNow';
 
 export const BLOG_CATEGORIES = [
   'Business Templates',
@@ -243,6 +244,12 @@ export default function BlogAdmin() {
       return;
     }
 
+    // Instantly notify Bing & IndexNow search engines when a post is published
+    if (finalStatus === 'published') {
+      const articleUrl = `/blog/${payload.slug}`;
+      notifyIndexNow([articleUrl, '/blog', '/sitemap.xml']);
+    }
+
     setForm(emptyForm);
     setEditingId(null);
     setLastAutosavedAt(null);
@@ -252,11 +259,18 @@ export default function BlogAdmin() {
       text: finalStatus === 'draft' 
         ? 'Article saved as draft.' 
         : editingId 
-        ? 'Article updated & published.' 
-        : 'Article published successfully.'
+        ? 'Article updated, published & submitted to Bing IndexNow.' 
+        : 'Article published & submitted to Bing IndexNow for instant indexing!'
     });
     await fetchPosts();
     setSaving(false);
+  };
+
+  const handleManualIndexNow = async () => {
+    setMessage({ type: 'info', text: 'Pinging IndexNow API (Bing, Yandex, Seznam)...' });
+    const publishedUrls = publishedPosts.map(p => `/blog/${p.slug}`);
+    const res = await notifyIndexNow([...publishedUrls, '/blog', '/marketplace', '/sitemap.xml']);
+    setMessage({ type: res.success ? 'success' : 'error', text: res.message });
   };
 
   const handleEdit = (post) => {
@@ -319,7 +333,14 @@ export default function BlogAdmin() {
             <h1 className="text-3xl md:text-5xl font-black tracking-tight">Manage Blog Articles</h1>
             <p className="text-gray-400 mt-2 max-w-2xl">Publish articles, assign categories & tags, upload HTML blog files, save drafts, and manage your SEO publication pipeline.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button 
+              onClick={handleManualIndexNow} 
+              className="text-xs font-bold px-4 py-2 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20 transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+              title="Submit all published URLs directly to Bing & IndexNow for instant search indexing"
+            >
+              <span>⚡</span> Ping IndexNow to Bing
+            </button>
             <Link to="/blog" target="_blank" className="text-xs font-semibold px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-all">
               View Public Blog ↗
             </Link>
