@@ -232,7 +232,7 @@ export default function BlogPost() {
             <h3 className="text-xl font-bold text-white mb-2">Ready to optimize your operations?</h3>
             <p className="text-sm text-gray-400">Explore production-grade templates and software systems in our digital marketplace.</p>
           </div>
-          <Link to="/marketplace" className="px-6 py-3 rounded-full bg-cyan-400 text-black font-bold hover:bg-cyan-300 transition-all whitespace-nowrap">
+          <Link to="/marketplace#digital-marketplace" className="px-6 py-3 rounded-full bg-cyan-400 text-black font-bold hover:bg-cyan-300 transition-all whitespace-nowrap">
             Browse Marketplace →
           </Link>
         </div>
