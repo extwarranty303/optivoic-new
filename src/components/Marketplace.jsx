@@ -80,7 +80,10 @@ export default function Marketplace() {
   return (
     <>
       <MarketplaceHero />
-      <div className="py-12">
+      <div id="digital-marketplace" className="py-12 scroll-mt-24 relative">
+        <div id="marketplace" className="absolute -top-24"></div>
+        <div id="catalog" className="absolute -top-24"></div>
+        <div id="templates" className="absolute -top-24"></div>
         <ServiceGrid />
       </div>
     </>
