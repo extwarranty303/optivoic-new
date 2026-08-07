@@ -3,12 +3,22 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { isAuthorizedAdmin } from '../utils/adminAccess';
 
+export const BLOG_CATEGORIES = [
+  'Business Templates',
+  'Template Buying Guides',
+  'Business Systems & Productivity',
+  'General Business',
+  'AI Websites',
+  'Consulting'
+];
+
 const emptyForm = {
   title: '',
   slug: '',
   excerpt: '',
   content: '',
-  category: 'Insights',
+  category: 'Business Templates',
+  tags: '',
   status: 'published',
   keywords: '',
   meta_description: '',
@@ -85,9 +95,10 @@ export default function BlogAdmin() {
       const h1Tag = doc.querySelector('h1')?.innerText;
       const extractedTitle = titleTag || h1Tag || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
 
-      // Extract Meta Description & Keywords
+      // Extract Meta Description & Keywords/Tags
       const metaDesc = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
       const metaKeys = doc.querySelector('meta[name="keywords"]')?.getAttribute('content') || '';
+      const metaTags = doc.querySelector('meta[name="tags"]')?.getAttribute('content') || metaKeys;
       
       // Extract Body Content (or whole file if no body tag)
       const bodyContent = doc.body && doc.body.innerHTML.trim() ? doc.body.innerHTML : htmlText;
@@ -112,6 +123,7 @@ export default function BlogAdmin() {
         content: bodyContent,
         meta_description: prev.meta_description || metaDesc,
         keywords: prev.keywords || metaKeys,
+        tags: prev.tags || metaTags,
         image_alt: prev.image_alt || imgAlt
       }));
 
@@ -133,9 +145,10 @@ export default function BlogAdmin() {
       slug: form.slug || form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
       excerpt: form.excerpt,
       content: form.content,
-      category: form.category,
+      category: form.category || 'Business Templates',
+      tags: form.tags,
       status: finalStatus,
-      keywords: form.keywords,
+      keywords: form.keywords || form.tags,
       meta_description: form.meta_description,
       featured_image: form.featured_image,
       image_alt: form.image_alt || form.title,
@@ -147,9 +160,10 @@ export default function BlogAdmin() {
       ? await supabase.from('blog_posts').update(payload).eq('id', editingId)
       : await supabase.from('blog_posts').insert([{ ...payload, created_at: new Date().toISOString() }]);
 
-    // Fallback if image_alt column has not been added to Supabase blog_posts table yet
-    if (error && error.message && error.message.includes('image_alt')) {
+    // Fallback if tags or image_alt columns have not been added to Supabase blog_posts table yet
+    if (error && error.message && (error.message.includes('tags') || error.message.includes('image_alt'))) {
       const fallbackPayload = { ...payload };
+      delete fallbackPayload.tags;
       delete fallbackPayload.image_alt;
       const fallbackRes = editingId
         ? await supabase.from('blog_posts').update(fallbackPayload).eq('id', editingId)
@@ -184,7 +198,8 @@ export default function BlogAdmin() {
       slug: post.slug || '',
       excerpt: post.excerpt || '',
       content: post.content || '',
-      category: post.category || 'Insights',
+      category: post.category || 'Business Templates',
+      tags: post.tags || '',
       status: post.status || 'published',
       keywords: post.keywords || '',
       meta_description: post.meta_description || '',
@@ -234,7 +249,7 @@ export default function BlogAdmin() {
               Editorial Suite
             </div>
             <h1 className="text-3xl md:text-5xl font-black tracking-tight">Manage Blog Articles</h1>
-            <p className="text-gray-400 mt-2 max-w-2xl">Publish articles, upload HTML blog files, save drafts, and manage your SEO publication pipeline.</p>
+            <p className="text-gray-400 mt-2 max-w-2xl">Publish articles, assign categories & tags, upload HTML blog files, save drafts, and manage your SEO publication pipeline.</p>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/blog" target="_blank" className="text-xs font-semibold px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-all">
@@ -265,7 +280,7 @@ export default function BlogAdmin() {
                   <h3 className="font-bold text-white text-base flex items-center gap-2">
                     <span>📄</span> Import HTML Blog File
                   </h3>
-                  <p className="text-xs text-gray-300 mt-1">Upload any HTML document. Title, meta description, image alt text, and article content will be auto-extracted.</p>
+                  <p className="text-xs text-gray-300 mt-1">Upload any HTML document. Title, meta description, image alt text, tags, and article content will be auto-extracted.</p>
                 </div>
                 <label className="cursor-pointer inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-cyan-500 text-black text-xs font-bold hover:bg-cyan-400 transition-all whitespace-nowrap">
                   <span>Upload .HTML File</span>
@@ -323,8 +338,17 @@ export default function BlogAdmin() {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="category" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">Category</label>
-                      <input id="category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. AI Automation, Insights, Reseller" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                      <label htmlFor="category" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">Category *</label>
+                      <select 
+                        id="category" 
+                        value={form.category} 
+                        onChange={(e) => setForm({ ...form, category: e.target.value })} 
+                        className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none"
+                      >
+                        {BLOG_CATEGORIES.map((cat) => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label htmlFor="status" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">Publication Status</label>
@@ -335,11 +359,18 @@ export default function BlogAdmin() {
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="tags" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">Blog Post Tags (comma-separated)</label>
+                      <input id="tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="reseller, templates, tax, automation" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                    </div>
                     <div>
                       <label htmlFor="keywords" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">SEO Keywords</label>
                       <input id="keywords" value={form.keywords} onChange={(e) => setForm({ ...form, keywords: e.target.value })} placeholder="ai automation, business systems" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none" />
                     </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="featured_image" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">Featured Image URL</label>
                       <input id="featured_image" value={form.featured_image} onChange={(e) => setForm({ ...form, featured_image: e.target.value })} placeholder="https://example.com/banner.jpg" className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none" />
@@ -359,7 +390,12 @@ export default function BlogAdmin() {
                 /* Live Preview Mode */
                 <div className="space-y-6 bg-black/40 border border-white/10 rounded-2xl p-6">
                   <div className="border-b border-white/10 pb-4">
-                    <span className="text-xs text-cyan-300 uppercase tracking-[0.25em] font-semibold">{form.category || 'Article'}</span>
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <span className="text-xs text-cyan-300 uppercase tracking-[0.25em] font-semibold">{form.category || 'Business Templates'}</span>
+                      {form.tags && form.tags.split(',').map(tag => tag.trim()).filter(Boolean).map(t => (
+                        <span key={t} className="text-[10px] px-2 py-0.5 rounded-md bg-white/10 text-gray-300">#{t}</span>
+                      ))}
+                    </div>
                     <h2 className="text-3xl font-bold mt-2 text-white">{form.title || 'Untitled Article'}</h2>
                     {form.excerpt && <p className="text-gray-400 text-sm mt-2 italic">{form.excerpt}</p>}
                   </div>
@@ -459,7 +495,14 @@ export default function BlogAdmin() {
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="font-semibold text-white text-sm line-clamp-1">{post.title}</p>
-                          <p className="text-xs text-gray-400 mt-1">{post.category || 'Article'} • {new Date(post.created_at).toLocaleDateString()}</p>
+                          <p className="text-xs text-gray-400 mt-1">{post.category || 'Business Templates'} • {new Date(post.created_at).toLocaleDateString()}</p>
+                          {post.tags && (
+                            <div className="flex flex-wrap gap-1 mt-1.5">
+                              {post.tags.split(',').map(t => t.trim()).filter(Boolean).slice(0, 3).map(tag => (
+                                <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-gray-400">#{tag}</span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <button
                           type="button"

@@ -197,6 +197,18 @@ export default function BlogPost() {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
+        {/* Article Tags */}
+        {post.tags && (
+          <div className="mt-12 flex flex-wrap items-center gap-2 pt-6 border-t border-white/10">
+            <span className="text-xs text-gray-400 font-semibold mr-2 uppercase tracking-wider">Article Tags:</span>
+            {post.tags.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+              <span key={tag} className="text-xs font-semibold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-cyan-300">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Article Footer & Call to Action */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 bg-white/[0.02] p-8 rounded-3xl border border-white/5">
           <div>

@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageMeta } from '../utils/usePageMeta';
 import { supabase } from '../supabaseClient';
+import { BLOG_CATEGORIES } from './BlogAdmin';
 
 const SEED_POSTS = [
   {
     id: 'seed-1',
     slug: 'scaling-reseller-operations-with-automated-frameworks',
     title: 'Scaling Reseller Operations with Turnkey Automated Frameworks',
-    category: 'Reseller Systems',
+    category: 'Business Templates',
+    tags: 'reseller, templates, inventory, profit-tracking',
     excerpt: 'Discover how top-performing reselling enterprises track inventory, calculate profit margins automatically, and streamline multi-channel fulfillment.',
     content: '<h2>The Reseller Profit Trap</h2><p>Managing inventory across multiple marketplaces can quickly become overwhelming without structured systems. Modern reselling requires automated profit tracking, live inventory updates, and clear cash flow visibility.</p><h2>Building an Operational Command Center</h2><p>With structured spreadsheet frameworks and automated data calculation, reseller business owners save 10+ hours per week while eliminating manual entry errors.</p>',
     created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
@@ -20,7 +22,8 @@ const SEED_POSTS = [
     id: 'seed-2',
     slug: '1099-executive-tax-estimation-strategies',
     title: '1099 Executive Tax Allocation: Quarter-by-Quarter Blueprint',
-    category: 'Tax Systems',
+    category: 'Business Systems & Productivity',
+    tags: '1099-tax, contractor, spreadsheet, finance',
     excerpt: 'A practical framework for freelancers, contractors, and agency founders to estimate quarterly taxes, track deductions, and preserve liquidity.',
     content: '<h2>Why Quarterly Tax Estimation Matters</h2><p>Contractors often face end-of-year tax shock. By automating tax allocations into dedicated buckets upon every invoice payment, business owners remain 100% tax compliant without cash flow surprises.</p>',
     created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
@@ -31,7 +34,8 @@ const SEED_POSTS = [
     id: 'seed-3',
     slug: 'ai-automation-for-modern-consulting-agencies',
     title: 'How AI Automation Elevates Client Delivery & Agency Operations',
-    category: 'AI Automation',
+    category: 'Consulting',
+    tags: 'AI, consulting, automation, workflows',
     excerpt: 'Learn how technology consulting agencies integrate AI workflows to automate reporting, audit software vendors, and accelerate project delivery.',
     content: '<h2>The Shift to AI-Powered Agency Workflows</h2><p>Artificial Intelligence is no longer optional for high-growth agencies. By codifying recurring workflows into smart templates and automated scripts, teams deliver higher ROI for clients in half the time.</p>',
     created_at: new Date(Date.now() - 86400000 * 9).toISOString(),
@@ -49,7 +53,7 @@ export default function BlogPage() {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('blog_posts')
           .select('*')
           .eq('status', 'published')
@@ -86,12 +90,13 @@ export default function BlogPage() {
     }
   });
 
-  const categories = ['All', ...Array.from(new Set(posts.map(p => p.category).filter(Boolean)))];
+  const categories = ['All', ...BLOG_CATEGORIES];
 
   const filteredPosts = posts.filter(post => {
     const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
     const matchesSearch = (post.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (post.excerpt || '').toLowerCase().includes(searchQuery.toLowerCase());
+                          (post.excerpt || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (post.tags || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -117,27 +122,29 @@ export default function BlogPage() {
         </p>
 
         {/* Search & Category Filter Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-4">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${activeCategory === cat ? 'bg-cyan-400 text-black shadow-[0_0_15px_rgba(56,182,255,0.4)]' : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-col gap-6 pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${activeCategory === cat ? 'bg-cyan-400 text-black shadow-[0_0_15px_rgba(56,182,255,0.4)]' : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'}`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
 
-          <div className="relative w-full md:w-72">
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none placeholder-gray-500"
-            />
+            <div className="relative w-full md:w-72">
+              <input
+                type="text"
+                placeholder="Search by keyword, tag, or title..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none placeholder-gray-500"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -172,7 +179,7 @@ export default function BlogPage() {
 
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-cyan-300">
-                      {post.category || 'Article'}
+                      {post.category || 'Business Templates'}
                     </span>
                     <span className="text-xs text-gray-500">
                       {new Date(post.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -185,9 +192,20 @@ export default function BlogPage() {
                     </Link>
                   </h2>
 
-                  <p className="text-gray-400 text-sm mb-6 leading-relaxed line-clamp-3">
+                  <p className="text-gray-400 text-sm mb-4 leading-relaxed line-clamp-3">
                     {post.excerpt}
                   </p>
+
+                  {/* Render Tag Pills */}
+                  {post.tags && (
+                    <div className="flex flex-wrap gap-1.5 mb-6">
+                      {post.tags.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+                        <span key={tag} className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-gray-400">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between mt-auto">
