@@ -65,9 +65,7 @@ export default function BlogPost() {
       <div className="max-w-4xl mx-auto px-8 py-24">
         <Link to="/blog" className="text-cyan-400 hover:underline mb-8 inline-block">← Back to blog</Link>
         <h1 className="text-4xl md:text-5xl font-black mb-6">{post.title}</h1>
-        <p className="text-lg text-gray-400 leading-relaxed whitespace-pre-line">{post.content || post.excerpt}</p>
       </div>
-      <Footer />
     </div>
   );
 }

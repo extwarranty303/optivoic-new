@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { usePageMeta } from '../utils/usePageMeta';
 import { supabase } from '../supabaseClient';
 import CheckoutModal from './CheckoutModal';
+import AuthModal from './AuthModal';
 
 export default function ResellerCommandCenter() {
   // --- State for purchase flow ---
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [template, setTemplate] = useState(null);
 
@@ -149,21 +151,30 @@ export default function ResellerCommandCenter() {
             </ul>
 
             <div className="flex flex-col items-center justify-center pt-2 w-full">
-              <a 
-                href="https://www.paypal.com/ncp/payment/MZ9PL72C48KFE"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button 
+                onClick={() => {
+                  if (!user) {
+                    setIsAuthOpen(true);
+                  } else {
+                    window.open("https://www.paypal.com/ncp/payment/MZ9PL72C48KFE", "_blank");
+                  }
+                }}
                 className="w-full text-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 hover:shadow-[0_0_30px_rgba(56,182,255,0.4)] text-white font-bold text-lg py-4 px-8 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg cursor-pointer"
               >
                 <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
                   <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.762.762 0 0 1 .752-.64h6.586c2.47 0 4.384.54 5.378 1.637.91 1.004 1.134 2.457.666 4.316-.763 3.033-2.91 4.707-6.05 4.707H9.72a.762.762 0 0 0-.752.64l-.892 6.957zm14.15-13.626c-.347.165-.733.313-1.157.442-.87.265-1.93.398-3.155.398H12.92a.641.641 0 0 0-.633.541l-.974 7.606h3.42c2.613 0 4.417-1.396 5.06-4.148.375-1.605.153-2.973-.621-3.839z"/>
                 </svg>
                 Buy Now ($99)
-              </a>
+              </button>
             </div>
           </div>
         </div>
       </main>
+
+      <AuthModal 
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+      />
 
       {template && (
         <CheckoutModal

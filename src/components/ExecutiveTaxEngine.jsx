@@ -317,10 +317,6 @@ export default function ExecutiveTaxEngine() {
         </div>
       </main>
       
-      {/* FIX 1: Fixed the broken comment syntax below so React parses it correctly */}
-      {/* Footer */}
-      <Footer />        
-      
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo="/tax-engine" />    
     </div>
   );

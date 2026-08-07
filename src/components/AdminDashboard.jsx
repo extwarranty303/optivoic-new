@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import Footer from './Footer';
 import { isAuthorizedAdmin } from '../utils/adminAccess';
 
 const NoiseOverlay = () => (
@@ -386,8 +385,6 @@ export default function AdminDashboard() {
         </div>
 
       </main>
-      {/* Footer */}
-      <Footer />  
     </div>
   );
 }

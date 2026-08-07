@@ -295,11 +295,7 @@ export default function TemplateDetails() {
             </div>
 
           </div>
-        </div>
       </main>
-
-      {/* BUG FIX 3: Moved Footer OUTSIDE of the `<main>` block and grid system so it spans full width */}
-      <Footer />
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo={`/template/${id}`} />
       

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import './ServiceGrid.css';
 
@@ -12,7 +12,8 @@ const DEFAULT_TEMPLATES = [
     categoryName: 'Professional Hubs',
     price: '99.00',
     status: 'READY',
-    route: '/reseller-command-center'
+    route: '/reseller-command-center',
+    image_url: 'https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/general/gemini-reseller-collage.png'
   },
   {
     id: 'executive-tax-engine',
@@ -37,11 +38,30 @@ const DEFAULT_TEMPLATES = [
 ];
 
 const ServiceGrid = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchParams] = useSearchParams();
+  const initialParam = searchParams.get('category');
+
+  const getInitialCategory = () => {
+    if (!initialParam) return "All";
+    const lower = initialParam.toLowerCase();
+    if (lower === 'personal' || lower === 'essential trackers') return "Essential Trackers";
+    if (lower === 'business' || lower === 'professional hubs') return "Professional Hubs";
+    if (lower === 'enterprise' || lower === 'enterprise b2b') return "Enterprise B2B";
+    return "All";
+  };
+
+  const [activeCategory, setActiveCategory] = useState(getInitialCategory);
   const [templates, setTemplates] = useState(DEFAULT_TEMPLATES);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const categories = ["All", "Essential Trackers", "Professional Hubs", "Enterprise B2B"];
+
+  useEffect(() => {
+    const categoryFromUrl = getInitialCategory();
+    if (categoryFromUrl !== "All") {
+      setActiveCategory(categoryFromUrl);
+    }
+  }, [initialParam]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,17 +77,29 @@ const ServiceGrid = () => {
 
       if (data && data.length > 0) {
         // Map DB fields to component fields
-        const formattedTemplates = data.map(p => {
-          const isReseller = p.title && p.title.toLowerCase().includes('reseller');
-          return {
-            ...p,
-            desc: p.description || p.desc,
-            categoryName: p.category_name || p.categoryName || 'Professional Hubs',
-            price: isReseller ? '99.00' : ((p.price_cents || 0) / 100).toFixed(2),
-            status: isReseller ? 'READY' : (p.current_file_id ? 'READY' : 'COMING SOON'),
-            route: isReseller ? '/reseller-command-center' : (p.route || `/template/${p.id}`)
-          };
-        });
+        const formattedTemplates = data
+          .filter(p => {
+            const isReseller = p.title && p.title.toLowerCase().includes('reseller');
+            const cat = p.category_name || p.categoryName || '';
+            if (isReseller && cat === 'Essential Trackers') {
+              return false;
+            }
+            return true;
+          })
+          .map(p => {
+            const isReseller = p.title && p.title.toLowerCase().includes('reseller');
+            const img = p.image_url || (isReseller ? 'https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/general/gemini-reseller-collage.png' : null);
+            return {
+              ...p,
+              icon: p.icon || (isReseller ? '📊' : '🚀'),
+              desc: p.description || p.desc,
+              categoryName: isReseller ? 'Professional Hubs' : (p.category_name || p.categoryName || 'Professional Hubs'),
+              price: isReseller ? '99.00' : ((p.price_cents || 0) / 100).toFixed(2),
+              status: isReseller ? 'READY' : (p.current_file_id ? 'READY' : 'COMING SOON'),
+              route: isReseller ? '/reseller-command-center' : (p.route || `/template/${p.id}`),
+              image_url: img
+            };
+          });
         setTemplates(formattedTemplates);
       } else {
         setTemplates(DEFAULT_TEMPLATES);
@@ -77,22 +109,19 @@ const ServiceGrid = () => {
     fetchProducts();
   }, []);
 
-  const filteredTemplates = (activeCategory === "All"
+  const categoryFiltered = activeCategory === "All"
     ? templates
-    : templates.filter(t => t.categoryName === activeCategory))
-    .slice(0, 2)
-    .concat(
-      (activeCategory === "All"
-        ? templates
-        : templates.filter(t => t.categoryName === activeCategory)
-      ).slice(2).filter(item => item.status === 'READY')
-    )
-    .concat(
-      (activeCategory === "All"
-        ? templates
-        : templates.filter(t => t.categoryName === activeCategory)
-      ).slice(2).filter(item => item.status !== 'READY')
-    );
+    : templates.filter(t => t.categoryName === activeCategory);
+
+  const activeTemplates = categoryFiltered
+    .filter(t => t.status === 'READY' || t.status === 'Active' || t.status === 'ACTIVE')
+    .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+
+  const inactiveTemplates = categoryFiltered
+    .filter(t => t.status !== 'READY' && t.status !== 'Active' && t.status !== 'ACTIVE')
+    .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+
+  const filteredTemplates = [...activeTemplates, ...inactiveTemplates];
 
   return (
     <section className="service-grid-section">
@@ -121,7 +150,7 @@ const ServiceGrid = () => {
         {filteredTemplates.map((item, index) => (
           <div
             key={item.id}
-            className={`service-card ${item.status === 'READY' ? 'ready' : 'coming-soon'} cursor-pointer`}
+            className={`service-card group ${item.status === 'READY' ? 'ready' : 'coming-soon'} cursor-pointer`}
             style={{ '--index': index }}
             onClick={() => {
               if (item.status === 'READY') {
@@ -132,11 +161,22 @@ const ServiceGrid = () => {
             <div className="card-background"></div>
             <div className="card-content">
               <div className="card-header">
-                <span className="card-icon">{item.icon}</span>
+                <span className="card-icon">{item.icon || '📊'}</span>
                 <span className={`card-badge ${item.status === 'READY' ? 'badge-ready' : 'badge-soon'}`}>
-                  {item.status === 'READY' ? 'Active' : 'In Dev'}
+                  {item.status === 'READY' ? 'Active' : 'Coming Soon'}
                 </span>
               </div>
+
+              {item.image_url && (
+                <div className="w-full h-44 my-3 rounded-2xl overflow-hidden border border-white/10 relative shadow-lg">
+                  <img 
+                    src={item.image_url} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                </div>
+              )}
 
               <h3 className="card-title">{item.title}</h3>
               <p className="card-desc">{item.desc}</p>

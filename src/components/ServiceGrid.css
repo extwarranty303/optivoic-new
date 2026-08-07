@@ -133,11 +133,17 @@
 }
 
 .service-card.coming-soon {
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(10, 10, 12, 0.8);
+  border: 1.5px solid rgba(168, 85, 247, 0.25);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
   backdrop-filter: blur(20px);
-  opacity: 0.6;
-  filter: grayscale(0.5);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card.coming-soon:hover {
+  border-color: rgba(192, 132, 252, 0.6);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(168, 85, 247, 0.3);
 }
 
 /* Card Background Effect */
@@ -204,15 +210,29 @@
 }
 
 .badge-ready {
-  background: rgba(6, 182, 212, 0.2);
-  color: #06b6d4;
-  border: 1px solid rgba(6, 182, 212, 0.4);
+  background: rgba(6, 182, 212, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
 }
 
 .badge-soon {
-  background: rgba(100, 116, 139, 0.2);
-  color: #94a3b8;
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(192, 132, 252, 0.5);
+  box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+  text-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(192, 132, 252, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(192, 132, 252, 0.6);
+  }
 }
 
 /* Card Title */

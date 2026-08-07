@@ -254,38 +254,50 @@ const OptiVoicLanding = () => {
               <p className="text-xl text-gray-400">Choose the option that's right for you.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
               {/* Personal Templates */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl text-center">
-                <h3 className="text-2xl font-bold mb-4">Personal Templates</h3>
-                <p className="text-gray-400 mb-6">For individual projects, budgeting, and personal sites.</p>
-                <div className="text-4xl font-black mb-6 text-cyan-400">from $19</div>
-                <Link to="/marketplace?category=personal" className="bg-white/10 border border-white/20 text-white font-semibold py-3 px-8 rounded-full hover:bg-white/20 transition-all">
-                  Browse Personal
-                </Link>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl text-center flex flex-col justify-between h-full">
+                <div>
+                  <h3 className="text-2xl font-bold mb-4">Personal Templates</h3>
+                  <p className="text-gray-400 mb-6 min-h-[48px]">For individual projects, budgeting, and personal sites.</p>
+                </div>
+                <div>
+                  <div className="text-4xl font-black mb-6 text-cyan-400">from $19</div>
+                  <Link to="/marketplace?category=personal" className="inline-block w-full bg-white/10 border border-white/20 text-white font-semibold py-3 px-8 rounded-full hover:bg-white/20 transition-all">
+                    Browse Personal
+                  </Link>
+                </div>
               </div>
 
               {/* Business Templates */}
-              <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 backdrop-blur-xl relative text-center">
+              <div className="bg-gradient-to-r from-cyan-400/20 to-violet-500/20 border border-cyan-400/30 rounded-2xl p-8 backdrop-blur-xl relative text-center flex flex-col justify-between h-full">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-violet-500 text-black text-xs font-bold px-3 py-1 rounded-full">
                   MOST POPULAR
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Business Templates</h3>
-                <p className="text-gray-400 mb-6">For service businesses, e-commerce, agencies, and startups.</p>
-                <div className="text-4xl font-black mb-6 text-cyan-400">from $99</div>
-                <Link to="/marketplace?category=business" className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold py-3 px-8 rounded-full hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all">
-                  Browse Business
-                </Link>
+                <div>
+                  <h3 className="text-2xl font-bold mb-4">Business Templates</h3>
+                  <p className="text-gray-400 mb-6 min-h-[48px]">For service businesses, e-commerce, agencies, and startups.</p>
+                </div>
+                <div>
+                  <div className="text-4xl font-black mb-6 text-cyan-400">from $99</div>
+                  <Link to="/marketplace?category=business" className="inline-block w-full bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold py-3 px-8 rounded-full hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all">
+                    Browse Business
+                  </Link>
+                </div>
               </div>
 
               {/* Custom Solutions */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl text-center">
-                <h3 className="text-2xl font-bold mb-4">Custom Solutions</h3>
-                <p className="text-gray-400 mb-6">A completely bespoke website or application built by our expert team.</p>
-                <div className="text-4xl font-black mb-6 text-cyan-400">Let's Talk</div>
-                <button onClick={() => scrollToSection('contact')} className="bg-white/10 border border-white/20 text-white font-semibold py-3 px-8 rounded-full hover:bg-white/20 transition-all">
-                  Request a Quote
-                </button>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl text-center flex flex-col justify-between h-full">
+                <div>
+                  <h3 className="text-2xl font-bold mb-4">Custom Solutions</h3>
+                  <p className="text-gray-400 mb-6 min-h-[48px]">A completely bespoke website or application built by our expert team.</p>
+                </div>
+                <div>
+                  <div className="text-4xl font-black mb-6 text-cyan-400">Let's Talk</div>
+                  <button onClick={() => scrollToSection('contact')} className="w-full bg-white/10 border border-white/20 text-white font-semibold py-3 px-8 rounded-full hover:bg-white/20 transition-all cursor-pointer">
+                    Request a Quote
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -299,28 +311,51 @@ const OptiVoicLanding = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
-                <h3 className="text-xl font-bold mb-4">AI-Powered from the Start</h3>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 hover:border-cyan-500/30 transition-all group">
+                <div className="w-14 h-14 mb-6 rounded-2xl border border-cyan-400/30 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(56,182,255,0.25)] group-hover:scale-110 transition-transform">
+                  🤖
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">AI-Powered from the Start</h3>
                 <p className="text-gray-400 leading-relaxed">Our templates come with AI features baked in, from intelligent chatbots to data analysis tools, giving you a competitive edge.</p>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
-                <h3 className="text-xl font-bold mb-4">Quality & Vetted</h3>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 hover:border-emerald-500/30 transition-all group">
+                <div className="w-14 h-14 mb-6 rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(52,211,153,0.25)] group-hover:scale-110 transition-transform">
+                  🛡️
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Quality & Vetted</h3>
                 <p className="text-gray-400 leading-relaxed">Every template is reviewed by our team for code quality, security, and performance, ensuring you start with a solid foundation.</p>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
-                <h3 className="text-xl font-bold mb-4">Easy to Customize</h3>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 hover:border-amber-500/30 transition-all group">
+                <div className="w-14 h-14 mb-6 rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(251,191,36,0.25)] group-hover:scale-110 transition-transform">
+                  ⚡
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Easy to Customize</h3>
                 <p className="text-gray-400 leading-relaxed">Built with modern, developer-friendly technologies like React and Tailwind CSS, making customization straightforward.</p>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
-                <h3 className="text-xl font-bold mb-4">For Every Use Case</h3>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 hover:border-violet-500/30 transition-all group">
+                <div className="w-14 h-14 mb-6 rounded-2xl border border-violet-400/30 bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(167,139,250,0.25)] group-hover:scale-110 transition-transform">
+                  🚀
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">For Every Use Case</h3>
                 <p className="text-gray-400 leading-relaxed">From complex business websites to simple personal tools, find the perfect starting point for any project.</p>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
-                <h3 className="text-xl font-bold mb-4">Expert Support Available</h3>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 hover:border-cyan-500/30 transition-all group">
+                <div className="w-14 h-14 mb-6 rounded-2xl border border-cyan-400/30 bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(56,182,255,0.25)] group-hover:scale-110 transition-transform">
+                  🎧
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Expert Support Available</h3>
                 <p className="text-gray-400 leading-relaxed">Get stuck? Our team of experts is available for custom modifications, feature additions, or full-scale custom builds.</p>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 transition-all">
-                <h3 className="text-xl font-bold mb-4">Growing Library</h3>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl hover:bg-white/10 hover:border-pink-500/30 transition-all group">
+                <div className="w-14 h-14 mb-6 rounded-2xl border border-pink-400/30 bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(244,114,182,0.25)] group-hover:scale-110 transition-transform">
+                  📈
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Growing Library</h3>
                 <p className="text-gray-400 leading-relaxed">We're constantly adding new and innovative templates to the marketplace, so you'll always have fresh options.</p>
               </div>
             </div>
