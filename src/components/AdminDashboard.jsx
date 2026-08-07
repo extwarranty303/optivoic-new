@@ -201,7 +201,12 @@ export default function AdminDashboard() {
           OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span> 
           <span className="bg-red-500/10 text-red-400 text-xs px-2 py-0.5 rounded border border-red-500/20 ml-2 font-mono">ROOT_ACCESS</span>
         </div>
-        <Link to="/portal" className="text-sm font-semibold text-gray-400 hover:text-white transition-colors">← Return to Portal</Link>
+        <div className="flex items-center gap-4">
+          <Link to="/blog-admin" className="text-xs font-bold px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(56,182,255,0.2)]">
+            <span>📝</span> Manage Blog Articles
+          </Link>
+          <Link to="/portal" className="text-sm font-semibold text-gray-400 hover:text-white transition-colors">← Return to Portal</Link>
+        </div>
       </nav>
 
       <main className="relative z-10 max-w-7xl mx-auto px-8 py-16">
