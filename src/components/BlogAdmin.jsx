@@ -131,20 +131,24 @@ export default function BlogAdmin() {
       updated_at: new Date().toISOString()
     };
 
-    if (editingId) {
-      const { error } = await supabase.from('blog_posts').update(payload).eq('id', editingId);
-      if (error) {
-        setMessage({ type: 'error', text: error.message });
-        setSaving(false);
-        return;
-      }
-    } else {
-      const { error } = await supabase.from('blog_posts').insert([{ ...payload, created_at: new Date().toISOString() }]);
-      if (error) {
-        setMessage({ type: 'error', text: error.message });
-        setSaving(false);
-        return;
-      }
+    let { error } = editingId
+      ? await supabase.from('blog_posts').update(payload).eq('id', editingId)
+      : await supabase.from('blog_posts').insert([{ ...payload, created_at: new Date().toISOString() }]);
+
+    // Fallback if image_alt column has not been added to Supabase blog_posts table yet
+    if (error && error.message && error.message.includes('image_alt')) {
+      const fallbackPayload = { ...payload };
+      delete fallbackPayload.image_alt;
+      const fallbackRes = editingId
+        ? await supabase.from('blog_posts').update(fallbackPayload).eq('id', editingId)
+        : await supabase.from('blog_posts').insert([{ ...fallbackPayload, created_at: new Date().toISOString() }]);
+      error = fallbackRes.error;
+    }
+
+    if (error) {
+      setMessage({ type: 'error', text: error.message });
+      setSaving(false);
+      return;
     }
 
     setForm(emptyForm);
