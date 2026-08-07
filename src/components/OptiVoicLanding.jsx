@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import emailjs from '@emailjs/browser';
+import { usePageMeta } from '../utils/usePageMeta';
 
 const NoiseOverlay = () => (
   <div
@@ -12,6 +13,22 @@ const NoiseOverlay = () => (
 
 const OptiVoicLanding = () => {
   const [activeTab, setActiveTab] = useState(0);
+
+  usePageMeta({
+    title: 'Optivoic | Technology Consulting Agency, AI Automation & Reseller Templates',
+    description: 'Optivoic is a premier technology consulting agency and AI automation firm. Discover turnkey reseller command center templates, 1099 tax calculators, and custom software solutions.',
+    keywords: 'technology consulting agency, AI automation agency, reseller command center, reseller templates, 1099 tax estimation template, business automation frameworks, custom software development',
+    canonical: 'https://www.optivoic.com/',
+    robots: 'index, follow',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Optivoic',
+      url: 'https://www.optivoic.com',
+      logo: 'https://www.optivoic.com/assets/favicon-32x32.png',
+      description: 'Technology consulting agency for AI automation, custom web systems, reseller templates, and business frameworks.'
+    }
+  });
 
   // Contact form state
   const [contactForm, setContactForm] = useState({

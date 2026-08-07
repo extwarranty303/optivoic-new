@@ -59,10 +59,13 @@ export default function ExecutiveTaxEngine() {
   }, []);
 
   usePageMeta({
-    title: `${product?.title || 'Loading...'} | OptiVöic`,
-    description: product?.description,
+    title: '1099 Executive Tax Estimation Tool & Calculator | Optivoic',
+    description: 'Quarterly tax estimation template for freelancers, contractors, and 1099 executives. Reserve tax allocations automatically, track write-offs, and preserve cash flow.',
+    keywords: '1099 executive tax estimation tool, contractor tax calculator template, quarterly estimated tax spreadsheet, freelancer tax allocation, business tax planner',
+    canonical: 'https://www.optivoic.com/tax-engine',
+    robots: 'index, follow',
     ogType: 'product',
-    priceAmount: product ? (product.price_cents / 100).toFixed(2) : '0',
+    priceAmount: product ? (product.price_cents / 100).toFixed(2) : '24.99',
     priceCurrency: 'USD'
   });
 

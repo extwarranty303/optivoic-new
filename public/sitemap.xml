@@ -13,23 +13,31 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://www.optivoic.com/tax-engine</loc>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://www.optivoic.com/consulting</loc>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.optivoic.com/blog</loc>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.optivoic.com/faq</loc>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.optivoic.com/sitemap</loc>
+    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://www.optivoic.com/privacy</loc>
-    <priority>0.5</priority>
+    <priority>0.50</priority>
   </url>
   <url>
     <loc>https://www.optivoic.com/terms</loc>
-    <priority>0.5</priority>
+    <priority>0.50</priority>
   </url>
 </urlset>

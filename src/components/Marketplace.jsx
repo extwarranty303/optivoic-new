@@ -66,12 +66,15 @@ export default function Marketplace() {
   }, []);
 
   usePageMeta({
-    title: 'Digital Marketplace | OptiVoic Frameworks & Templates',
-    description: 'Browse professional-grade business workspaces, automated trackers, and personal productivity hubs designed to reclaim your time and structure your daily routines.',
+    title: 'Digital Marketplace | Reseller Command Center, Business Templates & Trackers',
+    description: 'Browse professional-grade reseller templates, 1099 tax trackers, and business automation workspaces designed to reclaim your time and maximize profit.',
+    keywords: 'reseller command center, reseller templates, digital marketplace, 1099 tax estimation template, business automation frameworks, Google Sheets command center',
+    canonical: 'https://www.optivoic.com/marketplace',
+    robots: 'index, follow',
     ogTitle: 'OptiVoic | Digital Marketplace',
     ogDescription: 'Codified business and personal frameworks built to optimize your life and career.',
     ogType: 'website',
-    ogUrl: 'https://optivoic.com/marketplace'
+    ogUrl: 'https://www.optivoic.com/marketplace'
   });
 
   return (

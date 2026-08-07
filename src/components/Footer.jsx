@@ -16,8 +16,20 @@ export default function Footer() {
           <p className="text-gray-600 text-xs">OptiVoic Consulting and Software © {currentYear}</p>
         </div>
 
-        {/* Legal Links */}
-        <div className="flex gap-6">
+        {/* Navigation & Legal Links */}
+        <div className="flex flex-wrap gap-6 items-center justify-center md:justify-end">
+          <Link to="/marketplace" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
+            Marketplace
+          </Link>
+          <Link to="/blog" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
+            Blog
+          </Link>
+          <Link to="/faq" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
+            FAQ
+          </Link>
+          <Link to="/sitemap" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
+            Sitemap
+          </Link>
           <Link to="/terms" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
             Terms
           </Link>

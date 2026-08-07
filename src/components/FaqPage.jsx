@@ -28,11 +28,23 @@ const faqs = [
 
 export default function FaqPage() {
   usePageMeta({
-    title: 'FAQ | Optivoic Technology Consulting & Business Templates',
-    description: 'Find answers about technology consulting, AI automation, reseller templates, and how Optivoic helps businesses work smarter.',
-    keywords: 'technology consulting agency FAQ, AI automation FAQ, reseller templates FAQ',
+    title: 'FAQ | Technology Consulting Agency & Reseller Templates | Optivoic',
+    description: 'Frequently asked questions regarding Optivoic technology consulting, AI automation agency services, reseller command center templates, and custom software.',
+    keywords: 'technology consulting agency FAQ, AI automation agency FAQ, reseller templates FAQ, business automation questions',
     canonical: 'https://www.optivoic.com/faq',
-    robots: 'index, follow'
+    robots: 'index, follow',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map(faq => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer
+        }
+      }))
+    }
   });
 
   return (

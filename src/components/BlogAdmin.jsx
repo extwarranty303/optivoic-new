@@ -28,6 +28,7 @@ export default function BlogAdmin() {
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [activeTab, setActiveTab] = useState('editor'); // 'editor' | 'preview'
+  const [libraryFilter, setLibraryFilter] = useState('all'); // 'all' | 'published' | 'draft'
 
   useEffect(() => {
     const load = async () => {
@@ -57,6 +58,15 @@ export default function BlogAdmin() {
     const { data } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
     if (data) setPosts(data);
   };
+
+  const publishedPosts = useMemo(() => posts.filter(p => p.status === 'published'), [posts]);
+  const draftPosts = useMemo(() => posts.filter(p => p.status !== 'published'), [posts]);
+
+  const displayedPosts = useMemo(() => {
+    if (libraryFilter === 'published') return publishedPosts;
+    if (libraryFilter === 'draft') return draftPosts;
+    return posts;
+  }, [libraryFilter, posts, publishedPosts, draftPosts]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -111,10 +121,12 @@ export default function BlogAdmin() {
     reader.readAsText(file);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async (e, targetStatus = null) => {
+    if (e) e.preventDefault();
     setSaving(true);
     setMessage({ type: '', text: '' });
+
+    const finalStatus = targetStatus || form.status || 'published';
 
     const payload = {
       title: form.title,
@@ -122,7 +134,7 @@ export default function BlogAdmin() {
       excerpt: form.excerpt,
       content: form.content,
       category: form.category,
-      status: form.status,
+      status: finalStatus,
       keywords: form.keywords,
       meta_description: form.meta_description,
       featured_image: form.featured_image,
@@ -153,7 +165,14 @@ export default function BlogAdmin() {
 
     setForm(emptyForm);
     setEditingId(null);
-    setMessage({ type: 'success', text: editingId ? 'Article updated successfully.' : 'Article published successfully.' });
+    setMessage({
+      type: 'success',
+      text: finalStatus === 'draft' 
+        ? 'Article saved as draft.' 
+        : editingId 
+        ? 'Article updated & published.' 
+        : 'Article published successfully.'
+    });
     await fetchPosts();
     setSaving(false);
   };
@@ -181,7 +200,7 @@ export default function BlogAdmin() {
     const newStatus = post.status === 'published' ? 'draft' : 'published';
     const { error } = await supabase.from('blog_posts').update({ status: newStatus }).eq('id', post.id);
     if (!error) {
-      setMessage({ type: 'success', text: `Article "${post.title}" set to ${newStatus}.` });
+      setMessage({ type: 'success', text: `Article "${post.title}" changed to ${newStatus}.` });
       await fetchPosts();
     }
   };
@@ -215,7 +234,7 @@ export default function BlogAdmin() {
               Editorial Suite
             </div>
             <h1 className="text-3xl md:text-5xl font-black tracking-tight">Manage Blog Articles</h1>
-            <p className="text-gray-400 mt-2 max-w-2xl">Publish articles, upload HTML blog files, edit metadata, and manage your SEO publication pipeline.</p>
+            <p className="text-gray-400 mt-2 max-w-2xl">Publish articles, upload HTML blog files, save drafts, and manage your SEO publication pipeline.</p>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/blog" target="_blank" className="text-xs font-semibold px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-all">
@@ -230,7 +249,7 @@ export default function BlogAdmin() {
         {message.text ? (
           <div className={`mb-8 rounded-2xl border px-5 py-4 text-sm flex items-center justify-between ${message.type === 'error' ? 'border-red-500/30 bg-red-500/10 text-red-300' : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200'}`}>
             <span>{message.text}</span>
-            <button onClick={() => setMessage({ type: '', text: '' })} className="text-xs opacity-70 hover:opacity-100">✕ Close</button>
+            <button onClick={() => setMessage({ type: '', text: '' })} className="text-xs opacity-70 hover:opacity-100 cursor-pointer">✕ Close</button>
           </div>
         ) : null}
 
@@ -246,7 +265,7 @@ export default function BlogAdmin() {
                   <h3 className="font-bold text-white text-base flex items-center gap-2">
                     <span>📄</span> Import HTML Blog File
                   </h3>
-                  <p className="text-xs text-gray-300 mt-1">Upload any HTML document. Title, meta description, and article content will be auto-extracted.</p>
+                  <p className="text-xs text-gray-300 mt-1">Upload any HTML document. Title, meta description, image alt text, and article content will be auto-extracted.</p>
                 </div>
                 <label className="cursor-pointer inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-cyan-500 text-black text-xs font-bold hover:bg-cyan-400 transition-all whitespace-nowrap">
                   <span>Upload .HTML File</span>
@@ -261,14 +280,14 @@ export default function BlogAdmin() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('editor')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${activeTab === 'editor' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === 'editor' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-gray-400 hover:text-white'}`}
                 >
                   HTML Editor
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('preview')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${activeTab === 'preview' ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === 'preview' ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40' : 'text-gray-400 hover:text-white'}`}
                 >
                   Live Article Preview
                 </button>
@@ -277,7 +296,7 @@ export default function BlogAdmin() {
             </div>
 
             {/* Form Fields */}
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={(e) => handleSave(e, form.status)} className="space-y-5">
               
               {activeTab === 'editor' ? (
                 <>
@@ -327,7 +346,7 @@ export default function BlogAdmin() {
                     </div>
                     <div>
                       <label htmlFor="image_alt" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">Image Alt Text (SEO & Accessibility)</label>
-                      <input id="image_alt" value={form.image_alt} onChange={(e) => setForm({ ...form, image_alt: e.target.value })} placeholder="Descriptive image text for screen readers & Google..." className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                      <input id="image_alt" value={form.image_alt} onChange={(e) => setForm({ ...form, image_alt: e.target.value })} placeholder="Descriptive image text..." className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none" />
                     </div>
                   </div>
 
@@ -354,12 +373,32 @@ export default function BlogAdmin() {
                 </div>
               )}
 
-              <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                <button type="submit" disabled={saving} className="rounded-full bg-cyan-400 px-6 py-3 font-bold text-black hover:bg-cyan-300 transition-all cursor-pointer shadow-[0_0_20px_rgba(56,182,255,0.3)]">
-                  {saving ? 'Saving Article…' : editingId ? 'Update Article' : 'Publish Article'}
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={(e) => handleSave(e, 'published')}
+                  className="rounded-full bg-cyan-400 px-6 py-3 font-bold text-black hover:bg-cyan-300 transition-all cursor-pointer shadow-[0_0_20px_rgba(56,182,255,0.3)]"
+                >
+                  {saving ? 'Saving...' : editingId ? 'Update & Publish' : '🚀 Publish Article'}
                 </button>
+
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={(e) => handleSave(e, 'draft')}
+                  className="rounded-full border border-yellow-500/40 bg-yellow-500/10 px-6 py-3 font-bold text-yellow-300 hover:bg-yellow-500/20 transition-all cursor-pointer shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                >
+                  💾 Save Draft
+                </button>
+
                 {editingId ? (
-                  <button type="button" onClick={() => { setEditingId(null); setForm(emptyForm); }} className="rounded-full border border-white/20 bg-white/5 px-5 py-3 font-semibold text-gray-300 hover:bg-white/10 transition-all">
+                  <button
+                    type="button"
+                    onClick={() => { setEditingId(null); setForm(emptyForm); }}
+                    className="rounded-full border border-white/20 bg-white/5 px-5 py-3 font-semibold text-gray-300 hover:bg-white/10 transition-all cursor-pointer"
+                  >
                     Cancel Editing
                   </button>
                 ) : null}
@@ -367,42 +406,99 @@ export default function BlogAdmin() {
             </form>
           </div>
 
-          {/* Content Library Sidebar */}
+          {/* Content Library Sidebar with Filter Area */}
           <div className="space-y-4">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white">Content Library</h2>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-white/10 text-gray-300 font-semibold">{posts.length} Articles</span>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-white/10">
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <span>📚</span> Content Library
+                </h2>
+                {draftPosts.length > 0 && (
+                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 animate-pulse">
+                    {draftPosts.length} Draft{draftPosts.length > 1 ? 's' : ''} Pending
+                  </span>
+                )}
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex gap-1.5 p-1 rounded-xl bg-black/40 border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setLibraryFilter('all')}
+                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${libraryFilter === 'all' ? 'bg-white/15 text-white' : 'text-gray-400 hover:text-white'}`}
+                >
+                  All ({posts.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLibraryFilter('published')}
+                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${libraryFilter === 'published' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-gray-400 hover:text-white'}`}
+                >
+                  Published ({publishedPosts.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLibraryFilter('draft')}
+                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${libraryFilter === 'draft' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' : 'text-gray-400 hover:text-white'}`}
+                >
+                  Drafts ({draftPosts.length})
+                </button>
               </div>
               
-              <div className="space-y-3 max-h-[750px] overflow-y-auto pr-1">
-                {posts.length === 0 ? (
-                  <p className="text-gray-400 text-sm py-4 text-center border border-dashed border-white/10 rounded-2xl">No articles published yet. Fill out the form or upload an HTML file to publish your first post!</p>
+              <div className="space-y-3 max-h-[700px] overflow-y-auto pr-1">
+                {displayedPosts.length === 0 ? (
+                  <div className="text-center py-8 border border-dashed border-white/10 rounded-2xl">
+                    <p className="text-sm text-gray-400">No {libraryFilter === 'draft' ? 'draft' : libraryFilter === 'published' ? 'published' : ''} articles found.</p>
+                  </div>
                 ) : (
-                  posts.map((post) => (
-                    <div key={post.id} className="rounded-2xl border border-white/10 bg-black/60 p-4 space-y-3 hover:border-white/20 transition-all">
+                  displayedPosts.map((post) => (
+                    <div 
+                      key={post.id} 
+                      className={`rounded-2xl border p-4 space-y-3 transition-all ${post.status === 'published' ? 'border-white/10 bg-black/60 hover:border-white/20' : 'border-yellow-500/30 bg-yellow-500/5 hover:border-yellow-500/50'}`}
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="font-semibold text-white text-sm line-clamp-1">{post.title}</p>
                           <p className="text-xs text-gray-400 mt-1">{post.category || 'Article'} • {new Date(post.created_at).toLocaleDateString()}</p>
                         </div>
                         <button
+                          type="button"
                           onClick={() => handleToggleStatus(post)}
-                          className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold transition-all ${post.status === 'published' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'}`}
+                          className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold transition-all cursor-pointer ${post.status === 'published' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'}`}
+                          title="Click to toggle status"
                         >
-                          {post.status || 'published'}
+                          {post.status === 'published' ? 'Published' : 'Draft'}
                         </button>
                       </div>
 
                       <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                        <Link to={`/blog/${post.slug}`} target="_blank" className="text-xs text-cyan-400 hover:underline flex items-center gap-1">
-                          View Live ↗
-                        </Link>
+                        {post.status === 'published' ? (
+                          <Link to={`/blog/${post.slug}`} target="_blank" className="text-xs text-cyan-400 hover:underline flex items-center gap-1">
+                            View Live ↗
+                          </Link>
+                        ) : (
+                          <button 
+                            type="button" 
+                            onClick={() => handleToggleStatus(post)} 
+                            className="text-xs text-yellow-300 hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                          >
+                            🚀 Publish Now
+                          </button>
+                        )}
+
                         <div className="flex gap-2">
-                          <button onClick={() => handleEdit(post)} className="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-200 hover:bg-white/15 transition-all">
+                          <button 
+                            type="button" 
+                            onClick={() => handleEdit(post)} 
+                            className="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-200 hover:bg-white/15 transition-all cursor-pointer"
+                          >
                             Edit
                           </button>
-                          <button onClick={() => handleDelete(post.id)} className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs text-red-300 hover:bg-red-500/20 transition-all">
+                          <button 
+                            type="button" 
+                            onClick={() => handleDelete(post.id)} 
+                            className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs text-red-300 hover:bg-red-500/20 transition-all cursor-pointer"
+                          >
                             Delete
                           </button>
                         </div>

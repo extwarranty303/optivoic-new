@@ -40,8 +40,11 @@ export default function ResellerCommandCenter() {
   }, []);
 
   usePageMeta({
-    title: 'Reseller Command Center | OptiVoic Marketplace',
-    description: 'A daily workflow system that helps resellers move from auction sourcing to resale with clarity, speed, and stronger profits.',
+    title: 'Reseller Command Center | Inventory & Profit Tracking Template | OptiVoic',
+    description: 'The premier Reseller Command Center template. Track inventory, calculate net profit margins, manage multi-channel listings, and streamline reselling operations.',
+    keywords: 'reseller command center, reseller templates, inventory profit tracker, multi-channel reseller software, reselling business spreadsheet, eBay profit calculator template',
+    canonical: 'https://www.optivoic.com/reseller-command-center',
+    robots: 'index, follow',
     ogType: 'product',
     priceAmount: '99.00',
     priceCurrency: 'USD'

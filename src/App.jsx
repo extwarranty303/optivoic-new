@@ -18,6 +18,7 @@ import BlogPost from "./components/BlogPost"; // Individual blog post page
 import FaqPage from "./components/FaqPage"; // FAQ page
 import BlogAdmin from "./components/BlogAdmin"; // Blog admin page
 import DownloadPage from "./components/DownloadPage"; // Download page for purchased items
+import SitemapPage from "./components/SitemapPage"; // Visual sitemap directory page
 import ScrollToTop from "./utils/ScrollToTop"; // Utility to scroll to top on route change
 
 
@@ -45,6 +46,7 @@ function App() {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/faq" element={<FaqPage />} />
+            <Route path="/sitemap" element={<SitemapPage />} />
           </Routes>
         </Layout>
       </Router>
