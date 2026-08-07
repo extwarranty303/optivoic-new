@@ -39,6 +39,8 @@ export default function BlogAdmin() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [activeTab, setActiveTab] = useState('editor'); // 'editor' | 'preview'
   const [libraryFilter, setLibraryFilter] = useState('all'); // 'all' | 'published' | 'draft'
+  const [lastAutosavedAt, setLastAutosavedAt] = useState(null);
+  const [autosaveStatus, setAutosaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved'
 
   useEffect(() => {
     const load = async () => {
@@ -68,6 +70,70 @@ export default function BlogAdmin() {
     const { data } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
     if (data) setPosts(data);
   };
+
+  // 3-Minute Background Single-Draft Autosave Function
+  const perform3MinAutosave = async () => {
+    // Only autosave if there is a title or content entered
+    if (!form.title.trim() && !form.content.trim()) return;
+
+    setAutosaveStatus('saving');
+
+    const payload = {
+      title: form.title || 'Untitled Draft',
+      slug: form.slug || (form.title ? form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : `draft-${Date.now()}`),
+      excerpt: form.excerpt,
+      content: form.content,
+      category: form.category || 'Business Templates',
+      tags: form.tags,
+      status: 'draft',
+      keywords: form.keywords || form.tags,
+      meta_description: form.meta_description,
+      featured_image: form.featured_image,
+      image_alt: form.image_alt || form.title,
+      schema_type: form.schema_type,
+      updated_at: new Date().toISOString()
+    };
+
+    let targetId = editingId;
+
+    if (targetId) {
+      // Overwrite the existing post / draft row in database
+      let { error } = await supabase.from('blog_posts').update(payload).eq('id', targetId);
+      if (error && (error.message.includes('tags') || error.message.includes('image_alt'))) {
+        const fallback = { ...payload };
+        delete fallback.tags;
+        delete fallback.image_alt;
+        await supabase.from('blog_posts').update(fallback).eq('id', targetId);
+      }
+    } else {
+      // Create single draft entry and capture its ID so future 3-min autosaves overwrite the SAME draft
+      let { data, error } = await supabase.from('blog_posts').insert([{ ...payload, created_at: new Date().toISOString() }]).select().single();
+      if (error && (error.message.includes('tags') || error.message.includes('image_alt'))) {
+        const fallback = { ...payload };
+        delete fallback.tags;
+        delete fallback.image_alt;
+        const res = await supabase.from('blog_posts').insert([{ ...fallback, created_at: new Date().toISOString() }]).select().single();
+        if (res.data) data = res.data;
+      }
+      if (data && data.id) {
+        setEditingId(data.id);
+      }
+    }
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setLastAutosavedAt(timeStr);
+    setAutosaveStatus('saved');
+    await fetchPosts();
+  };
+
+  // 3-Minute Recurring Autosave Timer (180,000 ms)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      perform3MinAutosave();
+    }, 180000);
+
+    return () => clearInterval(timer);
+  }, [form, editingId]);
 
   const publishedPosts = useMemo(() => posts.filter(p => p.status === 'published'), [posts]);
   const draftPosts = useMemo(() => posts.filter(p => p.status !== 'published'), [posts]);
@@ -179,6 +245,8 @@ export default function BlogAdmin() {
 
     setForm(emptyForm);
     setEditingId(null);
+    setLastAutosavedAt(null);
+    setAutosaveStatus('idle');
     setMessage({
       type: 'success',
       text: finalStatus === 'draft' 
@@ -289,8 +357,8 @@ export default function BlogAdmin() {
               </div>
             </div>
 
-            {/* Tab Controls */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            {/* Tab Controls & Autosave Status */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -307,7 +375,24 @@ export default function BlogAdmin() {
                   Live Article Preview
                 </button>
               </div>
-              <span className="text-xs text-gray-400">{contentWordCount} words</span>
+
+              {/* Autosave Status Indicator */}
+              <div className="flex items-center gap-4">
+                {autosaveStatus === 'saving' ? (
+                  <span className="text-xs text-yellow-300 font-semibold flex items-center gap-1.5 animate-pulse">
+                    <span className="w-2 h-2 rounded-full bg-yellow-400"></span> Autosaving draft...
+                  </span>
+                ) : lastAutosavedAt ? (
+                  <span className="text-xs text-cyan-300 font-semibold flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400"></span> Draft autosaved at {lastAutosavedAt}
+                  </span>
+                ) : (
+                  <span className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Autosave active (Every 3m)
+                  </span>
+                )}
+                <span className="text-xs text-gray-400">{contentWordCount} words</span>
+              </div>
             </div>
 
             {/* Form Fields */}
@@ -432,7 +517,7 @@ export default function BlogAdmin() {
                 {editingId ? (
                   <button
                     type="button"
-                    onClick={() => { setEditingId(null); setForm(emptyForm); }}
+                    onClick={() => { setEditingId(null); setForm(emptyForm); setLastAutosavedAt(null); setAutosaveStatus('idle'); }}
                     className="rounded-full border border-white/20 bg-white/5 px-5 py-3 font-semibold text-gray-300 hover:bg-white/10 transition-all cursor-pointer"
                   >
                     Cancel Editing
