@@ -222,7 +222,7 @@ export default function ExecutiveTaxEngine() {
               </li>
               <li className="flex items-start gap-4">
                 <span className="text-gold font-bold">✓</span>
-                <span><strong>Universal Formatting:</strong> Upload to Google Sheets, open in Microsoft Excel, or use in Mac Numbers</span>
+                <span><strong>Universal Formatting:</strong> Formatted specifically for Microsoft Excel</span>
               </li>
             </ul>
           </div>

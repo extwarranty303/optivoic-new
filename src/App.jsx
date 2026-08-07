@@ -27,7 +27,7 @@ function App() {
         <ScrollToTop />
         <Layout>
           <Routes>
-            <Route path="/" element={<Storefront />} />
+            <Route path="/" element={<OptiVoicLanding />} />
             <Route path="/marketplace" element={<Marketplace />} />
             {/* The page for this route was not provided, so using ResellerCommandCenterPage as a placeholder for a dynamic template page */}
             <Route path="/template/:templateId" element={<ResellerCommandCenterPage />} />

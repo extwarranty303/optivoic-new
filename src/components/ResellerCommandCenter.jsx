@@ -41,7 +41,7 @@ export default function ResellerCommandCenter() {
     title: 'Reseller Command Center | OptiVoic Marketplace',
     description: 'A daily workflow system that helps resellers move from auction sourcing to resale with clarity, speed, and stronger profits.',
     ogType: 'product',
-    priceAmount: '39.99', // Corrected price
+    priceAmount: '99.00',
     priceCurrency: 'USD'
   });
 
@@ -67,15 +67,20 @@ export default function ResellerCommandCenter() {
 
   return (
     <>
-      <main className="max-w-7xl mx-auto px-8 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 pt-0">
-        <div className="lg:col-span-7">
-          <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 backdrop-blur-sm">
-            <span className="text-xs font-bold uppercase tracking-widest text-cyan-400">
-              Essential Business Workflow
-            </span>
-          </div>
+      {/* Full-width Feature Collage Banner at the top */}
+      <div className="max-w-7xl mx-auto px-8 pt-8 pb-4">
+        <div className="rounded-3xl overflow-hidden border border-white/10 bg-black/40 shadow-[0_0_60px_rgba(6,182,212,0.18)] backdrop-blur-xl">
+          <img 
+            src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/general/gemini-reseller-collage.png" 
+            alt="Reseller Command Center Preview Collage" 
+            className="w-full h-auto object-cover hover:scale-[1.005] transition-transform duration-500"
+          />
+        </div>
+      </div>
 
-          <div className="mb-16 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/70 via-slate-900/40 to-cyan-950/40 p-8 md:p-10 shadow-[0_0_80px_rgba(6,182,212,0.12)]">
+      <main className="max-w-7xl mx-auto px-8 py-8 md:py-12 grid grid-cols-1 lg:grid-cols-12 gap-16 pt-4">
+        <div className="lg:col-span-7">
+          <div className="mb-12 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/70 via-slate-900/40 to-cyan-950/40 p-8 md:p-10 shadow-[0_0_80px_rgba(6,182,212,0.12)]">
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-400/15 text-3xl shadow-lg shadow-cyan-500/10">
               🛍️
             </div>
@@ -130,10 +135,10 @@ export default function ResellerCommandCenter() {
             <p className="text-sm font-bold uppercase tracking-[0.3em] text-gray-400 mb-3">Instant Template Access</p>
             <div className="flex items-end justify-between mb-8 pb-8 border-b border-white/10">
               <div>
-                <p className="text-white font-semibold">Excel & Google Sheets</p>
+                <p className="text-white font-semibold">Microsoft Excel Template</p>
                 <p className="text-gray-400">Clean layouts, smart categories, and clear daily steps</p>
               </div>
-              <div className="text-4xl font-black text-cyan-400">${template ? (template.price_cents / 100).toFixed(2) : '39.99'}</div>
+              <div className="text-4xl font-black text-cyan-400">${template ? (template.price_cents / 100).toFixed(2) : '99.00'}</div>
             </div>
 
             <ul className="space-y-3 text-gray-300 mb-8">
@@ -143,14 +148,18 @@ export default function ResellerCommandCenter() {
               <li className="flex items-start gap-3"><span className="text-cyan-400">•</span><span>Includes the full template, PDF user guide, and ongoing support</span></li>
             </ul>
 
-            <div className="flex flex-col gap-3">
-              <button 
-                onClick={() => setIsCheckoutOpen(true)} 
-                disabled={!template}
-                className="text-center rounded-full bg-cyan-500 px-5 py-4 font-semibold text-black transition hover:bg-cyan-400 disabled:bg-gray-600 disabled:cursor-not-allowed"
+            <div className="flex flex-col items-center justify-center pt-2 w-full">
+              <a 
+                href="https://www.paypal.com/ncp/payment/MZ9PL72C48KFE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full text-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 hover:shadow-[0_0_30px_rgba(56,182,255,0.4)] text-white font-bold text-lg py-4 px-8 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg cursor-pointer"
               >
-                Purchase Now
-              </button>
+                <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                  <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.762.762 0 0 1 .752-.64h6.586c2.47 0 4.384.54 5.378 1.637.91 1.004 1.134 2.457.666 4.316-.763 3.033-2.91 4.707-6.05 4.707H9.72a.762.762 0 0 0-.752.64l-.892 6.957zm14.15-13.626c-.347.165-.733.313-1.157.442-.87.265-1.93.398-3.155.398H12.92a.641.641 0 0 0-.633.541l-.974 7.606h3.42c2.613 0 4.417-1.396 5.06-4.148.375-1.605.153-2.973-.621-3.839z"/>
+                </svg>
+                Buy Now ($99)
+              </a>
             </div>
           </div>
         </div>

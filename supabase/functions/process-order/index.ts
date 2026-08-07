@@ -4,7 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 // --- Environment Variables ---
 const PAYPAL_CLIENT_ID = Deno.env.get('VITE_PAYPAL_CLIENT_ID');
 const PAYPAL_CLIENT_SECRET = Deno.env.get('PAYPAL_CLIENT_SECRET');
-const PAYPAL_API_BASE_URL = Deno.env.get('PAYPAL_API_BASE_URL') || 'https://api-m.sandbox.paypal.com';
+const PAYPAL_API_BASE_URL = Deno.env.get('PAYPAL_API_BASE_URL') || 'https://api-m.paypal.com';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
 

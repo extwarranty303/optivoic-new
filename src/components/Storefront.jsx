@@ -10,21 +10,21 @@ const Hero = () => (
     <div className="inline-flex items-center mb-8 px-5 py-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 backdrop-blur-xl">
       <span className="text-xs font-bold tracking-widest uppercase text-cyan-300 flex items-center">
         <span className="w-2.5 h-2.5 inline-block rounded-full bg-cyan-400 mr-3 animate-pulse"></span>
-        Technology Consulting • AI Automation • Business Templates
+        AI-Powered Web Solutions & Templates
       </span>
     </div>
 
     <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[1.1] max-w-6xl">
-      The Top Marketplace for <br/>
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">Business Operating Systems.</span>
+      The AI Marketplace <br/>
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">for Work & Life.</span>
     </h1>
     
     <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-4xl font-light leading-relaxed">
-      Explore ready-to-use templates for AI automation, e-commerce, and finance, all designed to streamline your workflow and accelerate your business growth.
+      Discover, customize, and deploy AI-powered templates for everything from business websites to personal budgeting. Or, have our experts build a custom solution for you.
     </p>
 
     <div className="flex flex-wrap justify-center gap-4 mb-8">
-      {['AI Automation', 'Reseller Templates', 'Business Frameworks', 'E-Commerce Systems', 'Workflow Automation', 'Notion Templates'].map((item) => (
+      {['AI Automation', 'Business Templates', 'Personal Budgeting', 'Reseller Packages', 'Workflow Systems', 'Microsoft Excel'].map((item) => (
         <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-gray-300 backdrop-blur-xl">
           {item}
         </span>
@@ -33,10 +33,10 @@ const Hero = () => (
     
     <div className="flex flex-col sm:flex-row gap-6">
       <Link to="/marketplace" className="bg-white text-black font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all">
-        Explore the Marketplace
+        Explore Marketplace
       </Link>
-      <Link to="/reseller-command-center" className="bg-white/[0.05] border border-white/20 backdrop-blur-xl text-white font-bold text-lg py-4 px-10 rounded-full hover:bg-white/10 transition-all">
-        View Featured Template
+      <Link to="/consulting" className="bg-white/[0.05] border border-white/20 backdrop-blur-xl text-white font-bold text-lg py-4 px-10 rounded-full hover:bg-white/10 transition-all">
+        Request Custom Build
       </Link>
     </div>
   </section>
@@ -184,7 +184,7 @@ const SEOClosingSection = () => (
             <div>
               <h4 className="text-lg font-bold text-white mb-2">For Creators & Retailers</h4>
               <p className="text-sm text-gray-400 leading-relaxed">
-                Organize your pipeline with <strong>expert-designed Notion templates</strong> and scale operations using robust <strong>e-commerce inventory management solutions</strong>.
+                Organize your pipeline with <strong>expert-designed Excel templates</strong> and scale operations using robust <strong>e-commerce inventory management solutions</strong>.
               </p>
             </div>
           </div>
@@ -221,40 +221,8 @@ const SEOClosingSection = () => (
   </section>
 );
 
-// ==========================================
-// 3. MAIN EXPORT
-// ==========================================
+import OptiVoicLanding from './OptiVoicLanding';
+
 export default function Storefront() {
-
-  // Fallback to inject Tailwind specifically for the Canvas environment preview
-  // This ensures CSS works here, but won't break your local Vite config
-  useEffect(() => {
-    if (!window.tailwind && !document.getElementById('tailwind-cdn')) {
-      const script = document.createElement('script');
-      script.id = 'tailwind-cdn';
-      script.src = 'https://cdn.tailwindcss.com';
-      document.head.appendChild(script);
-    }
-  }, []);
-
-  usePageMeta({
-    title: 'Optivoic | Technology Consulting Agency for AI Automation & Business Templates',
-    description: 'Optivoic is a technology consulting agency for AI automation, custom web systems, reseller templates, and business frameworks that help teams grow faster.',
-    keywords: 'technology consulting agency, AI automation agency, business templates, reseller templates, custom web development, workflow automation, e-commerce systems',
-    canonical: 'https://www.optivoic.com/',
-    robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
-    ogTitle: 'Optivoic | Technology Consulting Agency for AI Automation & Business Templates',
-    ogDescription: 'Professional-grade operational frameworks, AI automation, and digital systems built to scale revenue and simplify daily execution.',
-    ogType: 'website',
-    ogUrl: 'https://www.optivoic.com/'
-  });
-
-  return (
-    <>
-        <Hero />
-        <ValuePropsSection />
-        <MarketplaceOverviewSection />
-        <SEOClosingSection />
-    </>
-  );
+  return <OptiVoicLanding />;
 }
