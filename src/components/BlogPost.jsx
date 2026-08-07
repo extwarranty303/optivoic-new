@@ -8,7 +8,8 @@ const SEED_POSTS_MAP = {
     id: 'seed-1',
     slug: 'scaling-reseller-operations-with-automated-frameworks',
     title: 'Scaling Reseller Operations with Turnkey Automated Frameworks',
-    category: 'Reseller Systems',
+    category: 'Business Templates',
+    tags: 'reseller, templates, inventory, profit-tracking',
     excerpt: 'Discover how top-performing reselling enterprises track inventory, calculate profit margins automatically, and streamline multi-channel fulfillment.',
     content: `
       <p class="lead">Managing an enterprise-grade reselling operation requires total clarity on live inventory, supplier costs, and net margins. Without a structured command center, small accounting discrepancies snowball into massive operational inefficiencies.</p>
@@ -39,7 +40,8 @@ const SEED_POSTS_MAP = {
     id: 'seed-2',
     slug: '1099-executive-tax-estimation-strategies',
     title: '1099 Executive Tax Allocation: Quarter-by-Quarter Blueprint',
-    category: 'Tax Systems',
+    category: 'Business Systems & Productivity',
+    tags: '1099-tax, contractor, spreadsheet, finance',
     excerpt: 'A practical framework for freelancers, contractors, and agency founders to estimate quarterly taxes, track deductions, and preserve liquidity.',
     content: `
       <p>Managing taxes as an independent contractor or 1099 executive demands proactive cash allocation. Waiting until April 15th to calculate liability risks severe penalties and unnecessary cash flow stress.</p>
@@ -63,7 +65,8 @@ const SEED_POSTS_MAP = {
     id: 'seed-3',
     slug: 'ai-automation-for-modern-consulting-agencies',
     title: 'How AI Automation Elevates Client Delivery & Agency Operations',
-    category: 'AI Automation',
+    category: 'Consulting',
+    tags: 'AI, consulting, automation, workflows',
     excerpt: 'Learn how technology consulting agencies integrate AI workflows to automate reporting, audit software vendors, and accelerate project delivery.',
     content: `
       <p>Artificial Intelligence is transforming how modern technology consulting agencies serve clients. By leveraging automated workflows, teams eliminate repetitive administrative tasks and focus entirely on high-value strategy.</p>
@@ -111,7 +114,7 @@ export default function BlogPost() {
   usePageMeta({
     title: `${post?.title || 'Article'} | Optivoic Insights`,
     description: post?.meta_description || post?.excerpt || 'Read our latest article on technology consulting and business frameworks.',
-    keywords: post?.keywords || 'technology consulting agency, AI automation agency, reseller templates, business frameworks',
+    keywords: post?.keywords || post?.tags || 'technology consulting agency, AI automation agency, reseller templates, business frameworks',
     canonical: `https://www.optivoic.com/blog/${slug}`,
     robots: 'index, follow',
     jsonLd: post ? {
@@ -151,17 +154,19 @@ export default function BlogPost() {
     );
   }
 
+  const rawTags = post.tags || post.keywords || '';
+
   return (
     <div className="min-h-screen bg-[#020202] text-white">
       <article className="max-w-4xl mx-auto px-6 md:px-8 py-20">
         
         {/* Navigation & Category */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <Link to="/blog" className="text-xs font-bold text-cyan-400 hover:text-cyan-300 uppercase tracking-wider flex items-center gap-1">
             ← Back to All Articles
           </Link>
-          <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
-            {post.category || 'Article'}
+          <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
+            {post.category || 'Business Templates'}
           </span>
         </div>
 
@@ -170,11 +175,23 @@ export default function BlogPost() {
           {post.title}
         </h1>
 
-        {/* Article Meta Header */}
-        <div className="flex items-center gap-4 py-4 border-y border-white/10 mb-8 text-xs text-gray-400">
-          <span className="font-semibold text-white">By Optivoic Editorial Team</span>
-          <span>•</span>
-          <span>{new Date(post.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+        {/* Article Meta Header & Tags */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-y border-white/10 mb-8 text-xs text-gray-400">
+          <div className="flex items-center gap-3">
+            <span className="font-semibold text-white">By Optivoic Editorial Team</span>
+            <span>•</span>
+            <span>{new Date(post.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+          </div>
+
+          {rawTags ? (
+            <div className="flex flex-wrap gap-1.5">
+              {rawTags.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+                <span key={tag} className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-cyan-300">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         {/* Featured Image */}
@@ -197,17 +214,17 @@ export default function BlogPost() {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* Article Tags */}
-        {post.tags && (
+        {/* Article Bottom Tags */}
+        {rawTags ? (
           <div className="mt-12 flex flex-wrap items-center gap-2 pt-6 border-t border-white/10">
             <span className="text-xs text-gray-400 font-semibold mr-2 uppercase tracking-wider">Article Tags:</span>
-            {post.tags.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+            {rawTags.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
               <span key={tag} className="text-xs font-semibold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-cyan-300">
                 #{tag}
               </span>
             ))}
           </div>
-        )}
+        ) : null}
 
         {/* Article Footer & Call to Action */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 bg-white/[0.02] p-8 rounded-3xl border border-white/5">
