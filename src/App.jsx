@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Layout from "./components/Layout";
 import Storefront from "./components/Storefront"; // Your homepage component
 import ResellerCommandCenterPage from "./pages/ResellerCommandCenterPage";
@@ -49,6 +50,7 @@ function App() {
             <Route path="/sitemap" element={<SitemapPage />} />
           </Routes>
         </Layout>
+        <SpeedInsights />
       </Router>
   );
 }
