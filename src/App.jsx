@@ -20,6 +20,8 @@ import BlogAdmin from "./components/BlogAdmin"; // Blog admin page
 import DownloadPage from "./components/DownloadPage"; // Download page for purchased items
 import SitemapPage from "./components/SitemapPage"; // Visual sitemap directory page
 import ScrollToTop from "./utils/ScrollToTop"; // Utility to scroll to top on route change
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 
 function App() {
@@ -49,6 +51,8 @@ function App() {
             <Route path="/sitemap" element={<SitemapPage />} />
           </Routes>
         </Layout>
+        <Analytics />
+        <SpeedInsights />
       </Router>
   );
 }

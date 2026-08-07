@@ -11,8 +11,11 @@
   "dependencies": {
     "@blackfireio/node-tracing": "^1.1.17",
     "@emailjs/browser": "^4.4.1",
+    "@microsoft/clarity": "^1.0.2",
     "@paypal/react-paypal-js": "^8.9.2",
     "@supabase/supabase-js": "^2.39.3",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "framer-motion": "^12.43.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
