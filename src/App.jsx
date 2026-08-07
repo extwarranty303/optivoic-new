@@ -22,7 +22,17 @@ import SitemapPage from "./components/SitemapPage"; // Visual sitemap directory 
 import ScrollToTop from "./utils/ScrollToTop"; // Utility to scroll to top on route change
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { useLocation } from "react-router-dom";
 
+function VercelTracker() {
+  const location = useLocation();
+  return (
+    <>
+      <Analytics route={location.pathname} />
+      <SpeedInsights route={location.pathname} />
+    </>
+  );
+}
 
 function App() {
   return (
@@ -51,8 +61,7 @@ function App() {
             <Route path="/sitemap" element={<SitemapPage />} />
           </Routes>
         </Layout>
-        <Analytics />
-        <SpeedInsights />
+        <VercelTracker />
       </Router>
   );
 }
