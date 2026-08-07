@@ -1,4 +1,4 @@
-import { clarity } from '@microsoft/clarity';
+import Clarity from '@microsoft/clarity';
 
 /**
  * Initializes Microsoft Clarity session recordings and heatmaps.
@@ -14,7 +14,7 @@ export function initClarity(projectId) {
   }
 
   try {
-    clarity.init(targetId);
+    Clarity.init(targetId);
     console.log('Microsoft Clarity initialized with Project ID:', targetId);
   } catch (err) {
     console.error('Microsoft Clarity initialization failed:', err);
