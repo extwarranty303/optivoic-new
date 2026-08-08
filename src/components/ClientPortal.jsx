@@ -86,49 +86,83 @@ export default function ClientPortal() {
 
   // UPDATED: The Smart Entitlement Download Engine
   const handleDownload = async (templateId) => {
+    if (!templateId) {
+      alert("Invalid product reference.");
+      return;
+    }
     setDownloadingId(templateId);
     try {
-      // Step 1: Look up the product to find the current active file ID
-      const { data: product, error: prodError } = await supabase
+      let storagePath = null;
+      let originalFilename = 'download.zip';
+
+      // Step 1: Look up the product to find current_file_id
+      const { data: product } = await supabase
         .from('products')
         .select('current_file_id')
         .eq('id', templateId)
-        .single();
+        .maybeSingle();
 
-      if (prodError || !product?.current_file_id) {
-        throw new Error("No active file is currently linked to this product. Contact support.");
+      if (product?.current_file_id) {
+        // Step 2a: Fetch metadata for the active current_file_id
+        const { data: fileMeta } = await supabase
+          .from('files')
+          .select('storage_path, original_filename')
+          .eq('id', product.current_file_id)
+          .maybeSingle();
+
+        if (fileMeta?.storage_path) {
+          storagePath = fileMeta.storage_path;
+          originalFilename = fileMeta.original_filename || originalFilename;
+        }
       }
 
-      // Step 2: Grab the storage path and original filename from the files table
-      const { data: fileMeta, error: fileError } = await supabase
-        .from('files')
-        .select('storage_path, original_filename')
-        .eq('id', product.current_file_id)
-        .single();
+      // Step 2b: Fallback if current_file_id is null - search files table for product_id
+      if (!storagePath) {
+        const { data: fallbackFile } = await supabase
+          .from('files')
+          .select('id, storage_path, original_filename')
+          .eq('product_id', templateId)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      if (fileError || !fileMeta) {
-        throw new Error("File metadata missing.");
+        if (fallbackFile?.storage_path) {
+          storagePath = fallbackFile.storage_path;
+          originalFilename = fallbackFile.original_filename || originalFilename;
+
+          // Auto-repair current_file_id on products table
+          await supabase
+            .from('products')
+            .update({ current_file_id: fallbackFile.id })
+            .eq('id', templateId);
+        }
       }
 
-      // Step 3: Generate Signed URL and FORCE the download name
+      if (!storagePath) {
+        throw new Error("No active file is currently linked to this product. Upload or link a file in the Admin Dashboard.");
+      }
+
+      // Step 3: Generate Signed URL and trigger browser download
       const { data: signedData, error: signError } = await supabase.storage
         .from('templates') 
-        .createSignedUrl(fileMeta.storage_path, 60, {
-          download: fileMeta.original_filename // <-- THIS IS THE MAGIC BULLET
+        .createSignedUrl(storagePath, 60, {
+          download: originalFilename
         });
 
-      if (signError) throw signError;
+      if (signError || !signedData?.signedUrl) {
+        throw new Error(signError?.message || "Unable to generate download link.");
+      }
 
-      // Step 4: Execute the download cleanly in the browser
       const link = document.createElement('a');
       link.href = signedData.signedUrl;
-      link.setAttribute('download', fileMeta.original_filename);
+      link.setAttribute('download', originalFilename);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-    } catch (error) {
-      alert(`Download failed: ${error.message}`);
+    } catch (err) {
+      console.error("Download error:", err);
+      alert(`Download failed: ${err.message}`);
     } finally {
       setDownloadingId(null);
     }
@@ -142,8 +176,8 @@ export default function ClientPortal() {
       <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-violet-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
 
       <nav className="relative z-50 border-b border-white/10 py-5 px-8 flex justify-between items-center bg-black/50 backdrop-blur-2xl">
-        <Link to="/" className="text-xl font-black text-white tracking-tighter drop-shadow-lg hover:opacity-80 transition-opacity cursor-pointer">
-          OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VOIC</span> <span className="text-gray-500 font-medium ml-2 text-sm hidden sm:inline-block">| Client Portal</span>
+        <Link to="/" className="text-xl font-bold text-white tracking-tight hover:text-cyan-400 transition-colors cursor-pointer">
+          Client Portal
         </Link>
         <div className="flex items-center gap-4 sm:gap-6">
           
