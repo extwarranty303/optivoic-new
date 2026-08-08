@@ -29,12 +29,18 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
       // 1. Check if email has any purchase entitlements in Supabase
       const { data: purchaseData } = await supabase
         .from('purchases')
-        .select('id')
-        .ilike('user_email', cleanEmail)
-        .limit(1);
+        .select('id, user_id')
+        .ilike('user_email', cleanEmail);
 
       const foundPurchases = Boolean(purchaseData && purchaseData.length > 0);
+      const hasAccount = Boolean(purchaseData && purchaseData.some(p => p.user_id !== null && p.user_id !== ''));
+
       setHasPurchases(foundPurchases);
+      if (hasAccount) {
+        setIsExistingUser(true);
+      } else {
+        setIsExistingUser(false);
+      }
 
       setStep(2);
     } catch (err) {
@@ -99,7 +105,6 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
 
         // Sign Up Success!
         if (signUpData) {
-          // Sign‑up succeeded – grant immediate access without email confirmation
           setMessage({ text: 'Account created! Redirecting to your Client Portal...', type: 'success' });
           setTimeout(() => {
             onClose();
@@ -228,7 +233,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
               </button>
 
               <h2 className="text-2xl font-black text-white mb-1.5 tracking-tight">
-                {isResetMode ? 'Reset Password' : isExistingUser ? 'Welcome Back' : hasPurchases ? 'Configure Your Password' : 'Create Your Password'}
+                {isResetMode ? 'Reset Password' : isExistingUser ? 'Welcome Back' : 'Enter Password'}
               </h2>
 
               <p className="text-gray-400 text-xs leading-relaxed">
@@ -236,10 +241,8 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
                   'We will send a password reset link to your email.'
                 ) : isExistingUser ? (
                   `Enter password for ${email} to view your Client Portal.`
-                ) : hasPurchases ? (
-                  `🎉 Purchases found for ${email}! Create a password to unlock your portal.`
                 ) : (
-                  `Set a password for ${email} to configure your portal account.`
+                  `Enter your password for ${email} to unlock your portal.`
                 )}
               </p>
             </div>
@@ -254,7 +257,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest">
-                    {isExistingUser ? 'Password' : 'Set Password'}
+                    Password
                   </label>
                   <button 
                     type="button" 
@@ -281,7 +284,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
               disabled={loading} 
               className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold text-base py-3.5 rounded-xl hover:shadow-[0_0_25px_rgba(56,182,255,0.4)] transition-all duration-300 disabled:opacity-50 cursor-pointer"
             >
-              {loading ? 'Authenticating...' : isResetMode ? 'Send Reset Link' : isExistingUser ? 'Sign In →' : 'Set Password & Unlock Portal →'}
+              {loading ? 'Authenticating...' : isResetMode ? 'Send Reset Link' : isExistingUser ? 'Sign In →' : 'Sign In / Set Password →'}
             </button>
           </form>
         )}
