@@ -79,12 +79,14 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
             Processing your transaction and unlocking your template...
           </div>
         ) : (
-          <PayPalScriptProvider options={{
-            // IMPORTANT: Ensure VITE_PAYPAL_CLIENT_ID is set in your .env for production.
-            // The "test" fallback is for development only and will cause real transactions to fail.
-            "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
-            currency: "USD" 
-          }}>
+          <PayPalScriptProvider 
+            key={import.meta.env.VITE_PAYPAL_CLIENT_ID || 'sandbox-key'} 
+            options={{
+              "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
+              currency: "USD",
+              intent: "capture"
+            }}
+          >
             <PayPalButtons 
               style={{ layout: "vertical", color: "blue", shape: "rect" }}
               createOrder={(data, actions) => {
