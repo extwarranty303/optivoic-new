@@ -19,7 +19,10 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
 
     try {
       if (view === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ 
+          email: email.trim(), 
+          password 
+        });
         if (error) throw error;
         setMessage({ text: 'Successfully logged in!', type: 'success' });
         setTimeout(() => {
@@ -28,23 +31,26 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
         }, 1000);
 
       } else if (view === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ 
+          email: email.trim(), 
+          password 
+        });
         if (error) throw error;
         setMessage({ text: 'Account created! You can now log in.', type: 'success' });
         setView('login'); 
 
       } else if (view === 'forgot') {
         // --- NEW: Password Reset Request ---
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
           redirectTo: `${window.location.origin}/update-password`,
         });
         if (error) throw error;
         setMessage({ text: 'Password reset link sent! Check your email.', type: 'success' });
       }
     } catch (error) {
-      console.error("Authentication Error:", error);
+      console.error("Supabase Authentication Error Detail:", error);
       const errorMsg = error.message === 'Failed to fetch' 
-        ? 'Unable to reach authentication server (Failed to fetch). Please refresh your browser page or check your internet connection.'
+        ? 'Unable to reach authentication server (Failed to fetch). Please check your browser Console (F12) for network errors.'
         : error.message;
       setMessage({ text: errorMsg, type: 'error' });
     } finally {
