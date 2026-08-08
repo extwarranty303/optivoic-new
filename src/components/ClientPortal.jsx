@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { fetchBookmarks, toggleBookmark } from '../utils/bookmarkManager';
+import { isAuthorizedAdmin } from '../utils/adminAccess';
 import CheckoutModal from './CheckoutModal';
 
 const NoiseOverlay = () => (
@@ -106,14 +107,10 @@ export default function ClientPortal() {
         setProjects(userProjects);
       }
 
-      // 5. Check if user is an authorized admin
-      const { data: adminCheck } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
+      // 5. Check if user is an authorized admin via admins table
+      const isAdminUser = await isAuthorizedAdmin(session.user.email);
 
-      setIsAdmin(!!adminCheck);
+      setIsAdmin(isAdminUser);
       setLoading(false);
     };
 
