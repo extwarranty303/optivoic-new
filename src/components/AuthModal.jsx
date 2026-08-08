@@ -12,6 +12,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isResetMode, setIsResetMode] = useState(false);
+  const [isAccountCreatedSuccess, setIsAccountCreatedSuccess] = useState(false);
 
   if (!isOpen) return null;
 
@@ -35,8 +36,6 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
       const foundPurchases = Boolean(purchaseData && purchaseData.length > 0);
       setHasPurchases(foundPurchases);
 
-      // 2. Check if account exists by attempting a sign up or sign in probe
-      // We advance to Step 2 with adaptive wording based on whether purchase exists
       setStep(2);
     } catch (err) {
       console.error("Email check error:", err);
@@ -107,8 +106,8 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
           }, 800);
           return;
         } else {
-          setMessage({ text: 'Account created! Please check your email to confirm or log in.', type: 'success' });
-          setIsExistingUser(true);
+          // Show Dedicated Confirmation Screen (Email Confirmation Sent)
+          setIsAccountCreatedSuccess(true);
           return;
         }
       }
@@ -138,6 +137,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
     setHasPurchases(false);
     setMessage({ text: '', type: '' });
     setIsResetMode(false);
+    setIsAccountCreatedSuccess(false);
     onClose();
   };
 
@@ -151,8 +151,38 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
           ✕
         </button>
 
-        {/* STEP 1: Enter Email */}
-        {step === 1 && (
+        {/* DEDICATED CONFIRMATION SCREEN ON ACCOUNT CREATION */}
+        {isAccountCreatedSuccess ? (
+          <div className="text-center py-2 space-y-5 relative z-10">
+            <div className="w-16 h-16 rounded-full bg-cyan-500/20 border border-cyan-400 text-cyan-300 mx-auto flex items-center justify-center text-3xl shadow-[0_0_30px_rgba(56,182,255,0.3)]">
+              ✉️
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-black text-white mb-1.5 tracking-tight">Account Created!</h2>
+              <p className="text-sm text-gray-300">
+                We sent a confirmation link to <strong className="text-white break-all">{email}</strong>.
+              </p>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl text-left space-y-2 text-xs text-gray-300">
+              <p className="text-white font-semibold flex items-center gap-2">
+                <span className="text-cyan-400 font-bold">📩</span> Next Steps:
+              </p>
+              <p className="text-gray-400 leading-relaxed">
+                Check your inbox and click the confirmation link to activate your account and jump straight to your Client Portal.
+              </p>
+            </div>
+
+            <button 
+              onClick={handleResetModalState} 
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all cursor-pointer text-sm"
+            >
+              Done
+            </button>
+          </div>
+        ) : step === 1 ? (
+          /* STEP 1: Enter Email */
           <form onSubmit={handleCheckEmail} className="relative z-10 space-y-5">
             <div>
               <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Access Portal</h2>
@@ -188,10 +218,8 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
               {loading ? 'Checking Account...' : 'Continue →'}
             </button>
           </form>
-        )}
-
-        {/* STEP 2: Password Setup or Sign In */}
-        {step === 2 && (
+        ) : (
+          /* STEP 2: Password Setup or Sign In */
           <form onSubmit={handleAuthSubmit} className="relative z-10 space-y-5">
             <div>
               <button 
