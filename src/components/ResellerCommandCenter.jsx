@@ -11,7 +11,7 @@ export default function ResellerCommandCenter() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [template, setTemplate] = useState({
-    id: 'reseller-command-center',
+    id: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
     title: 'Reseller Command Center',
     price_cents: 9900
   });
@@ -21,7 +21,7 @@ export default function ResellerCommandCenter() {
       const { data: prodData } = await supabase
         .from('products')
         .select('*')
-        .eq('id', 'reseller-command-center')
+        .eq('id', 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6')
         .maybeSingle();
 
       if (prodData) {
