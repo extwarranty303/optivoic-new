@@ -356,7 +356,7 @@ export default function ClientPortal() {
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
               OPTIVOIC EXECUTIVE WORKSPACE
             </div>
-            <h1 className="text-3xl md:text-5xl font-black mb-2">Welcome Back.</h1>
+            <h1 className="text-3xl md:text-5xl font-black mb-2">Welcome Back</h1>
             <p className="text-gray-400 text-sm md:text-base">Access your unlocked templates, Knowledge Vault guides, and active agency sprints.</p>
           </div>
 
