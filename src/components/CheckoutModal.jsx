@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 
-const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
+const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurchasedInfo }) => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [purchasedInfo, setPurchasedInfo] = useState(null);
+  const [purchasedInfo, setPurchasedInfo] = useState(initialPurchasedInfo || null);
   const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    if (initialPurchasedInfo) {
+      setPurchasedInfo(initialPurchasedInfo);
+    }
+  }, [initialPurchasedInfo]);
 
   if (!isOpen || !template) return null;
 
@@ -32,13 +38,27 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
       }
 
       const paypalOrderId = data.orderID;
+      const finalEmail = payerEmail || user?.email || 'your email';
+
+      // Save to sessionStorage so if page reloads, confirmation persists
+      const successPayload = {
+        email: finalEmail,
+        orderId: paypalOrderId,
+        templateId: template.id,
+        templateTitle: template.title
+      };
+      try {
+        sessionStorage.setItem('optivoic_last_purchase', JSON.stringify(successPayload));
+      } catch (e) {
+        console.warn("sessionStorage save notice:", e);
+      }
 
       // Invoke the 'process-order' Supabase Edge Function
       const { data: functionData, error: functionError } = await supabase.functions.invoke('process-order', {
         body: { 
           orderId: paypalOrderId,
           productId: template.id,
-          userEmail: payerEmail
+          userEmail: finalEmail
         },
       });
 
@@ -47,7 +67,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
         
         // Fallback: Create purchase entitlement directly in Supabase purchases table
         const payload = {
-          user_email: payerEmail || user?.email || '',
+          user_email: finalEmail,
           product_id: template.id,
           created_at: new Date().toISOString()
         };
@@ -64,10 +84,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
       if (onSuccess) onSuccess();
 
       // Show Purchase Confirmation Screen
-      setPurchasedInfo({
-        email: payerEmail || user?.email || 'your email',
-        orderId: paypalOrderId
-      });
+      setPurchasedInfo(successPayload);
 
     } catch (err) {
       console.error("Checkout Error:", err);
@@ -88,7 +105,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
         .maybeSingle();
 
       if (prodErr || !product?.current_file_id) {
-        throw new Error('File download is being prepared. Access it anytime in your Client Portal or via email.');
+        throw new Error('File download is being prepared. Access it anytime in your Client Portal.');
       }
 
       const { data: fileMeta, error: fileErr } = await supabase
@@ -123,9 +140,18 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
   };
 
   const handleCloseAll = () => {
+    const wasLoggedIn = Boolean(user);
     setPurchasedInfo(null);
     setError(null);
+    try {
+      sessionStorage.removeItem('optivoic_last_purchase');
+    } catch (e) {}
     onClose();
+
+    // If user was already logged in when purchasing, navigate straight to /portal upon modal close
+    if (wasLoggedIn || purchasedInfo) {
+      navigate('/portal');
+    }
   };
 
   return (
@@ -150,7 +176,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
             <div>
               <h2 className="text-2xl font-black text-white mb-1 tracking-tight">Purchase Successful!</h2>
               <p className="text-sm text-gray-300">
-                You now own <strong className="text-white">{template.title}</strong>.
+                You now own <strong className="text-white">{purchasedInfo.templateTitle || template.title}</strong>.
               </p>
             </div>
 
@@ -163,18 +189,28 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
                 </div>
               </div>
 
-              <div className="border-t border-white/10 pt-3 flex items-start gap-2.5">
-                <span className="text-cyan-400 text-base font-bold">🔑</span>
-                <div>
-                  <p className="font-semibold text-white">Accessing Your Client Portal</p>
-                  <ol className="list-decimal list-inside text-gray-300 mt-1.5 space-y-1.5">
-                    <li>Visit <strong className="text-cyan-300">www.optivoic.com/portal</strong>.</li>
-                    <li>Enter email: <strong className="text-white break-all">{purchasedInfo.email}</strong>.</li>
-                    <li>First-time users will be prompted to set a password. Existing users enter their password.</li>
-                    <li>Your purchased template automatically unlocks on your portal dashboard!</li>
-                  </ol>
+              {user ? (
+                <div className="border-t border-white/10 pt-3 flex items-start gap-2.5">
+                  <span className="text-cyan-400 text-base font-bold">✨</span>
+                  <div>
+                    <p className="font-semibold text-white">Account Linked & Unlocked</p>
+                    <p className="text-gray-300 mt-1">This template has been automatically unlocked in your active Client Portal account (<strong className="text-white break-all">{user.email}</strong>)!</p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="border-t border-white/10 pt-3 flex items-start gap-2.5">
+                  <span className="text-cyan-400 text-base font-bold">🔑</span>
+                  <div>
+                    <p className="font-semibold text-white">Accessing Your Client Portal</p>
+                    <ol className="list-decimal list-inside text-gray-300 mt-1.5 space-y-1.5">
+                      <li>Visit <strong className="text-cyan-300">www.optivoic.com/portal</strong>.</li>
+                      <li>Enter email: <strong className="text-white break-all">{purchasedInfo.email}</strong>.</li>
+                      <li>First-time users set a password. Existing users enter their password.</li>
+                      <li>Your purchased template automatically unlocks on your portal dashboard!</li>
+                    </ol>
+                  </div>
+                </div>
+              )}
             </div>
 
             {error && (
@@ -196,7 +232,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
                 onClick={() => { handleCloseAll(); navigate('/portal'); }}
                 className="w-full py-3 rounded-full border border-white/20 bg-white/5 text-gray-300 font-semibold hover:bg-white/10 transition-all cursor-pointer text-sm"
               >
-                Go to Client Portal →
+                {user ? 'View Template in Client Portal →' : 'Go to Client Portal →'}
               </button>
             </div>
           </div>

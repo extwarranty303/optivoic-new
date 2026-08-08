@@ -164,9 +164,11 @@ export default function ClientPortal() {
           
           <button 
             onClick={handleSignOut}
-            className="text-sm font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest ml-2"
+            className="text-xs font-bold text-gray-300 hover:text-red-400 bg-white/5 border border-white/15 hover:border-red-500/30 hover:bg-red-500/10 px-4 py-2 rounded-full transition-all uppercase tracking-wider ml-2 cursor-pointer flex items-center gap-1.5"
+            title="Log out of Client Portal"
           >
-            Sign Out
+            <span>Sign Out</span>
+            <span className="text-sm">↳</span>
           </button>
         </div>
       </nav>

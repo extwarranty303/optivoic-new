@@ -16,7 +16,20 @@ export default function ResellerCommandCenter() {
     price_cents: 9900
   });
 
+  const [initialPurchasedInfo, setInitialPurchasedInfo] = useState(null);
+
   useEffect(() => {
+    try {
+      const savedPurchase = sessionStorage.getItem('optivoic_last_purchase');
+      if (savedPurchase) {
+        const parsed = JSON.parse(savedPurchase);
+        setInitialPurchasedInfo(parsed);
+        setIsCheckoutOpen(true);
+      }
+    } catch (e) {
+      console.warn("Restore purchase notice:", e);
+    }
+
     const fetchData = async () => {
       const { data: prodData } = await supabase
         .from('products')
@@ -182,6 +195,7 @@ export default function ResellerCommandCenter() {
           template={template}
           user={user}
           onSuccess={handlePurchaseSuccess}
+          initialPurchasedInfo={initialPurchasedInfo}
         />
       )}
     </>
