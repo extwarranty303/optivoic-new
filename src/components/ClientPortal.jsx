@@ -176,16 +176,10 @@ export default function ClientPortal() {
       <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-violet-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
 
       <nav className="relative z-50 border-b border-white/10 py-5 px-8 flex justify-between items-center bg-black/50 backdrop-blur-2xl">
-        <Link to="/" className="text-xl font-bold text-white tracking-tight hover:text-cyan-400 transition-colors cursor-pointer">
+        <span className="text-xl font-bold text-white tracking-tight">
           Client Portal
-        </Link>
+        </span>
         <div className="flex items-center gap-4 sm:gap-6">
-          
-          <nav className="flex gap-4 mr-4">
-          <Link to="/" className="text-sm font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
-            Home
-          </Link>
-        </nav>
 
           {isAdmin && (
             <div className="hidden sm:flex items-center gap-2">
