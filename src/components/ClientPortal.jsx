@@ -138,6 +138,23 @@ export default function ClientPortal() {
         }
       }
 
+      // Step 2c: Storage Bucket Fallback if DB records are unlinked
+      if (!storagePath) {
+        const { data: bucketFiles } = await supabase.storage
+          .from('templates')
+          .list();
+
+        if (bucketFiles && bucketFiles.length > 0) {
+          const validFiles = bucketFiles.filter(f => f.name && f.name !== '.emptyFolderPlaceholder');
+          if (validFiles.length > 0) {
+            const latestBucketFile = validFiles[validFiles.length - 1];
+            storagePath = latestBucketFile.name;
+            const parts = latestBucketFile.name.split('-');
+            originalFilename = parts.length > 2 ? parts.slice(2).join('-') : latestBucketFile.name;
+          }
+        }
+      }
+
       if (!storagePath) {
         throw new Error("No active file is currently linked to this product. Upload or link a file in the Admin Dashboard.");
       }

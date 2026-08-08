@@ -29,11 +29,14 @@ export default function BuyButton({
     setIsCheckoutOpen(true);
   };
 
-  // Called from CheckoutModal after a successful PayPal transaction
+  // Called after user finishes with the Purchase Confirmation Screen in CheckoutModal
   const handlePurchaseSuccess = () => {
     setIsCheckoutOpen(false);
-    // Immediately launch the auth flow so the buyer can access the portal
-    setIsAuthOpen(true);
+    if (!user) {
+      setIsAuthOpen(true);
+    } else {
+      navigate(redirectTo);
+    }
   };
 
   // When AuthModal finishes (login or account creation) we navigate

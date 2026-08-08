@@ -32,11 +32,22 @@ export default function ResellerCommandCenter() {
     }
 
     const fetchData = async () => {
-      const { data: prodData } = await supabase
+      let { data: prodData } = await supabase
         .from('products')
         .select('*')
         .eq('id', 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6')
         .maybeSingle();
+
+      if (!prodData) {
+        const { data: fallbackProd } = await supabase
+          .from('products')
+          .select('*')
+          .ilike('title', '%Reseller%')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        prodData = fallbackProd;
+      }
 
       if (prodData) {
         setTemplate(prodData);

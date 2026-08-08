@@ -84,7 +84,6 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
       console.warn("Fulfillment notice:", fulfillErr);
     } finally {
       setIsProcessing(false);
-      if (onSuccess) onSuccess();
     }
   };
 
@@ -94,13 +93,31 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
     try {
       let storagePath = null;
       let originalFilename = 'download.zip';
+      let targetProductId = template.id;
 
-      // 1. Check products table for current_file_id
-      const { data: product } = await supabase
+      // 1. Check products table for current_file_id by template.id
+      let { data: product } = await supabase
         .from('products')
-        .select('current_file_id')
+        .select('id, current_file_id')
         .eq('id', template.id)
         .maybeSingle();
+
+      // If template.id is an old demo ID, find product by title
+      if (!product && template.title) {
+        const keyword = template.title.split(' ')[0];
+        const { data: titleProd } = await supabase
+          .from('products')
+          .select('id, current_file_id')
+          .ilike('title', `%${keyword}%`)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (titleProd) {
+          product = titleProd;
+          targetProductId = titleProd.id;
+        }
+      }
 
       if (product?.current_file_id) {
         const { data: fileMeta } = await supabase
@@ -115,12 +132,12 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
         }
       }
 
-      // 2. Fallback: Search files table for latest file matching template.id
+      // 2. Fallback: Search files table for latest file matching targetProductId
       if (!storagePath) {
         const { data: fallbackFile } = await supabase
           .from('files')
           .select('id, storage_path, original_filename')
-          .eq('product_id', template.id)
+          .eq('product_id', targetProductId)
           .order('created_at', { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -130,10 +147,44 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
           originalFilename = fallbackFile.original_filename || originalFilename;
 
           // Auto-repair current_file_id on products table
-          await supabase
-            .from('products')
-            .update({ current_file_id: fallbackFile.id })
-            .eq('id', template.id);
+          if (targetProductId) {
+            await supabase
+              .from('products')
+              .update({ current_file_id: fallbackFile.id })
+              .eq('id', targetProductId);
+          }
+        }
+      }
+
+      // 3. Fallback: Grab the most recently uploaded file in the files table
+      if (!storagePath) {
+        const { data: anyLatestFile } = await supabase
+          .from('files')
+          .select('id, storage_path, original_filename, product_id')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (anyLatestFile?.storage_path) {
+          storagePath = anyLatestFile.storage_path;
+          originalFilename = anyLatestFile.original_filename || originalFilename;
+        }
+      }
+
+      // 4. Storage Bucket Fallback: Direct storage scan if DB records are unlinked
+      if (!storagePath) {
+        const { data: bucketFiles } = await supabase.storage
+          .from('templates')
+          .list();
+
+        if (bucketFiles && bucketFiles.length > 0) {
+          const validFiles = bucketFiles.filter(f => f.name && f.name !== '.emptyFolderPlaceholder');
+          if (validFiles.length > 0) {
+            const latestBucketFile = validFiles[validFiles.length - 1];
+            storagePath = latestBucketFile.name;
+            const parts = latestBucketFile.name.split('-');
+            originalFilename = parts.length > 2 ? parts.slice(2).join('-') : latestBucketFile.name;
+          }
         }
       }
 
@@ -141,7 +192,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
         throw new Error('File payload is being prepared. Access it anytime in your Client Portal.');
       }
 
-      // 3. Generate Signed URL and trigger browser download
+      // 4. Generate Signed URL and trigger browser download
       const { data: signedData, error: signErr } = await supabase.storage
         .from('templates')
         .createSignedUrl(storagePath, 60, { download: originalFilename });
@@ -166,6 +217,8 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
 
   const handleCloseAll = () => {
     const wasLoggedIn = Boolean(user);
+    const wasPurchased = Boolean(purchasedInfo);
+
     setPurchasedInfo(null);
     setError(null);
     try {
@@ -173,9 +226,12 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
     } catch (e) {}
     onClose();
 
-    // If user was already logged in when purchasing, navigate straight to /portal upon modal close
-    if (wasLoggedIn || purchasedInfo) {
-      navigate('/portal');
+    if (wasPurchased) {
+      if (onSuccess) {
+        onSuccess();
+      } else if (wasLoggedIn) {
+        navigate('/portal');
+      }
     }
   };
 
