@@ -175,13 +175,20 @@ export default function AdminDashboard() {
       if (error || (data && data.startsWith('Error'))) {
         console.warn("RPC admin_grant_access notice:", error?.message || data, "- executing direct fallback grant...");
         
-        const { error: insertError } = await supabase
-          .from('purchases')
-          .insert([{
-            user_email: normalizedEmail,
-            template_id: grantTemplateId,
-            created_at: new Date().toISOString()
-          }]);
+        const payload = {
+          user_email: normalizedEmail,
+          product_id: grantTemplateId,
+          created_at: new Date().toISOString()
+        };
+
+        let { error: insertError } = await supabase.from('purchases').insert([payload]);
+
+        if (insertError && insertError.message.includes('product_id')) {
+          delete payload.product_id;
+          payload.template_id = grantTemplateId;
+          const retry = await supabase.from('purchases').insert([payload]);
+          insertError = retry.error;
+        }
 
         if (insertError) throw insertError;
       }
