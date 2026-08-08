@@ -92,41 +92,72 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
     setDownloading(true);
     setError(null);
     try {
-      const { data: product, error: prodErr } = await supabase
+      let storagePath = null;
+      let originalFilename = 'download.zip';
+
+      // 1. Check products table for current_file_id
+      const { data: product } = await supabase
         .from('products')
         .select('current_file_id')
         .eq('id', template.id)
         .maybeSingle();
 
-      if (prodErr || !product?.current_file_id) {
-        throw new Error('File download is being prepared. Access it anytime in your Client Portal.');
+      if (product?.current_file_id) {
+        const { data: fileMeta } = await supabase
+          .from('files')
+          .select('storage_path, original_filename')
+          .eq('id', product.current_file_id)
+          .maybeSingle();
+
+        if (fileMeta?.storage_path) {
+          storagePath = fileMeta.storage_path;
+          originalFilename = fileMeta.original_filename || originalFilename;
+        }
       }
 
-      const { data: fileMeta, error: fileErr } = await supabase
-        .from('files')
-        .select('storage_path, original_filename')
-        .eq('id', product.current_file_id)
-        .maybeSingle();
+      // 2. Fallback: Search files table for latest file matching template.id
+      if (!storagePath) {
+        const { data: fallbackFile } = await supabase
+          .from('files')
+          .select('id, storage_path, original_filename')
+          .eq('product_id', template.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      if (fileErr || !fileMeta) {
-        throw new Error('File metadata missing.');
+        if (fallbackFile?.storage_path) {
+          storagePath = fallbackFile.storage_path;
+          originalFilename = fallbackFile.original_filename || originalFilename;
+
+          // Auto-repair current_file_id on products table
+          await supabase
+            .from('products')
+            .update({ current_file_id: fallbackFile.id })
+            .eq('id', template.id);
+        }
       }
 
+      if (!storagePath) {
+        throw new Error('File payload is being prepared. Access it anytime in your Client Portal.');
+      }
+
+      // 3. Generate Signed URL and trigger browser download
       const { data: signedData, error: signErr } = await supabase.storage
         .from('templates')
-        .createSignedUrl(fileMeta.storage_path, 60, { download: fileMeta.original_filename || 'download.zip' });
+        .createSignedUrl(storagePath, 60, { download: originalFilename });
 
       if (signErr || !signedData?.signedUrl) {
-        throw new Error('Unable to generate download link.');
+        throw new Error(signErr?.message || 'Unable to generate download link.');
       }
 
       const link = document.createElement('a');
       link.href = signedData.signedUrl;
-      link.download = fileMeta.original_filename || 'download.zip';
+      link.setAttribute('download', originalFilename);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (err) {
+      console.error("Direct download error:", err);
       setError(err.message);
     } finally {
       setDownloading(false);
@@ -179,7 +210,13 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
                 <span className="text-cyan-400 text-base font-bold">📧</span>
                 <div>
                   <p className="font-semibold text-white">Confirmation & Receipt Email</p>
-                  <p className="text-gray-400 mt-0.5">Dispatched to: <strong className="text-white break-all">{purchasedInfo.email}</strong></p>
+                  <p className="text-gray-400 mt-0.5">
+                    {purchasedInfo.email && purchasedInfo.email !== 'your email' ? (
+                      <>Dispatched to: <strong className="text-white break-all">{purchasedInfo.email}</strong></>
+                    ) : (
+                      'Dispatched to your PayPal email address.'
+                    )}
+                  </p>
                 </div>
               </div>
 
@@ -198,7 +235,13 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
                     <p className="font-semibold text-white">Accessing Your Client Portal</p>
                     <ol className="list-decimal list-inside text-gray-300 mt-1.5 space-y-1.5">
                       <li>Visit <strong className="text-cyan-300">www.optivoic.com/portal</strong>.</li>
-                      <li>Enter email: <strong className="text-white break-all">{purchasedInfo.email}</strong>.</li>
+                      <li>
+                        {purchasedInfo.email && purchasedInfo.email !== 'your email' ? (
+                          <>Enter email: <strong className="text-white break-all">{purchasedInfo.email}</strong></>
+                        ) : (
+                          'Enter the email address associated with your PayPal purchase.'
+                        )}
+                      </li>
                       <li>First-time users set a password. Existing users enter their password.</li>
                       <li>Your purchased template automatically unlocks on your portal dashboard!</li>
                     </ol>

@@ -55,16 +55,14 @@ CREATE POLICY "Allow admins full access to purchases" ON purchases
 ALTER TABLE files ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Users can view files for products they purchased" ON files;
-CREATE POLICY "Users can view files for products they purchased" ON files
+DROP POLICY IF EXISTS "Allow read access to files for active products" ON files;
+
+CREATE POLICY "Allow read access to files for active products" ON files
   FOR SELECT USING (
     exists (
       select 1 from products p
-      join purchases pur on (pur.product_id = p.id or pur.template_id = p.id)
-      where p.current_file_id = files.id
-      and (
-        pur.user_id = auth.uid()
-        or (pur.user_email is not null and lower(pur.user_email) = lower(auth.jwt() ->> 'email'))
-      )
+      where (p.current_file_id = files.id or p.id = files.product_id)
+      and p.is_active = true
     )
   );
 
@@ -72,5 +70,5 @@ CREATE POLICY "Users can view files for products they purchased" ON files
 DROP POLICY IF EXISTS "Allow admin full access to files" ON files;
 CREATE POLICY "Allow admin full access to files" ON files
   FOR ALL USING (
-    exists (select 1 from admins where user_id = auth.uid())
+    exists (select 1 from admins where user_id = auth.uid() or lower(email) = lower(auth.jwt() ->> 'email'))
   );
