@@ -164,13 +164,7 @@ export default function ResellerCommandCenter() {
 
             <div className="flex flex-col items-center justify-center pt-2 w-full">
               <button 
-                onClick={() => {
-                  if (!user) {
-                    setIsAuthOpen(true);
-                  } else {
-                    setIsCheckoutOpen(true);
-                  }
-                }}
+                onClick={() => setIsCheckoutOpen(true)}
                 className="w-full text-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 hover:shadow-[0_0_30px_rgba(56,182,255,0.4)] text-white font-bold text-lg py-4 px-8 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg cursor-pointer"
               >
                 <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">

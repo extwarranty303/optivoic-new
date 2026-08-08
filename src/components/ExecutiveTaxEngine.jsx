@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 import AuthModal from './AuthModal';
+import CheckoutModal from './CheckoutModal';
 import { usePageMeta } from '../utils/usePageMeta';
 import Footer from './Footer';
-import { sendPurchaseEmail } from '../utils/purchaseEmail';
 
 const NoiseOverlay = () => (
   <div 
@@ -20,6 +19,7 @@ export default function ExecutiveTaxEngine() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const productId = "526dcf30-0990-458e-bba7-b9f1c7e99078";
 
   useEffect(() => {
@@ -245,62 +245,13 @@ export default function ExecutiveTaxEngine() {
               </div>
             </div>
 
-            <div className="min-h-[150px] relative z-20 flex flex-col justify-center mb-6">
-              {!user ? (
-                <div className="text-center bg-black/40 border border-white/10 rounded-2xl p-6">
-                  <p className="text-gray-300 mb-4 text-sm">You must have an OptiVöic account to access your digital downloads securely.</p>
-                  <button 
-                    onClick={() => setIsAuthOpen(true)}
-                    className="w-full bg-cyan-400 text-black font-bold py-3 rounded-full hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all"
-                  >
-                    Create Account to Checkout
-                  </button>
-                </div>
-              ) : (
-                <div className="bg-white p-4 rounded-2xl shadow-inner">
-                  <PayPalScriptProvider options={{
-                    "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
-                    currency: "USD"
-                  }}>
-                    <PayPalButtons 
-                      style={{ layout: "vertical", shape: "rect", color: "black" }}
-                      createOrder={(data, actions) => {
-                        return actions.order.create({
-                          purchase_units: [{
-                            description: product.title,
-                            amount: { value: (product.price_cents / 100).toFixed(2) }
-                          }]
-                        });
-                      }}
-                      onApprove={async (data, actions) => {
-                        const details = await actions.order.capture();
-
-                        const { data: purchaseData, error } = await supabase.from('purchases').insert([
-                          {
-                            user_id: user.id,
-                            user_email: user.email,
-                            product_id: product.id
-                          }
-                        ]).select('id').single();
-
-                        if (error) {
-                          alert("Payment succeeded, but there was an error generating your link. Please contact support.");
-                          console.error(error);
-                        } else {
-                          // Send the confirmation email
-                          await sendPurchaseEmail({
-                            purchase: purchaseData,
-                            userEmail: user.email,
-                            productTitle: product.title,
-                          });
-                          alert(`Success! Thank you, ${details.payer.name.given_name}. Redirecting to your secure portal...`);
-                          navigate('/portal');
-                        }
-                      }}
-                    />
-                  </PayPalScriptProvider>
-                </div>
-              )}
+            <div className="flex flex-col justify-center mb-6">
+              <button 
+                onClick={() => setIsCheckoutOpen(true)}
+                className="w-full bg-gradient-to-r from-cyan-400 to-violet-500 hover:shadow-[0_0_30px_rgba(56,182,255,0.4)] text-white font-bold text-lg py-4 px-8 rounded-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg cursor-pointer"
+              >
+                Buy Now (${(product.price_cents / 100).toFixed(2)})
+              </button>
             </div>
 
             <div className="space-y-4 text-center">
@@ -317,10 +268,16 @@ export default function ExecutiveTaxEngine() {
 
           </div>
 
-        </div>
-      </main>
-      
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo="/tax-engine" />    
+      
+      {product && (
+        <CheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          template={product}
+          user={user}
+        />
+      )}
     </div>
   );
 }
