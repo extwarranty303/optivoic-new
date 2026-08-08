@@ -207,6 +207,8 @@ export default function BlogAdmin() {
 
     const finalStatus = targetStatus || form.status || 'published';
 
+    const combinedKeywords = form.keywords ? (form.keywords.includes(form.tags) ? form.keywords : `${form.tags ? form.tags + ', ' : ''}${form.keywords}`) : form.tags;
+
     const payload = {
       title: form.title,
       slug: form.slug || form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
@@ -215,7 +217,7 @@ export default function BlogAdmin() {
       category: form.category || 'Business Templates',
       tags: form.tags,
       status: finalStatus,
-      keywords: form.keywords || form.tags,
+      keywords: combinedKeywords,
       meta_description: form.meta_description,
       featured_image: form.featured_image,
       image_alt: form.image_alt || form.title,
@@ -281,7 +283,7 @@ export default function BlogAdmin() {
       excerpt: post.excerpt || '',
       content: post.content || '',
       category: post.category || 'Business Templates',
-      tags: post.tags || '',
+      tags: post.tags || post.keywords || '',
       status: post.status || 'published',
       keywords: post.keywords || '',
       meta_description: post.meta_description || '',
