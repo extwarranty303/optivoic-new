@@ -145,6 +145,7 @@ export default function ResellerCommandCenter() {
             <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_40px_rgba(56,182,255,0.25)]">
               <video 
                 controls 
+                autoPlay
                 preload="metadata"
                 playsInline
                 className="w-full aspect-video rounded-2xl object-cover"

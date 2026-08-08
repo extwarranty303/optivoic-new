@@ -560,30 +560,14 @@ export default function ClientPortal() {
                         </p>
                       </div>
 
-                      <div className="pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => setActiveQuickStart(product || { title, id: targetProductId })}
-                            className="px-3.5 py-2 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-                            title="Open Quick-Start setup checklist & concept video"
-                          >
-                            <span>⚡</span> Quick Start
-                          </button>
-
-                          {isResellerCenter && (
-                            <button
-                              onClick={() => setActiveVideoModal({
-                                title: 'Reseller Command Center v2.5 Concept & Getting Started Guide',
-                                videoUrl: 'https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/Command_Center_v2.5.mp4',
-                                description: 'Learn how to set up your multi-channel inventory spreadsheet, automate platform fee deductions, and track real-time net profit margins.'
-                              })}
-                              className="px-3.5 py-2 rounded-full border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-                              title="Watch Concept & Getting Started Video (v2.5)"
-                            >
-                              <span>🎥</span> How-To Video (v2.5)
-                            </button>
-                          )}
-                        </div>
+                      <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-3">
+                        <button
+                          onClick={() => setActiveQuickStart(product || { title, id: targetProductId })}
+                          className="px-4 py-2 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                          title="Open Quick-Start setup checklist & concept video"
+                        >
+                          <span>⚡</span> Quick Start
+                        </button>
 
                         <button 
                           onClick={() => handleDownload(targetProductId)}
@@ -786,6 +770,7 @@ export default function ClientPortal() {
             <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_30px_rgba(56,182,255,0.2)]">
               <video 
                 controls 
+                autoPlay
                 preload="metadata"
                 playsInline
                 className="w-full aspect-video rounded-2xl object-cover"
