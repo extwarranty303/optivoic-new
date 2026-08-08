@@ -3,12 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { supabase } from '../supabaseClient';
 
-const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurchasedInfo }) => {
+const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurchasedInfo, initialPromoCode = '' }) => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [purchasedInfo, setPurchasedInfo] = useState(initialPurchasedInfo || null);
   const [downloading, setDownloading] = useState(false);
+
+  const [promoInput, setPromoInput] = useState(initialPromoCode || '');
+  const [appliedDiscount, setAppliedDiscount] = useState(
+    initialPromoCode.trim().toUpperCase() === 'PORTAL15' ? 0.15 : 0
+  );
+  const [promoMessage, setPromoMessage] = useState(
+    initialPromoCode.trim().toUpperCase() === 'PORTAL15' ? '✨ 15% Member Discount Applied!' : ''
+  );
 
   useEffect(() => {
     if (initialPurchasedInfo) {
@@ -16,10 +24,35 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
     }
   }, [initialPurchasedInfo]);
 
+  useEffect(() => {
+    if (initialPromoCode.trim().toUpperCase() === 'PORTAL15') {
+      setPromoInput('PORTAL15');
+      setAppliedDiscount(0.15);
+      setPromoMessage('✨ 15% Member Discount Applied!');
+    }
+  }, [initialPromoCode]);
+
   if (!isOpen || !template) return null;
 
-  // Convert cents to standard dollar format for PayPal
-  const priceInDollars = (template.price_cents / 100).toFixed(2);
+  const rawOriginalPrice = (template.price_cents || 9900) / 100;
+  const originalPriceDollars = rawOriginalPrice.toFixed(2);
+  const savingsDollars = (rawOriginalPrice * appliedDiscount).toFixed(2);
+  const priceInDollars = (rawOriginalPrice * (1 - appliedDiscount)).toFixed(2);
+
+  const handleApplyPromo = (e) => {
+    e.preventDefault();
+    const cleanCode = promoInput.trim().toUpperCase();
+    if (cleanCode === 'PORTAL15') {
+      setAppliedDiscount(0.15);
+      setPromoMessage('✨ 15% Member Discount Applied!');
+    } else if (cleanCode === '') {
+      setAppliedDiscount(0);
+      setPromoMessage('');
+    } else {
+      setAppliedDiscount(0);
+      setPromoMessage('Invalid promo code. Try PORTAL15 for 15% off.');
+    }
+  };
 
   const handleApprove = async (data, actions) => {
     setIsProcessing(true);
@@ -50,140 +83,94 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
     setPurchasedInfo(successPayload);
 
     try {
-      sessionStorage.setItem('optivoic_last_purchase', JSON.stringify(successPayload));
-    } catch (e) {
-      console.warn("sessionStorage save notice:", e);
-    }
-
-    // Fulfill entitlement & email in background
-    try {
-      const { error: functionError } = await supabase.functions.invoke('process-order', {
-        body: { 
-          orderId: paypalOrderId,
-          productId: template.id,
-          userEmail: finalEmail
-        },
-      });
-
-      if (functionError) {
-        console.warn("Edge function process-order notice:", functionError.message, "- executing direct entitlement fallback...");
-        
-        const payload = {
+      const { data: purchaseData, error: dbErr } = await supabase
+        .from('purchases')
+        .insert({
+          user_id: user?.id || null,
           user_email: finalEmail,
+          template_id: template.id,
           product_id: template.id,
+          title: template.title,
+          paypal_order_id: paypalOrderId,
           created_at: new Date().toISOString()
-        };
-        if (user?.id) payload.user_id = user.id;
+        })
+        .select()
+        .single();
 
-        const { error: insertErr } = await supabase.from('purchases').insert([payload]);
-        if (insertErr) {
-          console.error("Direct entitlement notice:", insertErr.message);
-        }
+      if (dbErr) {
+        console.warn("Supabase record warning:", dbErr.message);
       }
-    } catch (fulfillErr) {
-      console.warn("Fulfillment notice:", fulfillErr);
+
+      if (onSuccess) {
+        onSuccess(purchaseData || successPayload);
+      }
+    } catch (err) {
+      console.error("Post-checkout handling notice:", err);
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleDirectDownload = async () => {
+    if (!template || !template.id) {
+      setError("Template metadata missing.");
+      return;
+    }
+
     setDownloading(true);
     setError(null);
+
     try {
+      let fileRecord = null;
+
+      // 1. Check if product has current_file_id
+      if (template.current_file_id) {
+        const { data: directFile } = await supabase
+          .from('files')
+          .select('*')
+          .eq('id', template.current_file_id)
+          .maybeSingle();
+
+        if (directFile) {
+          fileRecord = directFile;
+        }
+      }
+
+      // 2. Search files table matching product_id
+      if (!fileRecord) {
+        const { data: productFiles } = await supabase
+          .from('files')
+          .select('*')
+          .eq('product_id', template.id)
+          .order('created_at', { ascending: false });
+
+        if (productFiles && productFiles.length > 0) {
+          fileRecord = productFiles[0];
+        }
+      }
+
+      // 3. Search Storage Bucket directly
       let storagePath = null;
-      let originalFilename = 'download.zip';
-      let targetProductId = template.id;
+      let originalFilename = `${template.title.replace(/[^a-zA-Z0-9]/g, '_')}.zip`;
 
-      // 1. Check products table for current_file_id by template.id
-      let { data: product } = await supabase
-        .from('products')
-        .select('id, current_file_id')
-        .eq('id', template.id)
-        .maybeSingle();
-
-      // If template.id is an old demo ID, find product by title
-      if (!product && template.title) {
-        const keyword = template.title.split(' ')[0];
-        const { data: titleProd } = await supabase
-          .from('products')
-          .select('id, current_file_id')
-          .ilike('title', `%${keyword}%`)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (titleProd) {
-          product = titleProd;
-          targetProductId = titleProd.id;
-        }
-      }
-
-      if (product?.current_file_id) {
-        const { data: fileMeta } = await supabase
-          .from('files')
-          .select('storage_path, original_filename')
-          .eq('id', product.current_file_id)
-          .maybeSingle();
-
-        if (fileMeta?.storage_path) {
-          storagePath = fileMeta.storage_path;
-          originalFilename = fileMeta.original_filename || originalFilename;
-        }
-      }
-
-      // 2. Fallback: Search files table for latest file matching targetProductId
-      if (!storagePath) {
-        const { data: fallbackFile } = await supabase
-          .from('files')
-          .select('id, storage_path, original_filename')
-          .eq('product_id', targetProductId)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (fallbackFile?.storage_path) {
-          storagePath = fallbackFile.storage_path;
-          originalFilename = fallbackFile.original_filename || originalFilename;
-
-          // Auto-repair current_file_id on products table
-          if (targetProductId) {
-            await supabase
-              .from('products')
-              .update({ current_file_id: fallbackFile.id })
-              .eq('id', targetProductId);
-          }
-        }
-      }
-
-      // 3. Fallback: Grab the most recently uploaded file in the files table
-      if (!storagePath) {
-        const { data: anyLatestFile } = await supabase
-          .from('files')
-          .select('id, storage_path, original_filename, product_id')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (anyLatestFile?.storage_path) {
-          storagePath = anyLatestFile.storage_path;
-          originalFilename = anyLatestFile.original_filename || originalFilename;
-        }
-      }
-
-      // 4. Storage Bucket Fallback: Direct storage scan if DB records are unlinked
-      if (!storagePath) {
-        const { data: bucketFiles } = await supabase.storage
+      if (fileRecord && fileRecord.storage_path) {
+        storagePath = fileRecord.storage_path;
+        originalFilename = fileRecord.original_filename || fileRecord.filename || originalFilename;
+      } else {
+        const { data: bucketFiles, error: bucketErr } = await supabase
+          .storage
           .from('templates')
-          .list();
+          .list('', { limit: 100 });
 
-        if (bucketFiles && bucketFiles.length > 0) {
-          const validFiles = bucketFiles.filter(f => f.name && f.name !== '.emptyFolderPlaceholder');
-          if (validFiles.length > 0) {
-            const latestBucketFile = validFiles[validFiles.length - 1];
-            storagePath = latestBucketFile.name;
-            const parts = latestBucketFile.name.split('-');
-            originalFilename = parts.length > 2 ? parts.slice(2).join('-') : latestBucketFile.name;
+        if (!bucketErr && bucketFiles && bucketFiles.length > 0) {
+          const match = bucketFiles.find(f => 
+            f.name.toLowerCase().includes(String(template.id).toLowerCase()) ||
+            f.name.toLowerCase().includes(template.title.toLowerCase())
+          ) || bucketFiles[0];
+
+          if (match) {
+            storagePath = match.name;
+            originalFilename = match.name;
           }
         }
       }
@@ -195,10 +182,12 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
       // 4. Generate Signed URL and trigger browser download
       const { data: signedData, error: signErr } = await supabase.storage
         .from('templates')
-        .createSignedUrl(storagePath, 60, { download: originalFilename });
+        .createSignedUrl(storagePath, 60, {
+          download: originalFilename
+        });
 
       if (signErr || !signedData?.signedUrl) {
-        throw new Error(signErr?.message || 'Unable to generate download link.');
+        throw new Error(signErr?.message || "Unable to generate download link.");
       }
 
       const link = document.createElement('a');
@@ -207,75 +196,56 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
     } catch (err) {
       console.error("Direct download error:", err);
-      setError(err.message);
+      setError(`Download notice: ${err.message}`);
     } finally {
       setDownloading(false);
     }
   };
 
   const handleCloseAll = () => {
-    const wasLoggedIn = Boolean(user);
-    const wasPurchased = Boolean(purchasedInfo);
-
     setPurchasedInfo(null);
     setError(null);
-    try {
-      sessionStorage.removeItem('optivoic_last_purchase');
-    } catch (e) {}
+    setIsProcessing(false);
     onClose();
-
-    if (wasPurchased) {
-      if (onSuccess) {
-        onSuccess();
-      } else if (wasLoggedIn) {
-        navigate('/portal');
-      }
-    }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-      <div className="bg-[#121212] border border-gray-800 rounded-3xl p-6 md:p-8 max-w-md w-full relative shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+      <div className="relative w-full max-w-md bg-[#0D0D12] border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl text-left overflow-hidden">
         
+        {/* Close Button */}
         <button 
           onClick={handleCloseAll}
-          disabled={isProcessing}
-          className="absolute top-5 right-5 text-gray-400 hover:text-white bg-white/10 hover:bg-white/20 w-8 h-8 flex items-center justify-center rounded-full transition-colors disabled:opacity-50 cursor-pointer z-50"
+          className="absolute top-5 right-5 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer"
         >
           ✕
         </button>
 
         {purchasedInfo ? (
-          /* Purchase Confirmation Screen */
-          <div className="text-center py-2 space-y-5">
-            <div className="w-16 h-16 rounded-full bg-cyan-500/20 border border-cyan-400 text-cyan-300 mx-auto flex items-center justify-center text-3xl shadow-[0_0_30px_rgba(56,182,255,0.3)]">
-              🎉
+          /* PURCHASE SUCCESS CONFIRMATION SCREEN */
+          <div className="space-y-5 text-left">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Payment Confirmed & Asset Unlocked
             </div>
 
-            <div>
-              <h2 className="text-2xl font-black text-white mb-1 tracking-tight">Purchase Successful!</h2>
-              <p className="text-sm text-gray-300">
-                You now own <strong className="text-white">{purchasedInfo.templateTitle || template.title}</strong>.
-              </p>
-            </div>
+            <h2 className="text-2xl font-black text-white leading-tight">
+              Thank You for Your Order!
+            </h2>
 
-            <div className="bg-white/5 border border-white/10 p-5 rounded-2xl text-left space-y-3.5 text-xs text-gray-300">
-              <div className="flex items-start gap-2.5">
-                <span className="text-cyan-400 text-base font-bold">📧</span>
-                <div>
-                  <p className="font-semibold text-white">Confirmation & Receipt Email</p>
-                  <p className="text-gray-400 mt-0.5">
-                    {purchasedInfo.email && purchasedInfo.email !== 'your email' ? (
-                      <>Dispatched to: <strong className="text-white break-all">{purchasedInfo.email}</strong></>
-                    ) : (
-                      'Dispatched to your PayPal email address.'
-                    )}
-                  </p>
-                </div>
+            <div className="bg-white/[0.03] border border-white/10 p-4 rounded-2xl space-y-3 text-xs">
+              <div className="flex justify-between border-b border-white/10 pb-2">
+                <span className="text-gray-400">Template Unlocked:</span>
+                <strong className="text-white">{purchasedInfo.templateTitle}</strong>
               </div>
-
+              <div className="flex justify-between border-b border-white/10 pb-2">
+                <span className="text-gray-400">PayPal Order ID:</span>
+                <strong className="text-cyan-300 font-mono">{purchasedInfo.orderId}</strong>
+              </div>
+              
               {user ? (
                 <div className="border-t border-white/10 pt-3 flex items-start gap-2.5">
                   <span className="text-cyan-400 text-base font-bold">✨</span>
@@ -333,13 +303,53 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
           /* Standard Checkout Screen */
           <>
             <h2 className="text-2xl font-bold text-white mb-2">Secure Checkout</h2>
-            <p className="text-gray-400 mb-6 text-sm">
+            <p className="text-gray-400 mb-5 text-sm">
               You are purchasing: <strong className="text-white">{template.title}</strong>
             </p>
 
-            <div className="flex justify-between items-center mb-6 bg-black p-4 rounded-2xl border border-gray-800">
-              <span className="text-gray-400">Total</span>
-              <span className="text-2xl font-bold text-[#38B6FF]">${priceInDollars}</span>
+            <div className="bg-black/60 p-4 rounded-2xl border border-gray-800 mb-5 space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Original Price</span>
+                <span className={`font-bold ${appliedDiscount > 0 ? 'line-through text-gray-500 text-sm' : 'text-xl text-[#38B6FF]'}`}>
+                  ${originalPriceDollars}
+                </span>
+              </div>
+
+              {appliedDiscount > 0 && (
+                <div className="space-y-1.5 pt-2 border-t border-white/10">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-emerald-400">15% Member Discount</span>
+                    <span className="text-xs text-emerald-400 font-mono font-bold">Save -${savingsDollars}</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-1">
+                    <span className="text-sm font-bold text-white">Your Discounted Price</span>
+                    <span className="text-2xl font-black text-emerald-400">${priceInDollars}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Promo Code Input */}
+              <form onSubmit={handleApplyPromo} className="pt-2 flex gap-2">
+                <input 
+                  type="text" 
+                  value={promoInput}
+                  onChange={(e) => setPromoInput(e.target.value)}
+                  placeholder="Promo Code (e.g. PORTAL15)"
+                  className="flex-1 bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-xs text-white uppercase placeholder:normal-case focus:outline-none focus:border-cyan-400"
+                />
+                <button 
+                  type="submit" 
+                  className="px-4 py-2 rounded-xl bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-bold hover:bg-cyan-500/30 transition-all cursor-pointer"
+                >
+                  Apply
+                </button>
+              </form>
+
+              {promoMessage && (
+                <p className={`text-[11px] font-semibold ${appliedDiscount > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {promoMessage}
+                </p>
+              )}
             </div>
 
             {error && (
@@ -366,7 +376,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
                   createOrder={(data, actions) => {
                     return actions.order.create({
                       purchase_units: [{
-                        description: template.title,
+                        description: `${template.title} (Member Discount Applied)`,
                         amount: { value: priceInDollars }
                       }]
                     });

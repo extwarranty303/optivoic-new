@@ -130,6 +130,36 @@ export default function ResellerCommandCenter() {
             </div>
           </div>
 
+          {/* Promotional Video Preview & Ease of Use Section */}
+          <div className="mb-16 rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-black p-8 md:p-10 backdrop-blur-xl shadow-2xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-300 bg-cyan-500/20 border border-cyan-500/30 px-3 py-1 rounded-full inline-block mb-2">
+                  🎥 3-Minute Video Demo
+                </span>
+                <h2 className="text-2xl md:text-3xl font-black text-white">Ease of Use & Key Benefits Preview</h2>
+                <p className="text-gray-300 text-sm mt-1">See how the Reseller Command Center automates fee calculations and live profit tracking in seconds.</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/20 bg-black overflow-hidden relative group">
+              <div className="aspect-video w-full bg-gradient-to-tr from-cyan-950 via-slate-950 to-black flex flex-col items-center justify-center text-center p-8 space-y-4">
+                <div className="w-20 h-20 rounded-full bg-cyan-400 text-black flex items-center justify-center font-bold text-3xl shadow-[0_0_35px_rgba(56,182,255,0.7)] group-hover:scale-110 transition-transform cursor-pointer">
+                  ▶
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">Watch Interactive System Walkthrough</h3>
+                  <p className="text-xs text-gray-400 max-w-md">Discover how automatic eBay/Poshmark fee deductions, aging inventory alerts, and tax bucket reservations work out of the box.</p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-2 pt-2">
+                  <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full">✓ 0 Formulas to Code</span>
+                  <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full">✓ Works in Google Sheets & Excel</span>
+                  <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full">✓ Instant Download</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="mb-16">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold mb-4 text-cyan-400">Built for daily reselling success</h2>
