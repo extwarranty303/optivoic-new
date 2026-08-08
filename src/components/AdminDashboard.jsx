@@ -84,7 +84,7 @@ export default function AdminDashboard() {
   const fetchDashboardData = async () => {
     try {
       // Fetch Dynamic Products
-      const { data: prodData } = await supabase.from('products').select('id, title').eq('is_active', true);
+      const { data: prodData } = await supabase.from('products').select('id, title, current_file_id').eq('is_active', true);
       if (prodData) {
         setProductsList(prodData);
         if (prodData.length > 0) {
@@ -289,8 +289,8 @@ export default function AdminDashboard() {
       <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-red-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
 
       <nav className="relative z-50 border-b border-white/10 py-5 px-8 flex justify-between items-center bg-black/50 backdrop-blur-2xl">
-        <div className="text-xl font-black text-white tracking-tighter drop-shadow-lg flex items-center gap-2">
-          OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span> 
+        <div className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+          Admin Command Center
           <span className="bg-red-500/10 text-red-400 text-xs px-2 py-0.5 rounded border border-red-500/20 ml-2 font-mono">ROOT_ACCESS</span>
         </div>
         <div className="flex items-center gap-4">
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
           </div>
           <div className="bg-black/40 border border-white/5 rounded-2xl p-6 backdrop-blur-md">
             <h3 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Assets Deployed</h3>
-            <p className="text-3xl font-light text-gray-300">{vaultFiles.length}</p>
+            <p className="text-3xl font-light text-gray-300">{productsList.filter(p => p.current_file_id).length}</p>
           </div>
           <div className="bg-black/40 border border-white/5 border-b-2 border-b-cyan-500/50 rounded-2xl p-6 backdrop-blur-md">
             <h3 className="text-cyan-500/70 text-xs font-bold uppercase tracking-widest mb-2">Template Clients</h3>
