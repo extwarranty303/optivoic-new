@@ -10,28 +10,24 @@ export default function ResellerCommandCenter() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [template, setTemplate] = useState(null);
-
-  // --- IMPORTANT: This ID must match the one in your database and TemplateCard.jsx ---
-  const RESELLER_COMMAND_CENTER_ID = 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6'; // Placeholder UUID
+  const [template, setTemplate] = useState({
+    id: 'reseller-command-center',
+    title: 'Reseller Command Center',
+    price_cents: 9900
+  });
 
   useEffect(() => {
-    // Fetch the template data and user session when the component mounts
     const fetchData = async () => {
-      // Fetch the template details
-      const { data: templateData, error: templateError } = await supabase
-        .from('templates')
+      const { data: prodData } = await supabase
+        .from('products')
         .select('*')
-        .eq('id', RESELLER_COMMAND_CENTER_ID)
-        .single();
+        .eq('id', 'reseller-command-center')
+        .maybeSingle();
 
-      if (templateData) {
-        setTemplate(templateData);
-      } else {
-        console.error("Could not fetch Reseller Command Center template data:", templateError);
+      if (prodData) {
+        setTemplate(prodData);
       }
 
-      // Fetch the current user
       const { data: { user: userData } } = await supabase.auth.getUser();
       setUser(userData);
     };
