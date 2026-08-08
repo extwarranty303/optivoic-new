@@ -1,31 +1,64 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import BuyButton from './BuyButton';
 
-// This file was not provided in the context, so this is a conceptual diff.
-// Please apply these changes to your actual TemplateCard.jsx file.
+const TemplateCard = ({ template, user = null }) => {
+  if (!template) return null;
 
-const TemplateCard = ({ template }) => {
-  // IMPORTANT: Replace 'your-reseller-template-id' with the actual UUID of your "Reseller Command Center" template
-  // You can find this ID in your Supabase 'templates' table.
-  const RESELLER_COMMAND_CENTER_ID = 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6'; // Placeholder UUID
-  const isResellerCommandCenter = template.id === RESELLER_COMMAND_CENTER_ID;
+  const priceDisplay = template.price_cents
+    ? (template.price_cents / 100).toFixed(2)
+    : (template.price || '99.00');
+
+  const isReady = template.status === 'READY' || template.status === 'Active' || template.status === 'ACTIVE' || !template.status;
 
   return (
-    <div className="template-card bg-[#121212] border border-gray-800 rounded-xl p-6 shadow-lg text-white"> {/* Apply your card styling */}
-      <h3 className="text-xl font-bold mb-2 text-[#67e8f9]">{template.title}</h3> {/* Apply your title styling */}
-      <p className="text-gray-400 mb-4">{template.description}</p> {/* Apply your description styling */}
-      <p className="text-lg font-semibold mb-4">Price: ${template.price_cents / 100}</p> {/* Apply your price styling */}
-      
-      {isResellerCommandCenter ? (
-        // Link to the dedicated Reseller Command Center page
-        <Link to="/reseller-command-center" className="inline-block bg-[#0891b2] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#067e9a] transition-colors"> {/* Apply your button styling */}
-          View Details
-        </Link>
-      ) : (
-        <button className="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg cursor-not-allowed opacity-70" disabled>
-          Notify Me
-        </button>
-      )}
+    <div className="template-card bg-[#121212] border border-gray-800 rounded-xl p-6 shadow-lg text-white flex flex-col justify-between hover:border-cyan-500/30 transition-all duration-300">
+      <div>
+        {template.image_url && (
+          <div className="w-full h-40 mb-4 rounded-lg overflow-hidden border border-white/10 relative">
+            <img 
+              src={template.image_url} 
+              alt={template.title} 
+              className="w-full h-full object-cover" 
+            />
+          </div>
+        )}
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-xl font-bold text-[#67e8f9]">{template.title}</h3>
+          <span className="text-sm px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-semibold">
+            ${priceDisplay}
+          </span>
+        </div>
+        <p className="text-gray-400 text-sm mb-4 line-clamp-3">{template.description || template.desc}</p>
+      </div>
+
+      <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+        {template.route && (
+          <Link
+            to={template.route}
+            className="flex-1 text-center bg-white/5 border border-white/10 text-gray-300 font-semibold py-2.5 px-4 rounded-lg hover:bg-white/10 transition-colors text-sm"
+          >
+            View Details
+          </Link>
+        )}
+        
+        {isReady ? (
+          <div className="flex-1">
+            <BuyButton
+              template={template}
+              user={user}
+              className="w-full bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold py-2.5 px-4 rounded-lg hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all text-sm text-center cursor-pointer"
+            />
+          </div>
+        ) : (
+          <button
+            className="flex-1 bg-gray-700 text-gray-400 font-bold py-2.5 px-4 rounded-lg cursor-not-allowed text-sm opacity-60"
+            disabled
+          >
+            Coming Soon
+          </button>
+        )}
+      </div>
     </div>
   );
 };

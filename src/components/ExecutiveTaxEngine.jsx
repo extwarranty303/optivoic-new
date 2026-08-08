@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import AuthModal from './AuthModal';
-import CheckoutModal from './CheckoutModal';
+import BuyButton from './BuyButton';
 import { usePageMeta } from '../utils/usePageMeta';
 import Footer from './Footer';
 
@@ -241,17 +240,12 @@ export default function ExecutiveTaxEngine() {
                 <p className="text-white font-medium">{product.format || 'Digital File'}</p>
               </div>
               <div className="text-4xl font-light text-white drop-shadow-md">
-                ${(product.price_cents / 100).toFixed(2)}
+                {`$${(product.price_cents / 100).toFixed(2)}`}
               </div>
             </div>
 
             <div className="flex flex-col justify-center mb-6">
-              <button 
-                onClick={() => setIsCheckoutOpen(true)}
-                className="w-full bg-gradient-to-r from-cyan-400 to-violet-500 hover:shadow-[0_0_30px_rgba(56,182,255,0.4)] text-white font-bold text-lg py-4 px-8 rounded-full transition-all duration-300 flex items-center justify-center gap-3 shadow-lg cursor-pointer"
-              >
-                Buy Now (${(product.price_cents / 100).toFixed(2)})
-              </button>
+              <BuyButton template={product} user={user} redirectTo="/portal" />
             </div>
 
             <div className="space-y-4 text-center">
@@ -267,17 +261,7 @@ export default function ExecutiveTaxEngine() {
             </div>
 
           </div>
-
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} redirectTo="/tax-engine" />    
-      
-      {product && (
-        <CheckoutModal
-          isOpen={isCheckoutOpen}
-          onClose={() => setIsCheckoutOpen(false)}
-          template={product}
-          user={user}
-        />
-      )}
+    </main>
     </div>
   );
 }

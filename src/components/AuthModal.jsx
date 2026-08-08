@@ -98,16 +98,13 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
         }
 
         // Sign Up Success!
-        if (signUpData?.session) {
-          setMessage({ text: 'Password configured! Welcome to your Client Portal.', type: 'success' });
+        if (signUpData) {
+          // Sign‑up succeeded – grant immediate access without email confirmation
+          setMessage({ text: 'Account created! Redirecting to your Client Portal...', type: 'success' });
           setTimeout(() => {
             onClose();
             navigate(redirectTo || '/portal');
           }, 800);
-          return;
-        } else {
-          // Show Dedicated Confirmation Screen (Email Confirmation Sent)
-          setIsAccountCreatedSuccess(true);
           return;
         }
       }
