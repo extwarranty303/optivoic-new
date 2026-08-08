@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { fetchBookmarks, toggleBookmark } from '../utils/bookmarkManager';
 
 const NoiseOverlay = () => (
   <div className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
@@ -14,6 +15,7 @@ export default function ClientPortal() {
   const [products, setProducts] = useState({});
   const [downloadingId, setDownloadingId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false); 
+  const [savedArticles, setSavedArticles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,120 +50,152 @@ export default function ClientPortal() {
       }
 
       // 3. Fetch Live Products to map to purchases
-      const { data: prodData } = await supabase.from('products').select('id, title, category_name');
-      if (prodData) {
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('*');
+
+      if (productsData) {
         const prodMap = {};
-        prodData.forEach(p => { prodMap[p.id] = p; });
+        productsData.forEach(p => { prodMap[p.id] = p; });
         setProducts(prodMap);
       }
 
-      // 4. SECURE CHECK: Is user in the admins table?
-      const { data: adminData } = await supabase
-        .from('admins')
-        .select('email')
-        .eq('email', session.user.email)
-        .maybeSingle();
-        
-      if (adminData) setIsAdmin(true);
-
-      // 5. Fetch User's Consulting Projects
+      // 4. Fetch User's Consulting Sprints
       const { data: userProjects } = await supabase
         .from('projects')
         .select('*')
-        .eq('client_email', session.user.email)
+        .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
 
-      if (userProjects) setProjects(userProjects);
+      if (userProjects) {
+        setProjects(userProjects);
+      }
 
+      // 5. Check if user is an authorized admin
+      const { data: adminCheck } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      setIsAdmin(!!adminCheck);
       setLoading(false);
     };
 
     fetchPortalData();
+
+    // 6. Load Saved Articles / Bookmarks from Supabase / Local Storage
+    const loadSavedArticles = async () => {
+      const bks = await fetchBookmarks();
+      setSavedArticles(bks);
+    };
+
+    loadSavedArticles();
+
+    const handleBookmarksUpdate = async () => {
+      const bks = await fetchBookmarks();
+      setSavedArticles(bks);
+    };
+
+    window.addEventListener('optivoic_bookmarks_updated', handleBookmarksUpdate);
+    return () => window.removeEventListener('optivoic_bookmarks_updated', handleBookmarksUpdate);
   }, [navigate]);
+
+  const handleRemoveBookmark = async (post) => {
+    await toggleBookmark(post);
+    const bks = await fetchBookmarks();
+    setSavedArticles(bks);
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate('/');
   };
 
-  // UPDATED: The Smart Entitlement Download Engine
-  const handleDownload = async (templateId) => {
-    if (!templateId) {
-      alert("Invalid product reference.");
+  const handleDownload = async (targetProductId) => {
+    if (!targetProductId) {
+      alert("Product ID missing from purchase record.");
       return;
     }
-    setDownloadingId(templateId);
+
+    setDownloadingId(targetProductId);
+
     try {
+      let fileRecord = null;
+      let targetProduct = products[targetProductId];
+
+      // Tier 1: Check if product has current_file_id directly
+      if (targetProduct && targetProduct.current_file_id) {
+        const { data: directFile } = await supabase
+          .from('files')
+          .select('*')
+          .eq('id', targetProduct.current_file_id)
+          .maybeSingle();
+
+        if (directFile) {
+          fileRecord = directFile;
+        }
+      }
+
+      // Tier 2: Search files table matching product_id
+      if (!fileRecord) {
+        const { data: productFiles } = await supabase
+          .from('files')
+          .select('*')
+          .eq('product_id', targetProductId)
+          .order('created_at', { ascending: false });
+
+        if (productFiles && productFiles.length > 0) {
+          fileRecord = productFiles[0];
+        }
+      }
+
+      // Tier 3: Search files table by product title match
+      if (!fileRecord && targetProduct && targetProduct.title) {
+        const { data: titleFiles } = await supabase
+          .from('files')
+          .select('*')
+          .ilike('filename', `%${targetProduct.title}%`)
+          .order('created_at', { ascending: false });
+
+        if (titleFiles && titleFiles.length > 0) {
+          fileRecord = titleFiles[0];
+        }
+      }
+
+      // Tier 4: Storage bucket scan fallback
       let storagePath = null;
-      let originalFilename = 'download.zip';
+      let originalFilename = targetProduct ? `${targetProduct.title.replace(/[^a-zA-Z0-9]/g, '_')}.zip` : `template_${targetProductId}.zip`;
 
-      // Step 1: Look up the product to find current_file_id
-      const { data: product } = await supabase
-        .from('products')
-        .select('current_file_id')
-        .eq('id', templateId)
-        .maybeSingle();
-
-      if (product?.current_file_id) {
-        // Step 2a: Fetch metadata for the active current_file_id
-        const { data: fileMeta } = await supabase
-          .from('files')
-          .select('storage_path, original_filename')
-          .eq('id', product.current_file_id)
-          .maybeSingle();
-
-        if (fileMeta?.storage_path) {
-          storagePath = fileMeta.storage_path;
-          originalFilename = fileMeta.original_filename || originalFilename;
-        }
-      }
-
-      // Step 2b: Fallback if current_file_id is null - search files table for product_id
-      if (!storagePath) {
-        const { data: fallbackFile } = await supabase
-          .from('files')
-          .select('id, storage_path, original_filename')
-          .eq('product_id', templateId)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (fallbackFile?.storage_path) {
-          storagePath = fallbackFile.storage_path;
-          originalFilename = fallbackFile.original_filename || originalFilename;
-
-          // Auto-repair current_file_id on products table
-          await supabase
-            .from('products')
-            .update({ current_file_id: fallbackFile.id })
-            .eq('id', templateId);
-        }
-      }
-
-      // Step 2c: Storage Bucket Fallback if DB records are unlinked
-      if (!storagePath) {
-        const { data: bucketFiles } = await supabase.storage
+      if (fileRecord && fileRecord.storage_path) {
+        storagePath = fileRecord.storage_path;
+        originalFilename = fileRecord.original_filename || fileRecord.filename || originalFilename;
+      } else {
+        const { data: bucketFiles, error: bucketErr } = await supabase
+          .storage
           .from('templates')
-          .list();
+          .list('', { limit: 100 });
 
-        if (bucketFiles && bucketFiles.length > 0) {
-          const validFiles = bucketFiles.filter(f => f.name && f.name !== '.emptyFolderPlaceholder');
-          if (validFiles.length > 0) {
-            const latestBucketFile = validFiles[validFiles.length - 1];
-            storagePath = latestBucketFile.name;
-            const parts = latestBucketFile.name.split('-');
-            originalFilename = parts.length > 2 ? parts.slice(2).join('-') : latestBucketFile.name;
+        if (!bucketErr && bucketFiles && bucketFiles.length > 0) {
+          const match = bucketFiles.find(f => 
+            f.name.toLowerCase().includes(String(targetProductId).toLowerCase()) ||
+            (targetProduct && f.name.toLowerCase().includes(targetProduct.title.toLowerCase()))
+          ) || bucketFiles[0];
+
+          if (match) {
+            storagePath = match.name;
+            originalFilename = match.name;
           }
         }
       }
 
       if (!storagePath) {
-        throw new Error("No active file is currently linked to this product. Upload or link a file in the Admin Dashboard.");
+        throw new Error("File payload is being prepared. Access it anytime in your OptiVoic Portal.");
       }
 
-      // Step 3: Generate Signed URL and trigger browser download
-      const { data: signedData, error: signError } = await supabase.storage
-        .from('templates') 
+      const { data: signedData, error: signError } = await supabase
+        .storage
+        .from('templates')
         .createSignedUrl(storagePath, 60, {
           download: originalFilename
         });
@@ -179,13 +213,13 @@ export default function ClientPortal() {
 
     } catch (err) {
       console.error("Download error:", err);
-      alert(`Download failed: ${err.message}`);
-    } finally {
+      alert(`Download status: ${err.message}`);
+    } fontFinally: {
       setDownloadingId(null);
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-[#020202] flex items-center justify-center text-cyan-400 font-bold animate-pulse tracking-widest uppercase">Decrypting Portal...</div>;
+  if (loading) return <div className="min-h-screen bg-[#020202] flex items-center justify-center text-cyan-400 font-bold animate-pulse tracking-widest uppercase">Decrypting OptiVoic Portal...</div>;
 
   return (
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-cyan-500 selection:text-white relative overflow-x-hidden">
@@ -193,11 +227,16 @@ export default function ClientPortal() {
       <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-violet-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0"></div>
 
       <nav className="relative z-50 border-b border-white/10 py-5 px-8 flex justify-between items-center bg-black/50 backdrop-blur-2xl">
-        <span className="text-xl font-bold text-white tracking-tight">
-          Client Portal
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-bold text-white tracking-tight">
+            OptiVoic Portal
+          </span>
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+            User Workspace
+          </span>
+        </div>
+        
         <div className="flex items-center gap-4 sm:gap-6">
-
           {isAdmin && (
             <div className="hidden sm:flex items-center gap-2">
               <Link 
@@ -205,7 +244,7 @@ export default function ClientPortal() {
                 className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 text-xs font-bold px-3 py-1.5 rounded transition-all tracking-widest uppercase"
               >
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                Admin Panel
+                Admin Command Center
               </Link>
               <Link 
                 to="/blog-admin" 
@@ -221,7 +260,7 @@ export default function ClientPortal() {
           <button 
             onClick={handleSignOut}
             className="text-xs font-bold text-gray-300 hover:text-red-400 bg-white/5 border border-white/15 hover:border-red-500/30 hover:bg-red-500/10 px-4 py-2 rounded-full transition-all uppercase tracking-wider ml-2 cursor-pointer flex items-center gap-1.5"
-            title="Log out of Client Portal"
+            title="Log out of OptiVoic Portal"
           >
             <span>Sign Out</span>
             <span className="text-sm">↳</span>
@@ -231,8 +270,12 @@ export default function ClientPortal() {
 
       <main className="relative z-10 max-w-6xl mx-auto px-8 py-16">
         <header className="mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-xs font-mono font-semibold mb-3">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            OPTIVOIC PORTAL
+          </div>
           <h1 className="text-4xl font-black mb-2">Welcome Back.</h1>
-          <p className="text-gray-400 text-lg">Manage your digital frameworks and active consulting engagements.</p>
+          <p className="text-gray-400 text-lg">Manage your unlocked templates, saved intelligence guides, and active consulting engagements.</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -240,14 +283,14 @@ export default function ClientPortal() {
           {/* LEFT: Dynamic Digital Downloads */}
           <div className="lg:col-span-7 space-y-6">
             <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
-              <span className="text-cyan-400">↓</span> Purchased Frameworks
+              <span className="text-cyan-400">↓</span> Unlocked Templates & Assets
             </h2>
 
             {purchases.length === 0 ? (
               <div className="border border-dashed border-white/10 rounded-3xl p-10 text-center bg-black/20">
-                <p className="text-gray-500 text-sm mb-4">You have not acquired any frameworks yet.</p>
-                <Link to="/" className="text-cyan-400 text-sm font-bold hover:underline">
-                  Browse the Digital Marketplace →
+                <p className="text-gray-500 text-sm mb-4">You have not acquired any templates yet.</p>
+                <Link to="/marketplace" className="text-cyan-400 text-sm font-bold hover:underline">
+                  Browse Template Marketplace →
                 </Link>
               </div>
             ) : (
@@ -256,7 +299,7 @@ export default function ClientPortal() {
                 const product = products[targetProductId];
                 
                 const title = product ? product.title : (purchase.title || `Asset #${targetProductId || purchase.id}`);
-                const category = product ? product.category_name : "Digital Asset";
+                const category = product ? product.category_name : "Template Package";
                 
                 const isDownloading = downloadingId === targetProductId;
 
@@ -269,7 +312,7 @@ export default function ClientPortal() {
                         </span>
                         <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
                         <p className="text-xs text-gray-400 font-mono">
-                          Acquired: {new Date(purchase.created_at).toLocaleDateString()}
+                          Unlocked: {new Date(purchase.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <button 
@@ -289,12 +332,12 @@ export default function ClientPortal() {
           {/* RIGHT: Dynamic CRM Consulting Tracker */}
           <div className="lg:col-span-5">
             <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
-              <span className="text-violet-400">⚡</span> Active Engagements
+              <span className="text-violet-400">⚡</span> Active Consulting Sprints
             </h2>
 
             {projects.length === 0 ? (
               <div className="border border-dashed border-white/10 rounded-3xl p-10 text-center bg-black/20">
-                <p className="text-gray-500 text-sm mb-4">You have no active consulting sprints.</p>
+                <p className="text-gray-500 text-sm mb-4">You have no active consulting engagements.</p>
                 <Link to="/consulting" className="text-violet-400 text-sm font-bold hover:underline">
                   Inquire about Agency Services →
                 </Link>
@@ -341,6 +384,73 @@ export default function ClientPortal() {
             )}
           </div>
 
+        </div>
+
+        {/* KNOWLEDGE VAULT */}
+        <div className="mt-14 pt-10 border-t border-white/10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-xl font-bold flex items-center gap-3 text-white">
+                <span className="text-yellow-400">⭐</span> Knowledge Vault
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">Your bookmarked strategy articles, business guides, and reference materials.</p>
+            </div>
+            <Link to="/blog" className="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+              Browse All Blog Articles →
+            </Link>
+          </div>
+
+          {savedArticles.length === 0 ? (
+            <div className="border border-dashed border-white/10 rounded-3xl p-8 text-center bg-black/20">
+              <p className="text-gray-400 text-sm mb-2 font-semibold">Your Knowledge Vault is empty.</p>
+              <p className="text-gray-500 text-xs mb-5 max-w-md mx-auto">
+                Bookmark key strategy articles while reading the OptiVoic blog to build your personal reference library!
+              </p>
+              <Link to="/blog" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold hover:bg-cyan-500/20 transition-all">
+                <span>📖</span> Explore Blog Articles →
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedArticles.map((article) => (
+                <div key={article.slug} className="bg-white/[0.02] border border-white/10 hover:border-yellow-500/30 backdrop-blur-xl rounded-2xl p-6 flex flex-col justify-between transition-all group">
+                  <div>
+                    <div className="flex justify-between items-start gap-2 mb-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-0.5 rounded-full">
+                        {article.category || 'Business Strategy'}
+                      </span>
+                      <button 
+                        onClick={() => handleRemoveBookmark(article)} 
+                        className="text-xs text-gray-500 hover:text-red-400 transition-colors p-1 cursor-pointer"
+                        title="Remove from saved guides"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <h3 className="text-base font-bold text-white mb-2 line-clamp-2 group-hover:text-yellow-300 transition-colors">
+                      {article.title}
+                    </h3>
+                    {article.excerpt && (
+                      <p className="text-xs text-gray-400 line-clamp-2 mb-4 leading-relaxed">
+                        {article.excerpt}
+                      </p>
+                    )}
+                  </div>
+                  <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-[10px] text-gray-500 font-mono">
+                      Saved {new Date(article.saved_at || Date.now()).toLocaleDateString()}
+                    </span>
+                    <Link 
+                      to={`/blog/${article.slug}`} 
+                      className="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+                    >
+                      Read Guide →
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
     </div>

@@ -189,7 +189,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
       }
 
       if (!storagePath) {
-        throw new Error('File payload is being prepared. Access it anytime in your Client Portal.');
+        throw new Error('File payload is being prepared. Access it anytime in your OptiVoic Portal.');
       }
 
       // 4. Generate Signed URL and trigger browser download
@@ -281,14 +281,14 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
                   <span className="text-cyan-400 text-base font-bold">✨</span>
                   <div>
                     <p className="font-semibold text-white">Account Linked & Unlocked</p>
-                    <p className="text-gray-300 mt-1">This template has been automatically unlocked in your active Client Portal account (<strong className="text-white break-all">{user.email}</strong>)!</p>
+                    <p className="text-gray-300 mt-1">This template has been automatically unlocked in your active OptiVoic Portal account (<strong className="text-white break-all">{user.email}</strong>)!</p>
                   </div>
                 </div>
               ) : (
                 <div className="border-t border-white/10 pt-3 flex items-start gap-2.5">
                   <span className="text-cyan-400 text-base font-bold">🔑</span>
                   <div>
-                    <p className="font-semibold text-white">Accessing Your Client Portal</p>
+                    <p className="font-semibold text-white">Accessing Your OptiVoic Portal</p>
                     <ol className="list-decimal list-inside text-gray-300 mt-1.5 space-y-1.5">
                       <li>Visit <strong className="text-cyan-300">www.optivoic.com/portal</strong>.</li>
                       <li>
@@ -325,7 +325,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
                 onClick={() => { handleCloseAll(); navigate('/portal'); }}
                 className="w-full py-3 rounded-full border border-white/20 bg-white/5 text-gray-300 font-semibold hover:bg-white/10 transition-all cursor-pointer text-sm"
               >
-                {user ? 'View Template in Client Portal →' : 'Go to Client Portal →'}
+                {user ? 'View Template in OptiVoic Portal →' : 'Go to OptiVoic Portal →'}
               </button>
             </div>
           </div>

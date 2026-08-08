@@ -35,7 +35,7 @@ export default function SitemapPage() {
       category: 'Portals & Account',
       icon: '🔐',
       links: [
-        { title: 'Client Portal', path: '/portal', desc: 'Access your purchased templates, downloads, and custom consulting deliverables.' },
+        { title: 'OptiVoic Portal', path: '/portal', desc: 'Access your purchased templates, downloads, saved strategy guides, and custom consulting deliverables.' },
         { title: 'Root Admin Command Center', path: '/admin', desc: 'Administrative dashboard for client management and asset deployment.' },
         { title: 'Blog Editorial Suite', path: '/blog-admin', desc: 'Manage articles, draft posts, and upload HTML blog files.' },
       ]

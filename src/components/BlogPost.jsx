@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { usePageMeta } from '../utils/usePageMeta';
 import { supabase } from '../supabaseClient';
+import { fetchBookmarks, isBookmarked, toggleBookmark } from '../utils/bookmarkManager';
 
 const SEED_POSTS_MAP = {
   'scaling-reseller-operations-with-automated-frameworks': {
@@ -85,10 +86,14 @@ export default function BlogPost() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saved, setSaved] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     const loadPost = async () => {
       try {
+        await fetchBookmarks();
+
         const { data } = await supabase
           .from('blog_posts')
           .select('*')
@@ -97,12 +102,17 @@ export default function BlogPost() {
 
         if (data) {
           setPost(data);
+          setSaved(isBookmarked(data.slug));
         } else if (SEED_POSTS_MAP[slug]) {
           setPost(SEED_POSTS_MAP[slug]);
+          setSaved(isBookmarked(SEED_POSTS_MAP[slug].slug));
         }
       } catch (err) {
         console.error("Error fetching article:", err);
-        if (SEED_POSTS_MAP[slug]) setPost(SEED_POSTS_MAP[slug]);
+        if (SEED_POSTS_MAP[slug]) {
+          setPost(SEED_POSTS_MAP[slug]);
+          setSaved(isBookmarked(SEED_POSTS_MAP[slug].slug));
+        }
       } finally {
         setLoading(false);
       }
@@ -110,6 +120,14 @@ export default function BlogPost() {
 
     loadPost();
   }, [slug]);
+
+  const handleBookmarkToggle = async () => {
+    if (!post) return;
+    const isNowSaved = await toggleBookmark(post);
+    setSaved(isNowSaved);
+    setToastMessage(isNowSaved ? '⭐ Article saved to your Knowledge Vault!' : 'Article removed from Knowledge Vault.');
+    setTimeout(() => setToastMessage(''), 3500);
+  };
 
   usePageMeta({
     title: `${post?.title || 'Article'} | Optivoic Insights`,
@@ -174,14 +192,30 @@ export default function BlogPost() {
     <div className="min-h-screen bg-[#020202] text-white">
       <article className="max-w-4xl mx-auto px-6 md:px-8 py-20">
         
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold px-6 py-3 rounded-2xl shadow-[0_0_25px_rgba(56,182,255,0.5)] flex items-center gap-2 text-sm animate-pulse">
+            {toastMessage}
+          </div>
+        )}
+
         {/* Navigation & Category */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <Link to="/blog" className="text-xs font-bold text-cyan-400 hover:text-cyan-300 uppercase tracking-wider flex items-center gap-1">
             ← Back to All Articles
           </Link>
-          <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
-            {post.category || 'Business Templates'}
-          </span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleBookmarkToggle}
+              className={`text-xs font-bold px-3.5 py-1.5 rounded-full border transition-all flex items-center gap-1.5 cursor-pointer ${saved ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'bg-white/5 border-white/15 text-gray-300 hover:bg-white/10 hover:text-white'}`}
+              title={saved ? "Saved in Knowledge Vault" : "Bookmark this article to your Knowledge Vault"}
+            >
+              <span>{saved ? '⭐ Saved in Vault' : '☆ Save to Vault'}</span>
+            </button>
+            <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
+              {post.category || 'Business Templates'}
+            </span>
+          </div>
         </div>
 
         {/* Title */}

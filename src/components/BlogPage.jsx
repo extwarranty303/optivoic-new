@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { usePageMeta } from '../utils/usePageMeta';
 import { supabase } from '../supabaseClient';
 import { BLOG_CATEGORIES } from './BlogAdmin';
+import { fetchBookmarks, isBookmarked, toggleBookmark } from '../utils/bookmarkManager';
 
 const SEED_POSTS = [
   {
@@ -50,6 +51,8 @@ export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [savedSlugs, setSavedSlugs] = useState({});
+
   useEffect(() => {
     const loadPosts = async () => {
       try {
@@ -74,6 +77,28 @@ export default function BlogPage() {
 
     loadPosts();
   }, []);
+
+  useEffect(() => {
+    const updateSlugs = async () => {
+      await fetchBookmarks();
+      const map = {};
+      posts.forEach(p => {
+        if (p.slug) map[p.slug] = isBookmarked(p.slug);
+      });
+      setSavedSlugs(map);
+    };
+
+    updateSlugs();
+    window.addEventListener('optivoic_bookmarks_updated', updateSlugs);
+    return () => window.removeEventListener('optivoic_bookmarks_updated', updateSlugs);
+  }, [posts]);
+
+  const handleCardBookmark = async (e, post) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const isNowSaved = await toggleBookmark(post);
+    setSavedSlugs(prev => ({ ...prev, [post.slug]: isNowSaved }));
+  };
 
   usePageMeta({
     title: 'Blog & Insights | Optivoic Technology Consulting & Systems',
@@ -181,9 +206,18 @@ export default function BlogPage() {
                     <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-cyan-300">
                       {post.category || 'Business Templates'}
                     </span>
-                    <span className="text-xs text-gray-500">
-                      {new Date(post.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => handleCardBookmark(e, post)}
+                        className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border transition-all cursor-pointer flex items-center gap-1 ${savedSlugs[post.slug] ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300 shadow-[0_0_10px_rgba(234,179,8,0.2)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10'}`}
+                        title={savedSlugs[post.slug] ? "Saved in Knowledge Vault" : "Bookmark article to Knowledge Vault"}
+                      >
+                        <span>{savedSlugs[post.slug] ? '⭐ Saved' : '☆ Save'}</span>
+                      </button>
+                      <span className="text-xs text-gray-500 hidden sm:inline">
+                        {new Date(post.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </div>
                   </div>
 
                   <h2 className="text-xl font-bold mb-3 text-white group-hover:text-cyan-300 transition-colors leading-snug">

@@ -118,7 +118,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
 
         // Sign Up Success!
         if (signUpData) {
-          setMessage({ text: 'Account created! Redirecting to your Client Portal...', type: 'success' });
+          setMessage({ text: 'Account created! Redirecting to your OptiVoic Portal...', type: 'success' });
           setTimeout(() => {
             onClose();
             navigate(redirectTo || '/portal');
@@ -185,7 +185,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
                 <span className="text-cyan-400 font-bold">📩</span> Next Steps:
               </p>
               <p className="text-gray-400 leading-relaxed">
-                Check your inbox and click the confirmation link to activate your account and jump straight to your Client Portal.
+                Check your inbox and click the confirmation link to activate your account and jump straight to your OptiVoic Portal.
               </p>
             </div>
 
@@ -253,7 +253,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
                 {isResetMode ? (
                   'We will send a password reset link to your email.'
                 ) : isExistingUser ? (
-                  `Enter password for ${email} to view your Client Portal.`
+                  `Enter password for ${email} to view your OptiVoic Portal.`
                 ) : (
                   `Enter your password for ${email} to unlock your portal.`
                 )}
