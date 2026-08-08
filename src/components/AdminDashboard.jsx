@@ -35,6 +35,8 @@ export default function AdminDashboard() {
   // Manual Override State
   const [grantEmail, setGrantEmail] = useState('');
   const [grantTemplateId, setGrantTemplateId] = useState('');
+  const [grantStatus, setGrantStatus] = useState({ text: '', type: '' });
+  const [isGranting, setIsGranting] = useState(false);
   const [authorized, setAuthorized] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
@@ -80,30 +82,35 @@ export default function AdminDashboard() {
   }, [navigate]);
 
   const fetchDashboardData = async () => {
-    // Fetch Dynamic Products
-    const { data: prodData } = await supabase.from('products').select('id, title').eq('is_active', true);
-    if (prodData) {
-      setProductsList(prodData);
-      if (prodData.length > 0) {
-        setTemplateId(prodData[0].id);
-        setGrantTemplateId(prodData[0].id);
+    try {
+      // Fetch Dynamic Products
+      const { data: prodData } = await supabase.from('products').select('id, title').eq('is_active', true);
+      if (prodData) {
+        setProductsList(prodData);
+        if (prodData.length > 0) {
+          setTemplateId(prodData[0].id);
+          setGrantTemplateId(prodData[0].id);
+        }
       }
+
+      const { data: pData } = await supabase.from('purchases').select('*').order('created_at', { ascending: false });
+      if (pData) setPurchases(pData);
+
+      const { data: oData } = await supabase.from('orders').select('total_amount_cents').eq('status', 'completed');
+      if (oData) setOrders(oData);
+
+      // Assuming you are keeping the bucket named 'templates'
+      const { data: fData } = await supabase.storage.from('templates').list();
+      if (fData) setVaultFiles(fData.filter(f => f.name !== '.emptyFolderPlaceholder')); 
+      
+      const { data: projData, error: projErr } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+      if (!projErr && projData) setProjects(projData);
+
+    } catch (err) {
+      console.warn("Dashboard data fetch notice:", err);
+    } finally {
+      setLoading(false);
     }
-
-    const { data: pData } = await supabase.from('purchases').select('*').order('created_at', { ascending: false });
-    if (pData) setPurchases(pData);
-
-    const { data: oData } = await supabase.from('orders').select('total_amount_cents').eq('status', 'completed');
-    if (oData) setOrders(oData);
-
-    // Assuming you are keeping the bucket named 'templates'
-    const { data: fData } = await supabase.storage.from('templates').list();
-    if (fData) setVaultFiles(fData.filter(f => f.name !== '.emptyFolderPlaceholder')); 
-    
-    const { data: projData } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
-    if (projData) setProjects(projData);
-
-    setLoading(false);
   };
 
   // UPDATED: The 3-Step Upload Engine
