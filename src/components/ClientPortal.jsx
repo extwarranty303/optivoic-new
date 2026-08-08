@@ -47,6 +47,7 @@ export default function ClientPortal() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeQuickStart, setActiveQuickStart] = useState(null);
   const [activeChangelog, setActiveChangelog] = useState(null);
+  const [activeVideoModal, setActiveVideoModal] = useState(null);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const [supportMessage, setSupportMessage] = useState('');
   const [supportSent, setSupportSent] = useState(false);
@@ -536,6 +537,8 @@ export default function ClientPortal() {
                   const category = product ? product.category_name : "Template Package";
                   const isDownloading = downloadingId === targetProductId;
 
+                  const isResellerCenter = String(title).toLowerCase().includes('reseller');
+
                   return (
                     <div key={purchase.id} className="bg-white/[0.02] border border-white/10 hover:border-cyan-500/30 backdrop-blur-xl rounded-2xl p-6 transition-all group flex flex-col justify-between space-y-4">
                       <div>
@@ -548,7 +551,7 @@ export default function ClientPortal() {
                             className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded hover:bg-emerald-500/20 cursor-pointer"
                             title="View release notes"
                           >
-                            ✨ v2.4 Live Update
+                            ✨ v2.5 Live Update
                           </button>
                         </div>
                         <h3 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-300 transition-colors">{title}</h3>
@@ -557,18 +560,35 @@ export default function ClientPortal() {
                         </p>
                       </div>
 
-                      <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-3">
-                        <button
-                          onClick={() => setActiveQuickStart(product || { title, id: targetProductId })}
-                          className="px-4 py-2 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-                          title="Open Quick-Start setup checklist & video demo"
-                        >
-                          <span>⚡</span> Quick Start
-                        </button>
+                      <div className="pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setActiveQuickStart(product || { title, id: targetProductId })}
+                            className="px-3.5 py-2 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                            title="Open Quick-Start setup checklist & concept video"
+                          >
+                            <span>⚡</span> Quick Start
+                          </button>
+
+                          {isResellerCenter && (
+                            <button
+                              onClick={() => setActiveVideoModal({
+                                title: 'Reseller Command Center v2.5 Concept & Getting Started Guide',
+                                videoUrl: 'https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/Command_Center_v2.5.mp4',
+                                description: 'Learn how to set up your multi-channel inventory spreadsheet, automate platform fee deductions, and track real-time net profit margins.'
+                              })}
+                              className="px-3.5 py-2 rounded-full border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                              title="Watch Concept & Getting Started Video (v2.5)"
+                            >
+                              <span>🎥</span> How-To Video (v2.5)
+                            </button>
+                          )}
+                        </div>
+
                         <button 
                           onClick={() => handleDownload(targetProductId)}
                           disabled={isDownloading}
-                          className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-400 hover:text-black font-bold py-2 px-6 rounded-full transition-all text-xs whitespace-nowrap disabled:opacity-50 cursor-pointer shadow-[0_0_15px_rgba(56,182,255,0.1)] group-hover:shadow-[0_0_20px_rgba(56,182,255,0.3)]"
+                          className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-400 hover:text-black font-bold py-2 px-5 rounded-full transition-all text-xs whitespace-nowrap disabled:opacity-50 cursor-pointer shadow-[0_0_15px_rgba(56,182,255,0.1)] group-hover:shadow-[0_0_20px_rgba(56,182,255,0.3)]"
                         >
                           {isDownloading ? 'Decrypting...' : 'Secure Download'}
                         </button>
@@ -769,7 +789,7 @@ export default function ClientPortal() {
                 preload="metadata"
                 playsInline
                 className="w-full aspect-video rounded-2xl object-cover"
-                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/How_the_Reseller_Command_Center_Protects_Profit_Margins_edit.mp4"
+                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/Command_Center_v2.5.mp4"
               >
                 Your browser does not support playing this video.
               </video>
@@ -789,8 +809,8 @@ export default function ClientPortal() {
                 <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
                   <span className="font-mono font-bold text-cyan-400 bg-cyan-500/20 px-2 py-0.5 rounded">02</span>
                   <div>
-                    <h4 className="font-bold text-white">Enable Automated Formulas</h4>
-                    <p className="text-gray-400 mt-0.5">Ensure formula calculation mode is set to Automatic under Sheet Settings.</p>
+                    <h4 className="font-bold text-white">Make an Editable Master Copy</h4>
+                    <p className="text-gray-400 mt-0.5">Click File → Make a copy (Google Sheets) or Save As (Excel) to preserve your master template backup.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
@@ -822,6 +842,50 @@ export default function ClientPortal() {
         </div>
       )}
 
+      {/* DEDICATED HOW-TO & CONCEPT VIDEO MODAL */}
+      {activeVideoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+          <div className="relative w-full max-w-3xl bg-[#0D0D12] border border-violet-500/40 rounded-3xl p-6 md:p-8 shadow-2xl space-y-5 text-left">
+            <button 
+              onClick={() => setActiveVideoModal(null)}
+              className="absolute top-5 right-5 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-wider">
+              <span>🎥</span> Concept & How-To Walkthrough Video (v2.5)
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-black text-white">{activeVideoModal.title}</h2>
+              <p className="text-xs text-gray-300 mt-1">{activeVideoModal.description}</p>
+            </div>
+
+            <div className="rounded-2xl border border-violet-500/30 bg-black overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.2)]">
+              <video 
+                controls 
+                preload="metadata"
+                playsInline
+                className="w-full aspect-video rounded-2xl object-cover"
+                src={activeVideoModal.videoUrl}
+              >
+                Your browser does not support playing this video.
+              </video>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button 
+                onClick={() => setActiveVideoModal(null)}
+                className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all cursor-pointer"
+              >
+                Close Video Player
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* RELEASE NOTES CHANGELOG MODAL */}
       {activeChangelog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
@@ -834,14 +898,15 @@ export default function ClientPortal() {
             </button>
 
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-              <span>✨</span> Version 2.4 Release Notes
+              <span>✨</span> Version 2.5 Release Notes
             </div>
 
             <h2 className="text-2xl font-bold text-white">{activeChangelog.title}</h2>
 
             <div className="space-y-3 text-xs text-gray-300 bg-white/5 p-4 rounded-2xl border border-white/10">
-              <h4 className="font-bold text-white text-sm border-b border-white/10 pb-2">What's New in v2.4:</h4>
+              <h4 className="font-bold text-white text-sm border-b border-white/10 pb-2">What's New in v2.5:</h4>
               <ul className="list-disc list-inside space-y-1.5 leading-relaxed text-gray-300">
+                <li><strong className="text-white">New Concept & Getting Started Walkthrough Video:</strong> Integrated step-by-step video guide.</li>
                 <li><strong className="text-white">Updated 2026 Tax Table Buckets:</strong> Automated quarterly liquidity reservation.</li>
                 <li><strong className="text-white">Enhanced Formula Speed:</strong> Optimized array formulas for 10,000+ row inventory spreadsheets.</li>
                 <li><strong className="text-white">Multi-Marketplace Commission Deductions:</strong> Auto-deduct platform fees.</li>
