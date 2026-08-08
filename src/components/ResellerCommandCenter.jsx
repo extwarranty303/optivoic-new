@@ -159,7 +159,7 @@ export default function ResellerCommandCenter() {
                   if (!user) {
                     setIsAuthOpen(true);
                   } else {
-                    window.open("https://www.paypal.com/ncp/payment/MZ9PL72C48KFE", "_blank");
+                    setIsCheckoutOpen(true);
                   }
                 }}
                 className="w-full text-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 hover:shadow-[0_0_30px_rgba(56,182,255,0.4)] text-white font-bold text-lg py-4 px-8 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg cursor-pointer"
