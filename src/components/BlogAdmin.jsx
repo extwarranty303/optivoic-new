@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { isAuthorizedAdmin } from '../utils/adminAccess';
 import { notifyIndexNow } from '../utils/indexNow';
+import { downloadBlogSitemap, copyBlogSitemapToClipboard } from '../utils/sitemapGenerator';
 
 export const BLOG_CATEGORIES = [
   'Business Templates',
@@ -271,8 +272,25 @@ export default function BlogAdmin() {
   const handleManualIndexNow = async () => {
     setMessage({ type: 'info', text: 'Pinging IndexNow API (Bing, Yandex, Seznam)...' });
     const publishedUrls = publishedPosts.map(p => `/blog/${p.slug}`);
-    const res = await notifyIndexNow([...publishedUrls, '/blog', '/marketplace', '/sitemap.xml']);
+    const res = await notifyIndexNow([...publishedUrls, '/blog', '/marketplace', '/sitemap.xml', '/sitemap-blog.xml']);
     setMessage({ type: res.success ? 'success' : 'error', text: res.message });
+  };
+
+  const handleDownloadSitemap = () => {
+    downloadBlogSitemap(posts);
+    setMessage({
+      type: 'success',
+      text: `Downloaded sitemap-blog.xml with ${publishedPosts.length} published article(s)! Ready to upload to Search Console & Bing Webmaster Tools.`
+    });
+  };
+
+  const handleCopySitemapXml = async () => {
+    const success = await copyBlogSitemapToClipboard(posts);
+    if (success) {
+      setMessage({ type: 'success', text: 'Blog Sitemap XML copied to clipboard!' });
+    } else {
+      setMessage({ type: 'error', text: 'Unable to copy to clipboard automatically.' });
+    }
   };
 
   const handleEdit = (post) => {
@@ -336,6 +354,13 @@ export default function BlogAdmin() {
             <p className="text-gray-400 mt-2 max-w-2xl">Publish articles, assign categories & tags, upload HTML blog files, save drafts, and manage your SEO publication pipeline.</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={handleDownloadSitemap}
+              className="text-xs font-bold px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(56,182,255,0.2)]"
+              title="Generate and download sitemap-blog.xml for Google Search Console and Bing Webmaster Tools"
+            >
+              <span>🗺️</span> Blog Sitemap XML
+            </button>
             <button 
               onClick={handleManualIndexNow} 
               className="text-xs font-bold px-4 py-2 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20 transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
@@ -552,6 +577,38 @@ export default function BlogAdmin() {
 
           {/* Content Library Sidebar with Filter Area */}
           <div className="space-y-4">
+
+            {/* Blog Sitemap & Search Engine Management Card */}
+            <div className="rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-violet-500/5 p-6 backdrop-blur-xl space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-white text-base flex items-center gap-2">
+                  <span>🗺️</span> Blog Sitemap XML
+                </h3>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  sitemap-blog.xml
+                </span>
+              </div>
+              <p className="text-xs text-gray-300 leading-relaxed">
+                Generate and download an updated <code className="text-cyan-300 font-mono">sitemap-blog.xml</code> file containing all <strong className="text-white">{publishedPosts.length} published article(s)</strong> to upload directly to Google Search Console and Bing Webmaster Tools.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                <button
+                  type="button"
+                  onClick={handleDownloadSitemap}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-bold text-xs hover:shadow-[0_0_15px_rgba(56,182,255,0.4)] transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>⬇️</span> Download sitemap-blog.xml
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopySitemapXml}
+                  className="w-full py-2.5 px-4 rounded-xl border border-white/20 bg-white/5 text-gray-200 font-semibold text-xs hover:bg-white/10 transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>📋</span> Copy Sitemap XML
+                </button>
+              </div>
+            </div>
+
             <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-white/10">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">

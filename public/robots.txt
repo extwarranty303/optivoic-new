@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://www.optivoic.com/sitemap.xml
+Sitemap: https://www.optivoic.com/sitemap-blog.xml
