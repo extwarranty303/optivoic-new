@@ -119,16 +119,30 @@ export default function BlogPost() {
     robots: 'index, follow',
     jsonLd: post ? {
       '@context': 'https://schema.org',
-      '@type': 'Article',
+      '@type': 'NewsArticle',
       headline: post.title,
       description: post.meta_description || post.excerpt,
+      image: post.featured_image ? [post.featured_image] : undefined,
+      datePublished: post.created_at,
+      dateModified: post.updated_at || post.created_at,
       author: {
         '@type': 'Organization',
-        name: 'Optivoic Editorial'
+        name: 'Optivoic Editorial',
+        url: 'https://www.optivoic.com'
       },
       publisher: {
         '@type': 'Organization',
-        name: 'Optivoic'
+        name: 'Optivoic',
+        url: 'https://www.optivoic.com',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://www.optivoic.com/assets/og-image.jpg'
+        }
+      },
+      isPartOf: {
+        '@type': ['CreativeWork', 'Product'],
+        name: 'Optivoic News',
+        productID: 'CAow2p_hCw:openaccess'
       },
       mainEntityOfPage: `https://www.optivoic.com/blog/${slug}`
     } : null
