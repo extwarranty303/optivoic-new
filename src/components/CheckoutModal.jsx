@@ -34,20 +34,13 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
         
         // Fallback: Create purchase entitlement directly in Supabase purchases table
         const payload = {
-          user_id: user?.id || null,
           user_email: user?.email || '',
           product_id: template.id,
           created_at: new Date().toISOString()
         };
+        if (user?.id) payload.user_id = user.id;
 
-        let { error: insertErr } = await supabase.from('purchases').insert([payload]);
-
-        if (insertErr && insertErr.message.includes('product_id')) {
-          delete payload.product_id;
-          payload.template_id = template.id;
-          const retry = await supabase.from('purchases').insert([payload]);
-          insertErr = retry.error;
-        }
+        const { error: insertErr } = await supabase.from('purchases').insert([payload]);
 
         if (insertErr) {
           throw new Error("Unable to fulfill purchase entitlement: " + insertErr.message);
