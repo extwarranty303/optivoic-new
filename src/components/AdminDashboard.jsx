@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { isAuthorizedAdmin } from '../utils/adminAccess';
+import AuthModal from './AuthModal';
 
 const NoiseOverlay = () => (
   <div className="fixed inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
@@ -34,31 +35,48 @@ export default function AdminDashboard() {
   // Manual Override State
   const [grantEmail, setGrantEmail] = useState('');
   const [grantTemplateId, setGrantTemplateId] = useState('');
-  const [grantStatus, setGrantStatus] = useState({ text: '', type: '' });
-  const [isGranting, setIsGranting] = useState(false);
-  
+  const [authorized, setAuthorized] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAdminAndFetchData = async () => {
+      setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        navigate('/'); 
+        setAuthorized(false);
+        setLoading(false);
         return;
       } 
       
       const isAdmin = await isAuthorizedAdmin(session.user.email);
 
       if (!isAdmin) {
-        navigate('/portal'); 
+        setAuthorized(false);
+        setLoading(false);
         return;
       }
 
       setUser(session.user);
+      setAuthorized(true);
       fetchDashboardData();
     };
+
     checkAdminAndFetchData();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        checkAdminAndFetchData();
+      } else {
+        setAuthorized(false);
+        setUser(null);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const fetchDashboardData = async () => {
@@ -205,6 +223,42 @@ export default function AdminDashboard() {
   };
 
   if (loading) return <div className="min-h-screen bg-[#020202] flex items-center justify-center text-red-400 font-bold animate-pulse tracking-widest uppercase">Initializing Command Center...</div>;
+
+  if (!authorized) {
+    return (
+      <div className="min-h-screen bg-[#020202] text-white font-sans flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
+        <NoiseOverlay />
+        <div className="max-w-md w-full bg-white/[0.03] border border-white/10 p-8 rounded-3xl backdrop-blur-xl shadow-2xl relative z-10">
+          <div className="w-16 h-16 mx-auto mb-6 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center text-red-400 text-2xl font-bold">
+            🔒
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-2">Admin Authorization Required</h1>
+          <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+            The Root Admin Command Center is restricted. Please sign in with an authorized administrator account to continue.
+          </p>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => setIsAuthOpen(true)}
+              className="w-full bg-gradient-to-r from-red-500 to-violet-600 text-white font-bold py-3 px-6 rounded-full hover:shadow-[0_0_25px_rgba(239,68,68,0.4)] transition-all cursor-pointer text-sm"
+            >
+              Sign In as Admin
+            </button>
+            <Link
+              to="/"
+              className="w-full text-center text-xs text-gray-400 hover:text-white py-2 transition-colors"
+            >
+              ← Back to Storefront
+            </Link>
+          </div>
+        </div>
+        <AuthModal
+          isOpen={isAuthOpen}
+          onClose={() => setIsAuthOpen(false)}
+          redirectTo="/admin"
+        />
+      </div>
+    );
+  }
 
   const uniqueTemplateClients = new Set(purchases.map(p => p.user_email)).size;
   const uniqueConsultingClients = new Set(projects.map(p => p.client_email)).size;

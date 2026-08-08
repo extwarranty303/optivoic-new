@@ -35,3 +35,26 @@ CREATE POLICY "Allow admin read access to all purchases" ON purchases
   );
 
 -- NOTE: Inserts for `purchases` should only be done via a secure Edge Function.
+
+--
+-- Policies for `files` table
+--
+ALTER TABLE files ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view files for products they purchased" ON files;
+CREATE POLICY "Users can view files for products they purchased" ON files
+  FOR SELECT USING (
+    exists (
+      select 1 from products p
+      join purchases pur on pur.product_id = p.id
+      where p.current_file_id = files.id
+      and pur.user_id = auth.uid()
+    )
+  );
+
+-- Allow admins full access to files
+DROP POLICY IF EXISTS "Allow admin full access to files" ON files;
+CREATE POLICY "Allow admin full access to files" ON files
+  FOR ALL USING (
+    exists (select 1 from admins where user_id = auth.uid())
+  );

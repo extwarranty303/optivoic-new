@@ -132,7 +132,7 @@ export default function ClientPortal() {
 
       <nav className="relative z-50 border-b border-white/10 py-5 px-8 flex justify-between items-center bg-black/50 backdrop-blur-2xl">
         <Link to="/" className="text-xl font-black text-white tracking-tighter drop-shadow-lg hover:opacity-80 transition-opacity cursor-pointer">
-          OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span> <span className="text-gray-500 font-medium ml-2 text-sm hidden sm:inline-block">| Client Portal</span>
+          OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VOIC</span> <span className="text-gray-500 font-medium ml-2 text-sm hidden sm:inline-block">| Client Portal</span>
         </Link>
         <div className="flex items-center gap-4 sm:gap-6">
           
