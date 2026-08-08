@@ -769,7 +769,7 @@ export default function ClientPortal() {
                 preload="metadata"
                 playsInline
                 className="w-full aspect-video rounded-2xl object-cover"
-                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/How_the_Reseller_Command_Center_Protects_Profit_Margins.mp4"
+                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/How_the_Reseller_Command_Center_Protects_Profit_Margins_edit.mp4"
               >
                 Your browser does not support playing this video.
               </video>
