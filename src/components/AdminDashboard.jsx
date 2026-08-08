@@ -180,7 +180,6 @@ export default function AdminDashboard() {
           .insert([{
             user_email: normalizedEmail,
             template_id: grantTemplateId,
-            status: 'completed',
             created_at: new Date().toISOString()
           }]);
 
