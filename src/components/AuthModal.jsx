@@ -118,7 +118,13 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
 
     } catch (error) {
       console.error("Auth Error:", error);
-      setMessage({ text: error.message || 'Authentication error. Please try again.', type: 'error' });
+      let errorMsg = error.message || 'Authentication error. Please try again.';
+
+      if (cleanEmail.includes('.example.com') || cleanEmail.includes('example.org')) {
+        errorMsg = `PayPal Sandbox test email (${cleanEmail}) uses PayPal's fake domain (.example.com). Please enter your real email (or a standard email like yourname@gmail.com) to create your portal password. All your PayPal purchases will still link automatically!`;
+      }
+
+      setMessage({ text: errorMsg, type: 'error' });
     } finally {
       setLoading(false);
     }
