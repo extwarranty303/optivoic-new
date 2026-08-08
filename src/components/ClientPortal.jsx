@@ -751,29 +751,32 @@ export default function ClientPortal() {
 
       {/* QUICK-START & WALKTHROUGH MODAL */}
       {activeQuickStart && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-          <div className="relative w-full max-w-2xl bg-[#0D0D12] border border-white/20 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6 text-left max-h-[90vh] overflow-y-auto">
-            <button 
-              onClick={() => setActiveQuickStart(null)}
-              className="absolute top-5 right-5 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer"
-            >
-              ✕
-            </button>
-
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
-              <span>⚡</span> Quick-Start Onboarding Hub
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
+          <div className="relative w-full max-w-xl bg-[#0D0D12] border border-white/20 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4 text-left max-h-[85vh] overflow-y-auto my-auto scrollbar-thin scrollbar-thumb-white/20">
+            {/* Sticky Header with Close Button */}
+            <div className="sticky top-0 bg-[#0D0D12]/95 backdrop-blur-md pt-1 pb-3 -mt-2 z-30 flex items-center justify-between border-b border-white/10 mb-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+                <span>⚡</span> Quick-Start Onboarding Hub
+              </div>
+              <button 
+                onClick={() => setActiveQuickStart(null)}
+                className="text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer text-xs font-bold shadow-md"
+                title="Close modal"
+              >
+                ✕
+              </button>
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-black text-white">{activeQuickStart.title}</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-white">{activeQuickStart.title}</h2>
 
             {/* Video Walkthrough Embed Preview */}
-            <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_30px_rgba(56,182,255,0.2)]">
+            <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_25px_rgba(56,182,255,0.2)] max-h-[320px] flex items-center justify-center">
               <video 
                 controls 
                 autoPlay
                 preload="metadata"
                 playsInline
-                className="w-full aspect-video rounded-2xl object-cover"
+                className="w-full max-h-[320px] aspect-video rounded-2xl object-contain bg-black"
                 src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/Command_Center_v2.5.mp4"
               >
                 Your browser does not support playing this video.
@@ -781,9 +784,9 @@ export default function ClientPortal() {
             </div>
 
             {/* 4-Step Setup Checklist */}
-            <div className="space-y-4 pt-2">
-              <h3 className="text-base font-bold text-white">Operational Setup Checklist</h3>
-              <div className="space-y-3 text-xs">
+            <div className="space-y-3 pt-1">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Operational Setup Checklist</h3>
+              <div className="space-y-2.5 text-xs">
                 <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
                   <span className="font-mono font-bold text-cyan-400 bg-cyan-500/20 px-2 py-0.5 rounded">01</span>
                   <div>
@@ -815,10 +818,10 @@ export default function ClientPortal() {
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end gap-3 border-t border-white/10">
+            <div className="pt-3 flex justify-end gap-3 border-t border-white/10">
               <button 
                 onClick={() => setActiveQuickStart(null)}
-                className="px-6 py-2.5 rounded-full bg-cyan-400 text-black font-bold text-xs hover:bg-cyan-300 transition-all cursor-pointer"
+                className="px-6 py-2 rounded-full bg-cyan-400 text-black font-bold text-xs hover:bg-cyan-300 transition-all cursor-pointer shadow-md"
               >
                 Done
               </button>
@@ -829,30 +832,33 @@ export default function ClientPortal() {
 
       {/* DEDICATED HOW-TO & CONCEPT VIDEO MODAL */}
       {activeVideoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-          <div className="relative w-full max-w-3xl bg-[#0D0D12] border border-violet-500/40 rounded-3xl p-6 md:p-8 shadow-2xl space-y-5 text-left">
-            <button 
-              onClick={() => setActiveVideoModal(null)}
-              className="absolute top-5 right-5 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer"
-            >
-              ✕
-            </button>
-
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-wider">
-              <span>🎥</span> Concept & How-To Walkthrough Video (v2.5)
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
+          <div className="relative w-full max-w-2xl bg-[#0D0D12] border border-violet-500/40 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4 text-left max-h-[85vh] overflow-y-auto my-auto scrollbar-thin scrollbar-thumb-white/20">
+            {/* Sticky Header with Close Button */}
+            <div className="sticky top-0 bg-[#0D0D12]/95 backdrop-blur-md pt-1 pb-3 -mt-2 z-30 flex items-center justify-between border-b border-white/10 mb-2">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-wider">
+                <span>🎥</span> Concept & How-To Walkthrough Video (v2.5)
+              </div>
+              <button 
+                onClick={() => setActiveVideoModal(null)}
+                className="text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer text-xs font-bold shadow-md"
+                title="Close modal"
+              >
+                ✕
+              </button>
             </div>
 
             <div>
-              <h2 className="text-2xl font-black text-white">{activeVideoModal.title}</h2>
+              <h2 className="text-xl sm:text-2xl font-black text-white">{activeVideoModal.title}</h2>
               <p className="text-xs text-gray-300 mt-1">{activeVideoModal.description}</p>
             </div>
 
-            <div className="rounded-2xl border border-violet-500/30 bg-black overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.2)]">
+            <div className="rounded-2xl border border-violet-500/30 bg-black overflow-hidden shadow-[0_0_30px_rgba(139,92,246,0.2)] max-h-[350px] flex items-center justify-center">
               <video 
                 controls 
                 preload="metadata"
                 playsInline
-                className="w-full aspect-video rounded-2xl object-cover"
+                className="w-full max-h-[350px] aspect-video rounded-2xl object-contain bg-black"
                 src={activeVideoModal.videoUrl}
               >
                 Your browser does not support playing this video.
@@ -862,7 +868,7 @@ export default function ClientPortal() {
             <div className="pt-2 flex justify-end">
               <button 
                 onClick={() => setActiveVideoModal(null)}
-                className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all cursor-pointer"
+                className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all cursor-pointer"
               >
                 Close Video Player
               </button>
