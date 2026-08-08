@@ -142,21 +142,16 @@ export default function ResellerCommandCenter() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/20 bg-black overflow-hidden relative group">
-              <div className="aspect-video w-full bg-gradient-to-tr from-cyan-950 via-slate-950 to-black flex flex-col items-center justify-center text-center p-8 space-y-4">
-                <div className="w-20 h-20 rounded-full bg-cyan-400 text-black flex items-center justify-center font-bold text-3xl shadow-[0_0_35px_rgba(56,182,255,0.7)] group-hover:scale-110 transition-transform cursor-pointer">
-                  ▶
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-1">Watch Interactive System Walkthrough</h3>
-                  <p className="text-xs text-gray-400 max-w-md">Discover how automatic eBay/Poshmark fee deductions, aging inventory alerts, and tax bucket reservations work out of the box.</p>
-                </div>
-                <div className="flex flex-wrap justify-center gap-2 pt-2">
-                  <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full">✓ 0 Formulas to Code</span>
-                  <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full">✓ Works in Google Sheets & Excel</span>
-                  <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full">✓ Instant Download</span>
-                </div>
-              </div>
+            <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_40px_rgba(56,182,255,0.25)]">
+              <video 
+                controls 
+                preload="metadata"
+                playsInline
+                className="w-full aspect-video rounded-2xl object-cover"
+                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/How_the_Reseller_Command_Center_Protects_Profit_Margins.mp4"
+              >
+                Your browser does not support playing this video.
+              </video>
             </div>
           </div>
 

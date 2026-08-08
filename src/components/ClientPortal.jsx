@@ -763,14 +763,16 @@ export default function ClientPortal() {
             <h2 className="text-2xl md:text-3xl font-black text-white">{activeQuickStart.title}</h2>
 
             {/* Video Walkthrough Embed Preview */}
-            <div className="rounded-2xl border border-white/15 bg-black overflow-hidden relative group">
-              <div className="aspect-video w-full bg-gradient-to-tr from-cyan-900/30 via-violet-900/30 to-black flex flex-col items-center justify-center text-center p-6 space-y-3">
-                <div className="w-16 h-16 rounded-full bg-cyan-400 text-black flex items-center justify-center font-bold text-2xl shadow-[0_0_25px_rgba(56,182,255,0.6)] cursor-pointer group-hover:scale-110 transition-transform">
-                  ▶
-                </div>
-                <h4 className="text-base font-bold text-white">Ease-of-Use & Benefits Video Overview</h4>
-                <p className="text-xs text-gray-400 max-w-sm">Watch the 3-minute video walkthrough demonstrating automated formulas, setup tips, and live profit tracking.</p>
-              </div>
+            <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_30px_rgba(56,182,255,0.2)]">
+              <video 
+                controls 
+                preload="metadata"
+                playsInline
+                className="w-full aspect-video rounded-2xl object-cover"
+                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/How_the_Reseller_Command_Center_Protects_Profit_Margins.mp4"
+              >
+                Your browser does not support playing this video.
+              </video>
             </div>
 
             {/* 4-Step Setup Checklist */}
