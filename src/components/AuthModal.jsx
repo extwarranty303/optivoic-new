@@ -42,7 +42,11 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
         setMessage({ text: 'Password reset link sent! Check your email.', type: 'success' });
       }
     } catch (error) {
-      setMessage({ text: error.message, type: 'error' });
+      console.error("Authentication Error:", error);
+      const errorMsg = error.message === 'Failed to fetch' 
+        ? 'Unable to reach authentication server (Failed to fetch). Please refresh your browser page or check your internet connection.'
+        : error.message;
+      setMessage({ text: errorMsg, type: 'error' });
     } finally {
       setLoading(false);
     }
