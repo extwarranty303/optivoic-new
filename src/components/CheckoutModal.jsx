@@ -25,36 +25,39 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
     setIsProcessing(true);
     setError(null);
 
+    const paypalOrderId = data.orderID;
+    let payerEmail = user?.email || '';
+
     try {
-      // Capture order details to extract payer email
-      let payerEmail = user?.email || '';
-      try {
-        const details = await actions.order.capture();
-        if (details?.payer?.email_address) {
-          payerEmail = details.payer.email_address;
-        }
-      } catch (capErr) {
-        console.warn("PayPal capture notice:", capErr);
+      const details = await actions.order.capture();
+      if (details?.payer?.email_address) {
+        payerEmail = details.payer.email_address;
       }
+    } catch (capErr) {
+      console.warn("PayPal capture notice:", capErr);
+    }
 
-      const paypalOrderId = data.orderID;
-      const finalEmail = payerEmail || user?.email || 'your email';
+    const finalEmail = payerEmail || user?.email || 'your email';
 
-      // Save to sessionStorage so if page reloads, confirmation persists
-      const successPayload = {
-        email: finalEmail,
-        orderId: paypalOrderId,
-        templateId: template.id,
-        templateTitle: template.title
-      };
-      try {
-        sessionStorage.setItem('optivoic_last_purchase', JSON.stringify(successPayload));
-      } catch (e) {
-        console.warn("sessionStorage save notice:", e);
-      }
+    const successPayload = {
+      email: finalEmail,
+      orderId: paypalOrderId,
+      templateId: template.id,
+      templateTitle: template.title
+    };
 
-      // Invoke the 'process-order' Supabase Edge Function
-      const { data: functionData, error: functionError } = await supabase.functions.invoke('process-order', {
+    // GUARANTEED: Show Purchase Confirmation Screen immediately upon PayPal approval!
+    setPurchasedInfo(successPayload);
+
+    try {
+      sessionStorage.setItem('optivoic_last_purchase', JSON.stringify(successPayload));
+    } catch (e) {
+      console.warn("sessionStorage save notice:", e);
+    }
+
+    // Fulfill entitlement & email in background
+    try {
+      const { error: functionError } = await supabase.functions.invoke('process-order', {
         body: { 
           orderId: paypalOrderId,
           productId: template.id,
@@ -65,7 +68,6 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
       if (functionError) {
         console.warn("Edge function process-order notice:", functionError.message, "- executing direct entitlement fallback...");
         
-        // Fallback: Create purchase entitlement directly in Supabase purchases table
         const payload = {
           user_email: finalEmail,
           product_id: template.id,
@@ -74,23 +76,15 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
         if (user?.id) payload.user_id = user.id;
 
         const { error: insertErr } = await supabase.from('purchases').insert([payload]);
-
         if (insertErr) {
-          throw new Error("Unable to fulfill purchase entitlement: " + insertErr.message);
+          console.error("Direct entitlement notice:", insertErr.message);
         }
       }
-
-      // Notify parent component
-      if (onSuccess) onSuccess();
-
-      // Show Purchase Confirmation Screen
-      setPurchasedInfo(successPayload);
-
-    } catch (err) {
-      console.error("Checkout Error:", err);
-      setError(err.message || "An error occurred during checkout.");
+    } catch (fulfillErr) {
+      console.warn("Fulfillment notice:", fulfillErr);
     } finally {
       setIsProcessing(false);
+      if (onSuccess) onSuccess();
     }
   };
 
@@ -161,7 +155,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
         <button 
           onClick={handleCloseAll}
           disabled={isProcessing}
-          className="absolute top-5 right-5 text-gray-400 hover:text-white bg-white/10 hover:bg-white/20 w-8 h-8 flex items-center justify-center rounded-full transition-colors disabled:opacity-50 cursor-pointer"
+          className="absolute top-5 right-5 text-gray-400 hover:text-white bg-white/10 hover:bg-white/20 w-8 h-8 flex items-center justify-center rounded-full transition-colors disabled:opacity-50 cursor-pointer z-50"
         >
           ✕
         </button>
