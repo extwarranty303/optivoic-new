@@ -154,14 +154,26 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
               </p>
             </div>
 
-            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl text-left space-y-2.5 text-xs text-gray-300">
-              <div className="flex items-start gap-2">
-                <span className="text-cyan-400 font-bold">📧</span>
-                <span>Confirmation & download email sent to: <strong className="text-white break-all">{purchasedInfo.email}</strong></span>
+            <div className="bg-white/5 border border-white/10 p-5 rounded-2xl text-left space-y-3.5 text-xs text-gray-300">
+              <div className="flex items-start gap-2.5">
+                <span className="text-cyan-400 text-base font-bold">📧</span>
+                <div>
+                  <p className="font-semibold text-white">Confirmation & Receipt Email</p>
+                  <p className="text-gray-400 mt-0.5">Dispatched to: <strong className="text-white break-all">{purchasedInfo.email}</strong></p>
+                </div>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="text-cyan-400 font-bold">👤</span>
-                <span>Access anytime: Log in or create an account with <strong className="text-white break-all">{purchasedInfo.email}</strong> at <strong className="text-cyan-300">/portal</strong> to view all purchases.</span>
+
+              <div className="border-t border-white/10 pt-3 flex items-start gap-2.5">
+                <span className="text-cyan-400 text-base font-bold">🔑</span>
+                <div>
+                  <p className="font-semibold text-white">Accessing Your Client Portal</p>
+                  <ol className="list-decimal list-inside text-gray-300 mt-1.5 space-y-1.5">
+                    <li>Visit <strong className="text-cyan-300">www.optivoic.com/portal</strong>.</li>
+                    <li>Enter email: <strong className="text-white break-all">{purchasedInfo.email}</strong>.</li>
+                    <li>First-time users will be prompted to set a password. Existing users enter their password.</li>
+                    <li>Your purchased template automatically unlocks on your portal dashboard!</li>
+                  </ol>
+                </div>
               </div>
             </div>
 
