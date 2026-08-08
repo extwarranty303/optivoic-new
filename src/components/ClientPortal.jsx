@@ -27,11 +27,11 @@ export default function ClientPortal() {
       }
       setUser(session.user);
 
-      // 2. Fetch User's Purchases
+      // 2. Fetch User's Purchases (by user_id or email match)
       const { data: userPurchases } = await supabase
         .from('purchases')
         .select('*')
-        .eq('user_id', session.user.id)
+        .or(`user_id.eq.${session.user.id},user_email.ilike.${session.user.email}`)
         .order('created_at', { ascending: false });
 
       if (userPurchases) setPurchases(userPurchases);
