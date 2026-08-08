@@ -96,7 +96,10 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess }) => {
                 });
               }}
               onApprove={handleApprove}
-              onError={() => setError("PayPal encountered an error. Please try again.")}
+              onError={(err) => {
+                console.error("PayPal SDK error:", err);
+                setError("PayPal error: " + (err?.message || "Invalid Client ID or Sandbox mismatch. Check browser console."));
+              }}
             />
           </PayPalScriptProvider>
         )}
