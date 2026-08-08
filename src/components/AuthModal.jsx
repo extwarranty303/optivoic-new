@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient'; 
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,19 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isResetMode, setIsResetMode] = useState(false);
   const [isAccountCreatedSuccess, setIsAccountCreatedSuccess] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      const checkExistingSession = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          onClose();
+          navigate(redirectTo || '/portal');
+        }
+      };
+      checkExistingSession();
+    }
+  }, [isOpen, navigate, onClose, redirectTo]);
 
   if (!isOpen) return null;
 

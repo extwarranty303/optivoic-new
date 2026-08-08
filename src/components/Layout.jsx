@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 import SpaceBackground from './SpaceBackground';
 import Footer from './Footer';
 import AuthModal from './AuthModal';
@@ -13,8 +14,9 @@ const AmbientBackground = () => (
   </div>
 );
 
-const Navbar = ({ onLoginClick }) => {
+const Navbar = ({ onLoginClick, user }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const navLinks = [
     { path: "/marketplace", label: "Marketplace" },
     { path: "/consulting", label: "Consulting" },
@@ -26,7 +28,7 @@ const Navbar = ({ onLoginClick }) => {
   return (
     <nav className="fixed w-full border-b border-white/10 py-4 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl z-50 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
       <Link to="/" className="text-2xl font-black text-white tracking-tighter drop-shadow-lg hover:opacity-90 transition-opacity">
-        OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
+        OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VOIC</span>
       </Link>
       <div className="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
         {navLinks.map(link => (
@@ -39,23 +41,47 @@ const Navbar = ({ onLoginClick }) => {
           </Link>
         ))}
       </div>
-      <button 
-        onClick={onLoginClick} 
-        className="bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-semibold px-6 py-2 rounded-full transition-all duration-300 backdrop-blur-md"
-      >
-        Client Login
-      </button>
+      {user ? (
+        <button 
+          onClick={() => navigate('/portal')} 
+          className="bg-cyan-500/10 border border-cyan-400/30 hover:bg-cyan-500/20 text-cyan-300 text-sm font-semibold px-6 py-2 rounded-full transition-all duration-300 backdrop-blur-md cursor-pointer"
+        >
+          Client Portal
+        </button>
+      ) : (
+        <button 
+          onClick={onLoginClick} 
+          className="bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-semibold px-6 py-2 rounded-full transition-all duration-300 backdrop-blur-md cursor-pointer"
+        >
+          Client Login
+        </button>
+      )}
     </nav>
   );
 };
 
 const Layout = ({ children }) => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-cyan-500 selection:text-white relative">
       <AmbientBackground />
-      <Navbar onLoginClick={() => setIsAuthOpen(true)} />
+      <Navbar user={user} onLoginClick={() => setIsAuthOpen(true)} />
       {/* Add padding-top to account for the fixed navbar height */}
       <main className="relative z-10 pt-20">
         {children}

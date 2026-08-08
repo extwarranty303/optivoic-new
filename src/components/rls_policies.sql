@@ -24,8 +24,14 @@ CREATE POLICY "Users can only view their own orders" ON orders
 -- Policies for `purchases` table
 --
 DROP POLICY IF EXISTS "Users can only view their own purchases" ON purchases;
-CREATE POLICY "Users can only view their own purchases" ON purchases
-  FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can view their own purchases" ON purchases;
+
+CREATE POLICY "Users can view their own purchases" ON purchases
+  FOR SELECT USING (
+    auth.uid() = user_id
+    OR
+    (user_email IS NOT NULL AND lower(user_email) = lower(auth.jwt() ->> 'email'))
+  );
 
 -- Allow admins to see all purchases for support and management.
 DROP POLICY IF EXISTS "Allow admin read access to all purchases" ON purchases;
@@ -46,9 +52,12 @@ CREATE POLICY "Users can view files for products they purchased" ON files
   FOR SELECT USING (
     exists (
       select 1 from products p
-      join purchases pur on pur.product_id = p.id
+      join purchases pur on (pur.product_id = p.id or pur.template_id = p.id)
       where p.current_file_id = files.id
-      and pur.user_id = auth.uid()
+      and (
+        pur.user_id = auth.uid()
+        or (pur.user_email is not null and lower(pur.user_email) = lower(auth.jwt() ->> 'email'))
+      )
     )
   );
 

@@ -34,7 +34,18 @@ export default function ClientPortal() {
         .or(`user_id.eq.${session.user.id},user_email.ilike.${session.user.email}`)
         .order('created_at', { ascending: false });
 
-      if (userPurchases) setPurchases(userPurchases);
+      if (userPurchases && userPurchases.length > 0) {
+        setPurchases(userPurchases);
+
+        // Auto-link any unlinked purchases to this logged-in account
+        const unlinkedIds = userPurchases.filter(p => !p.user_id).map(p => p.id);
+        if (unlinkedIds.length > 0) {
+          await supabase
+            .from('purchases')
+            .update({ user_id: session.user.id })
+            .in('id', unlinkedIds);
+        }
+      }
 
       // 3. Fetch Live Products to map to purchases
       const { data: prodData } = await supabase.from('products').select('id, title, category_name');
@@ -196,12 +207,13 @@ export default function ClientPortal() {
               </div>
             ) : (
               purchases.map((purchase) => {
-                const product = products[purchase.product_id];
+                const targetProductId = purchase.product_id || purchase.template_id;
+                const product = products[targetProductId];
                 
-                const title = product ? product.title : `Asset #${purchase.product_id}`;
+                const title = product ? product.title : (purchase.title || `Asset #${targetProductId || purchase.id}`);
                 const category = product ? product.category_name : "Digital Asset";
                 
-                const isDownloading = downloadingId === purchase.product_id;
+                const isDownloading = downloadingId === targetProductId;
 
                 return (
                   <div key={purchase.id} className="bg-white/[0.02] border border-white/10 backdrop-blur-xl rounded-2xl p-6 hover:bg-white/[0.04] transition-all group">
@@ -216,9 +228,9 @@ export default function ClientPortal() {
                         </p>
                       </div>
                       <button 
-                        onClick={() => handleDownload(purchase.product_id)}
+                        onClick={() => handleDownload(targetProductId)}
                         disabled={isDownloading}
-                        className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-400 hover:text-black font-bold py-3 px-8 rounded-full transition-all text-sm whitespace-nowrap disabled:opacity-50 shadow-[0_0_15px_rgba(56,182,255,0.1)] group-hover:shadow-[0_0_20px_rgba(56,182,255,0.3)]"
+                        className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-400 hover:text-black font-bold py-3 px-8 rounded-full transition-all text-sm whitespace-nowrap disabled:opacity-50 shadow-[0_0_15px_rgba(56,182,255,0.1)] group-hover:shadow-[0_0_20px_rgba(56,182,255,0.3)] cursor-pointer"
                       >
                         {isDownloading ? 'Decrypting...' : 'Secure Download'}
                       </button>
