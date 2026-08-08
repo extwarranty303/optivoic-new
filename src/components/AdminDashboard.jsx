@@ -190,32 +190,44 @@ export default function AdminDashboard() {
     const normalizedEmail = grantEmail.trim().toLowerCase();
 
     try {
+      // Check if user already has an existing account in purchases table to grab user_id
+      let existingUserId = null;
+      const { data: existingPurchases } = await supabase
+        .from('purchases')
+        .select('user_id')
+        .ilike('user_email', normalizedEmail)
+        .not('user_id', 'is', null)
+        .limit(1);
+
+      if (existingPurchases && existingPurchases.length > 0) {
+        existingUserId = existingPurchases[0].user_id;
+      }
+
       // 1. Try RPC function
       let { data, error } = await supabase.rpc('admin_grant_access', {
         target_email: normalizedEmail,
         t_id: grantTemplateId 
       });
 
-      // 2. If RPC fails or returns unauthorized error, execute direct insert fallback
-      if (error || (data && data.startsWith('Error'))) {
+      // 2. If RPC fails or returns error string, execute direct insert fallback
+      if (error || (data && typeof data === 'string' && data.startsWith('Error'))) {
         console.warn("RPC admin_grant_access notice:", error?.message || data, "- executing direct fallback grant...");
         
         const payload = {
           user_email: normalizedEmail,
+          user_id: existingUserId,
           product_id: grantTemplateId,
           created_at: new Date().toISOString()
         };
 
         let { error: insertError } = await supabase.from('purchases').insert([payload]);
 
-        if (insertError && insertError.message.includes('product_id')) {
+        if (insertError) {
           delete payload.product_id;
           payload.template_id = grantTemplateId;
           const retry = await supabase.from('purchases').insert([payload]);
-          insertError = retry.error;
+          if (retry.error) throw retry.error;
         }
-
-        if (insertError) throw insertError;
       }
 
       setGrantStatus({ text: `Bypass Success: File unlocked for ${normalizedEmail}`, type: 'success' });
@@ -223,7 +235,7 @@ export default function AdminDashboard() {
       fetchDashboardData();
     } catch (err) {
       console.error("Grant Access Error:", err);
-      setGrantStatus({ text: `System Error: ${err.message}`, type: 'error' });
+      setGrantStatus({ text: `Override failed: ${err.message}`, type: 'error' });
     } finally {
       setIsGranting(false);
     }

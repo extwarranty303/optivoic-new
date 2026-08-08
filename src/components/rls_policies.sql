@@ -33,14 +33,21 @@ CREATE POLICY "Users can view their own purchases" ON purchases
     (user_email IS NOT NULL AND lower(user_email) = lower(auth.jwt() ->> 'email'))
   );
 
--- Allow admins to see all purchases for support and management.
-DROP POLICY IF EXISTS "Allow admin read access to all purchases" ON purchases;
-CREATE POLICY "Allow admin read access to all purchases" ON purchases
-  FOR SELECT USING (
-    exists(select 1 from admins where user_id = auth.uid())
+DROP POLICY IF EXISTS "Users can update their own purchases user_id" ON purchases;
+CREATE POLICY "Users can update their own purchases user_id" ON purchases
+  FOR UPDATE USING (
+    auth.uid() = user_id
+    OR
+    (user_email IS NOT NULL AND lower(user_email) = lower(auth.jwt() ->> 'email'))
   );
 
--- NOTE: Inserts for `purchases` should only be done via a secure Edge Function.
+-- Allow admins full access to purchases for management and manual overrides
+DROP POLICY IF EXISTS "Allow admin read access to all purchases" ON purchases;
+DROP POLICY IF EXISTS "Allow admins full access to purchases" ON purchases;
+CREATE POLICY "Allow admins full access to purchases" ON purchases
+  FOR ALL USING (
+    exists(select 1 from admins where user_id = auth.uid() or lower(email) = lower(auth.jwt() ->> 'email'))
+  );
 
 --
 -- Policies for `files` table
