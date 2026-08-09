@@ -10,13 +10,22 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
   const [purchasedInfo, setPurchasedInfo] = useState(initialPurchasedInfo || null);
   const [downloading, setDownloading] = useState(false);
 
+  const calculateDiscount = (code) => {
+    const clean = code.trim().toUpperCase();
+    if (clean === 'PORTAL15') return { rate: 0.15, msg: '✨ 15% Member Discount Applied!' };
+    if (clean.startsWith('VIP')) {
+      const numMatch = clean.match(/\d+/);
+      const percent = numMatch ? parseInt(numMatch[0], 10) : 20;
+      const rate = Math.min(Math.max(percent, 5), 80) / 100;
+      return { rate, msg: `✨ VIP ${percent}% Discount Applied!` };
+    }
+    return { rate: 0, msg: '' };
+  };
+
+  const initialCalc = calculateDiscount(initialPromoCode);
   const [promoInput, setPromoInput] = useState(initialPromoCode || '');
-  const [appliedDiscount, setAppliedDiscount] = useState(
-    initialPromoCode.trim().toUpperCase() === 'PORTAL15' ? 0.15 : 0
-  );
-  const [promoMessage, setPromoMessage] = useState(
-    initialPromoCode.trim().toUpperCase() === 'PORTAL15' ? '✨ 15% Member Discount Applied!' : ''
-  );
+  const [appliedDiscount, setAppliedDiscount] = useState(initialCalc.rate);
+  const [promoMessage, setPromoMessage] = useState(initialCalc.msg);
 
   useEffect(() => {
     if (initialPurchasedInfo) {
@@ -25,10 +34,11 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
   }, [initialPurchasedInfo]);
 
   useEffect(() => {
-    if (initialPromoCode.trim().toUpperCase() === 'PORTAL15') {
-      setPromoInput('PORTAL15');
-      setAppliedDiscount(0.15);
-      setPromoMessage('✨ 15% Member Discount Applied!');
+    if (initialPromoCode) {
+      const calc = calculateDiscount(initialPromoCode);
+      setPromoInput(initialPromoCode);
+      setAppliedDiscount(calc.rate);
+      setPromoMessage(calc.msg);
     }
   }, [initialPromoCode]);
 
@@ -42,12 +52,15 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
   const handleApplyPromo = (e) => {
     e.preventDefault();
     const cleanCode = promoInput.trim().toUpperCase();
-    if (cleanCode === 'PORTAL15') {
-      setAppliedDiscount(0.15);
-      setPromoMessage('✨ 15% Member Discount Applied!');
-    } else if (cleanCode === '') {
+    if (!cleanCode) {
       setAppliedDiscount(0);
       setPromoMessage('');
+      return;
+    }
+    const calc = calculateDiscount(cleanCode);
+    if (calc.rate > 0) {
+      setAppliedDiscount(calc.rate);
+      setPromoMessage(calc.msg);
     } else {
       setAppliedDiscount(0);
       setPromoMessage('Invalid promo code. Try PORTAL15 for 15% off.');

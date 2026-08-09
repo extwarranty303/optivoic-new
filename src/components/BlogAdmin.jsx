@@ -73,6 +73,34 @@ export default function BlogAdmin() {
     if (data) setPosts(data);
   };
 
+  const seoHealth = useMemo(() => {
+    const titleLen = form.title?.length || 0;
+    const metaLen = form.meta_description?.length || 0;
+    const hasImage = Boolean(form.featured_image?.trim());
+    const hasAlt = Boolean(form.image_alt?.trim());
+    const hasExcerpt = Boolean(form.excerpt?.trim());
+
+    let score = 0;
+    if (titleLen >= 30 && titleLen <= 65) score += 25;
+    else if (titleLen > 0) score += 10;
+
+    if (metaLen >= 100 && metaLen <= 165) score += 25;
+    else if (metaLen > 0) score += 10;
+
+    if (hasImage) score += 20;
+    if (hasAlt) score += 15;
+    if (hasExcerpt) score += 15;
+
+    return {
+      score,
+      titleOk: titleLen >= 30 && titleLen <= 65,
+      metaOk: metaLen >= 100 && metaLen <= 165,
+      hasImage,
+      hasAlt,
+      hasExcerpt
+    };
+  }, [form]);
+
   // 3-Minute Background Single-Draft Autosave Function
   const perform3MinAutosave = async () => {
     // Only autosave if there is a title or content entered
@@ -577,6 +605,45 @@ export default function BlogAdmin() {
 
           {/* Content Library Sidebar with Filter Area */}
           <div className="space-y-4">
+
+            {/* SEO Audit & Indexing Health Inspector Card */}
+            <div className="rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-cyan-500/5 p-6 backdrop-blur-xl space-y-3">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <h3 className="font-bold text-white text-base flex items-center gap-2">
+                  <span>📈</span> SEO & Indexing Inspector
+                </h3>
+                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${seoHealth.score >= 80 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : seoHealth.score >= 50 ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-red-500/20 text-red-300 border-red-500/40'}`}>
+                  Score: {seoHealth.score}/100
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Title Optimization (30–65 chars)</span>
+                  <span className={seoHealth.titleOk ? "text-emerald-400 font-bold" : "text-yellow-400 font-mono"}>
+                    {seoHealth.titleOk ? "✓ Optimized" : `${form.title?.length || 0} chars`}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Meta Description (100–165 chars)</span>
+                  <span className={seoHealth.metaOk ? "text-emerald-400 font-bold" : "text-yellow-400 font-mono"}>
+                    {seoHealth.metaOk ? "✓ Optimized" : `${form.meta_description?.length || 0} chars`}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Featured OpenGraph Image</span>
+                  <span className={seoHealth.hasImage ? "text-emerald-400 font-bold" : "text-gray-500 font-mono"}>
+                    {seoHealth.hasImage ? "✓ Attached" : "Missing"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Image Alt Attribute (Accessibility)</span>
+                  <span className={seoHealth.hasAlt ? "text-emerald-400 font-bold" : "text-gray-500 font-mono"}>
+                    {seoHealth.hasAlt ? "✓ Configured" : "Missing"}
+                  </span>
+                </div>
+              </div>
+            </div>
 
             {/* Blog Sitemap & Search Engine Management Card */}
             <div className="rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-violet-500/5 p-6 backdrop-blur-xl space-y-4">
