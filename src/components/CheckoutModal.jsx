@@ -9,6 +9,8 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
   const [isProcessing, setIsProcessing] = useState(false);
   const [purchasedInfo, setPurchasedInfo] = useState(initialPurchasedInfo || null);
   const [downloading, setDownloading] = useState(false);
+  const [alreadyOwned, setAlreadyOwned] = useState(false);
+  const [checkingOwnership, setCheckingOwnership] = useState(false);
 
   const calculateDiscount = (code) => {
     const clean = code.trim().toUpperCase();
@@ -41,6 +43,28 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
       setPromoMessage(calc.msg);
     }
   }, [initialPromoCode]);
+
+  // Duplicate purchase check: run whenever modal opens for a logged-in user
+  useEffect(() => {
+    if (!isOpen || !template || !user) return;
+    const checkOwnership = async () => {
+      setCheckingOwnership(true);
+      const templateId = template.id;
+      const { data } = await supabase
+        .from('purchases')
+        .select('id')
+        .or(`user_id.eq.${user.id},user_email.ilike.${user.email}`)
+        .or(`product_id.eq.${templateId},template_id.eq.${templateId}`)
+        .limit(1);
+      if (data && data.length > 0) {
+        setAlreadyOwned(true);
+      } else {
+        setAlreadyOwned(false);
+      }
+      setCheckingOwnership(false);
+    };
+    checkOwnership();
+  }, [isOpen, template, user]);
 
   if (!isOpen || !template) return null;
 
@@ -237,8 +261,42 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
           ✕
         </button>
 
-        {purchasedInfo ? (
+        {/* Checking ownership loading state */}
+        {checkingOwnership ? (
+          <div className="py-12 text-center text-cyan-400 text-sm animate-pulse font-semibold">
+            Verifying your account...
+          </div>
+        ) : alreadyOwned ? (
+          /* ALREADY OWNED SCREEN */
+          <div className="space-y-5 text-center">
+            <div className="w-16 h-16 mx-auto bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex items-center justify-center text-3xl">
+              ✅
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-white mb-2">You Already Own This!</h2>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                <strong className="text-white">{template.title}</strong> is already in your OptiVoic Portal. You won't be charged again.
+              </p>
+            </div>
+            <div className="bg-cyan-500/[0.05] border border-cyan-500/20 rounded-2xl p-4 text-left text-xs space-y-1.5">
+              <p className="text-gray-400">Need help accessing your template?</p>
+              <p className="text-gray-300">Visit your portal dashboard — your download link is always available there.</p>
+            </div>
+            <div className="flex flex-col gap-3 pt-1">
+              <button
+                onClick={() => { handleCloseAll(); navigate('/portal'); }}
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all cursor-pointer"
+              >
+                Open My Portal →
+              </button>
+              <button onClick={handleCloseAll} className="text-xs text-gray-500 hover:text-gray-300 transition-colors cursor-pointer">
+                Close
+              </button>
+            </div>
+          </div>
+        ) : purchasedInfo ? (
           /* PURCHASE SUCCESS CONFIRMATION SCREEN */
+
           <div className="space-y-5 text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>

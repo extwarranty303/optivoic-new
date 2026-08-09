@@ -293,6 +293,27 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteDuplicate = async (purchaseId, userEmail, paypalOrderId) => {
+    const refundNote = paypalOrderId
+      ? `PayPal Order ID for refund: ${paypalOrderId}`
+      : 'No PayPal Order ID recorded — check PayPal dashboard manually.';
+    const confirmed = window.confirm(
+      `Delete duplicate purchase #${purchaseId} for ${userEmail}?\n\n` +
+      `⚠️ This removes the DUPLICATE row only (the original purchase is kept).\n\n` +
+      `${refundNote}\n\nTo issue a refund, use the PayPal Order ID above in your PayPal Business dashboard.`
+    );
+    if (!confirmed) return;
+    try {
+      const { error } = await supabase.from('purchases').delete().eq('id', purchaseId);
+      if (error) throw error;
+      logAdminAction('DELETE_DUPLICATE_PURCHASE', `Removed duplicate purchase #${purchaseId} for ${userEmail} (PayPal: ${paypalOrderId || 'N/A'})`);
+      alert(`Duplicate removed. ${paypalOrderId ? `Issue refund in PayPal for Order ID: ${paypalOrderId}` : 'No PayPal Order ID — check manually.'}`);
+      fetchDashboardData();
+    } catch (err) {
+      alert(`Delete failed: ${err.message}`);
+    }
+  };
+
   const handleRevokeLicense = async (purchaseId, userEmail, targetProdId) => {
     if (!window.confirm(`Revoke template license #${purchaseId} for ${userEmail}? This will immediately block template access.`)) return;
 
@@ -339,6 +360,20 @@ export default function AdminDashboard() {
       (productsMap[p.product_id || p.template_id] || '').toLowerCase().includes(q)
     );
   }, [purchases, licenseSearch, productsMap]);
+
+  // Detect duplicate purchases: same email + same product_id owned more than once
+  const duplicatePurchases = useMemo(() => {
+    const groups = {};
+    purchases.forEach(p => {
+      const key = `${(p.user_email || '').toLowerCase()}::${p.product_id || p.template_id}`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(p);
+    });
+    // Return only groups with more than 1 entry, sorted oldest first
+    return Object.values(groups)
+      .filter(group => group.length > 1)
+      .map(group => group.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+  }, [purchases]);
 
   if (loading) return <div className="min-h-screen bg-[#020202] flex items-center justify-center text-red-400 font-bold animate-pulse tracking-widest uppercase">Initializing Command Center...</div>;
 
@@ -745,6 +780,76 @@ export default function AdminDashboard() {
             </table>
           </div>
         </div>
+
+        {/* DUPLICATE PURCHASE MANAGER */}
+        {duplicatePurchases.length > 0 && (
+          <div className="bg-orange-500/[0.03] border border-orange-500/30 backdrop-blur-xl rounded-3xl p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-white/10 pb-4">
+              <div>
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <span className="text-orange-400">⚠️</span> Duplicate Purchase Manager
+                </h2>
+                <p className="text-xs text-gray-400 mt-1">Customers who purchased the same template more than once. Delete the duplicate row and issue a PayPal refund using the Order ID shown.</p>
+              </div>
+              <span className="text-xs font-bold px-3 py-1.5 bg-orange-500/20 border border-orange-500/40 text-orange-300 rounded-full animate-pulse">
+                {duplicatePurchases.length} Duplicate Group{duplicatePurchases.length > 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {duplicatePurchases.map((group, gi) => {
+                const original = group[0];
+                const dupes = group.slice(1);
+                const targetProdId = original.product_id || original.template_id;
+                const prodTitle = productsMap[targetProdId] || `#${targetProdId}`;
+                return (
+                  <div key={gi} className="bg-black/40 border border-orange-500/20 rounded-2xl p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-bold text-white">{original.user_email}</p>
+                        <p className="text-xs text-orange-300 font-mono mt-0.5">{prodTitle}</p>
+                      </div>
+                      <span className="text-xs bg-orange-500/20 text-orange-300 border border-orange-500/30 px-2.5 py-1 rounded-full font-bold">
+                        {group.length}x purchased
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Purchase History (oldest → newest)</p>
+                      {group.map((p, i) => (
+                        <div key={p.id} className={`flex items-center justify-between text-xs rounded-xl px-4 py-2.5 ${i === 0 ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
+                          <div className="space-y-0.5">
+                            <span className={`font-bold ${i === 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                              {i === 0 ? '✓ Original' : `⚠ Duplicate #${i}`}
+                            </span>
+                            <p className="text-gray-400 font-mono">{new Date(p.created_at).toLocaleString()}</p>
+                            {p.paypal_order_id && (
+                              <p className="text-cyan-400 font-mono text-[10px]">PayPal: {p.paypal_order_id}</p>
+                            )}
+                          </div>
+                          {i > 0 && (
+                            <button
+                              onClick={() => handleDeleteDuplicate(p.id, p.user_email, p.paypal_order_id)}
+                              className="ml-4 px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-bold hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+                            >
+                              🗑 Delete Duplicate
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {dupes.some(p => p.paypal_order_id) && (
+                      <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 text-xs text-yellow-300">
+                        <strong>💡 Refund Instructions:</strong> Log in to your PayPal Business dashboard → Activity → search the Order ID above → Issue Refund.
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* BOTTOM SECTION 2: SECURITY & ADMIN AUDIT STREAM */}
         <div className="bg-white/[0.02] border border-white/10 backdrop-blur-xl rounded-3xl p-8">
