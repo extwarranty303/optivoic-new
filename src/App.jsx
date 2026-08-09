@@ -50,6 +50,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/portal" element={<ClientPortal />} />
+            <Route path="/client-portal" element={<ClientPortal />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/blog-admin" element={<BlogAdmin />} />
             <Route path="/download/:purchaseId" element={<DownloadPage />} />

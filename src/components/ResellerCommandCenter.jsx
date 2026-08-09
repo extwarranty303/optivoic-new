@@ -26,6 +26,8 @@ export default function ResellerCommandCenter() {
         const parsed = JSON.parse(savedPurchase);
         setInitialPurchasedInfo(parsed);
         setIsCheckoutOpen(true);
+        // BUG-004 FIX: clear so it doesn't re-open on every page refresh
+        sessionStorage.removeItem('optivoic_last_purchase');
       }
     } catch (e) {
       console.warn("Restore purchase notice:", e);
@@ -72,9 +74,13 @@ export default function ResellerCommandCenter() {
   });
 
   const handlePurchaseSuccess = () => {
-    console.log("Purchase successful!");
     setIsCheckoutOpen(false);
-    // Optionally, redirect to a thank you page or dashboard
+    // BUG-003/007 FIX: trigger AuthModal for guests, redirect portal for logged-in users
+    if (!user) {
+      setIsAuthOpen(true);
+    } else {
+      window.location.href = '/portal';
+    }
   };
 
   const workflows = [
@@ -209,7 +215,7 @@ export default function ResellerCommandCenter() {
 
       <AuthModal 
         isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
+        onClose={() => { setIsAuthOpen(false); window.location.href = '/portal'; }}
       />
 
       {template && (

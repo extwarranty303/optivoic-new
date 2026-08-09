@@ -331,7 +331,7 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
               {appliedDiscount > 0 && (
                 <div className="space-y-1.5 pt-2 border-t border-white/10">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-emerald-400">15% Member Discount</span>
+                    <span className="text-xs font-bold text-emerald-400">{Math.round(appliedDiscount * 100)}% Discount Applied</span>
                     <span className="text-xs text-emerald-400 font-mono font-bold">Save -${savingsDollars}</span>
                   </div>
                   <div className="flex justify-between items-center pt-1">
@@ -387,9 +387,12 @@ const CheckoutModal = ({ isOpen, onClose, template, user, onSuccess, initialPurc
                 <PayPalButtons 
                   style={{ layout: "vertical", color: "blue", shape: "rect" }}
                   createOrder={(data, actions) => {
+                    const desc = appliedDiscount > 0
+                      ? `${template.title} (${Math.round(appliedDiscount * 100)}% Discount Applied)`
+                      : template.title;
                     return actions.order.create({
                       purchase_units: [{
-                        description: `${template.title} (Member Discount Applied)`,
+                        description: desc,
                         amount: { value: priceInDollars }
                       }]
                     });

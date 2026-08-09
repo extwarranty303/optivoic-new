@@ -57,7 +57,7 @@ export default function Marketplace() {
   // Fallback to inject Tailwind specifically for the Canvas environment preview
   // This ensures CSS works here, but won't break your local Vite config
   useEffect(() => {
-    if (!window.tailwind && !document.getElementById('tailwind-cdn')) {
+    if (import.meta.env.DEV && !window.tailwind && !document.getElementById('tailwind-cdn')) {
       const script = document.createElement('script');
       script.id = 'tailwind-cdn';
       script.src = 'https://cdn.tailwindcss.com';

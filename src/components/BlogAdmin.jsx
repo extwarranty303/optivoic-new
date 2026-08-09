@@ -612,8 +612,8 @@ export default function BlogAdmin() {
                 <h3 className="font-bold text-white text-base flex items-center gap-2">
                   <span>📈</span> SEO & Indexing Inspector
                 </h3>
-                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${seoHealth.score >= 80 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : seoHealth.score >= 50 ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-red-500/20 text-red-300 border-red-500/40'}`}>
-                  Score: {seoHealth.score}/100
+                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${!form.title && !form.meta_description ? 'bg-white/10 text-gray-400 border-white/20' : seoHealth.score >= 80 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : seoHealth.score >= 50 ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-red-500/20 text-red-300 border-red-500/40'}`}>
+                  {!form.title && !form.meta_description ? 'Start writing ✏️' : `Score: ${seoHealth.score}/100`}
                 </span>
               </div>
 

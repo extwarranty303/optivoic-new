@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import CheckoutModal from './CheckoutModal';
 import './ServiceGrid.css';
 
 const DEFAULT_TEMPLATES = [
@@ -56,11 +57,30 @@ const ServiceGrid = () => {
   const navigate = useNavigate();
   const categories = ["All", "Essential Trackers", "Professional Hubs", "Enterprise B2B"];
 
+  // VIP Deep-Link state
+  const [vipTemplate, setVipTemplate] = useState(null);
+  const [vipPromo, setVipPromo] = useState('');
+  const [vipCheckoutOpen, setVipCheckoutOpen] = useState(false);
+  const [vipUser, setVipUser] = useState(null);
+
   useEffect(() => {
     const categoryFromUrl = getInitialCategory();
     if (categoryFromUrl !== "All") {
       setActiveCategory(categoryFromUrl);
     }
+
+    // VIP Deep-Link: read ?template= and ?promo= params
+    const templateParam = searchParams.get('template');
+    const promoParam = searchParams.get('promo');
+    if (templateParam && promoParam) {
+      setVipPromo(promoParam);
+      // Defer template match until after products load
+    }
+
+    // Fetch current user for CheckoutModal
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) setVipUser(data.user);
+    });
   }, [initialParam]);
 
   useEffect(() => {
@@ -123,7 +143,32 @@ const ServiceGrid = () => {
 
   const filteredTemplates = [...activeTemplates, ...inactiveTemplates];
 
+  // VIP Deep-Link: when templates load, match ?template= param and auto-open checkout
+  useEffect(() => {
+    if (loading) return;
+    const templateParam = searchParams.get('template');
+    const promoParam = searchParams.get('promo');
+    if (!templateParam || !promoParam) return;
+
+    const match = templates.find(t =>
+      t.id === templateParam ||
+      (t.title && t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').includes(templateParam.toLowerCase()))
+    );
+
+    if (match && match.status === 'READY') {
+      // Build a template object compatible with CheckoutModal
+      const checkoutTemplate = {
+        ...match,
+        price_cents: match.price_cents || Math.round(parseFloat(match.price || '99') * 100)
+      };
+      setVipTemplate(checkoutTemplate);
+      setVipPromo(promoParam);
+      setVipCheckoutOpen(true);
+    }
+  }, [templates, loading]);
+
   return (
+    <>
     <section className="service-grid-section">
       <div className="service-grid-header">
         <div>
@@ -204,6 +249,19 @@ const ServiceGrid = () => {
       </div>
       )}
     </section>
+
+      {/* VIP Deep-Link CheckoutModal */}
+      {vipTemplate && (
+        <CheckoutModal
+          isOpen={vipCheckoutOpen}
+          onClose={() => setVipCheckoutOpen(false)}
+          template={vipTemplate}
+          user={vipUser}
+          initialPromoCode={vipPromo}
+          onSuccess={() => setVipCheckoutOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
