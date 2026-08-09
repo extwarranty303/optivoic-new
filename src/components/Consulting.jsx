@@ -1,11 +1,10 @@
 import React from 'react';
 import { usePageMeta } from '../utils/usePageMeta';
-import Layout from '../components/Layout';
 
 const ConsultingHero = () => (
     <section className="relative pt-48 pb-32 px-8 flex flex-col items-center text-center z-10 border-b border-white/5">
       <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[1.1] max-w-5xl">
-        Technology Consulting for <br/>
+        Technology Consulting <br/>
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">Engineered Velocity.</span>
       </h1>
       <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl font-light leading-relaxed">
@@ -114,18 +113,10 @@ export default function Consulting() {
         ogUrl: 'https://www.optivoic.com/consulting'
     });
 
-    const navAction = (
-        <a href="https://cal.com/chill-dev" target="_blank" rel="noopener noreferrer"
-            className="bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-semibold px-6 py-2 rounded-full transition-all duration-300 backdrop-blur-md"
-        >
-            Book a Call
-        </a>
-    );
-
     return (
-        <Layout navAction={navAction}>
+        <>
             <ConsultingHero />
             <BentoServices />
-        </Layout>
+        </>
     );
 }
