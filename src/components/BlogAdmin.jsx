@@ -391,13 +391,26 @@ export default function BlogAdmin() {
     }
     setMessage({ type: 'info', text: `Backfilling read time for ${missing.length} article(s)...` });
     let updated = 0;
+    let firstError = null;
     for (const post of missing) {
       const rt = calculateReadTime(post.content);
       const { error } = await supabase.from('blog_posts').update({ read_time: rt }).eq('id', post.id);
-      if (!error) updated++;
+      if (!error) {
+        updated++;
+      } else {
+        if (!firstError) firstError = error;
+      }
     }
     await fetchPosts();
-    setMessage({ type: 'success', text: `✅ Backfilled read time for ${updated} article(s).` });
+    if (firstError) {
+      setMessage({
+        type: 'error',
+        text: `⚠️ ${updated} updated, but errors occurred. DB says: "${firstError.message}". ` +
+              `You may need to add the read_time column: ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS read_time text;`
+      });
+    } else {
+      setMessage({ type: 'success', text: `✅ Backfilled read time for ${updated} article(s).` });
+    }
   };
 
   if (loading) return <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center">Loading blog manager…</div>;
