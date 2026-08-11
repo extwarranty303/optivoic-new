@@ -1,7 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { usePageMeta } from '../utils/usePageMeta';
 
 export default function Privacy() {
+  usePageMeta({
+    title: 'Privacy Policy — Optivoic',
+    description: 'Read the Optivoic Privacy Policy to understand how we collect, use, and protect your personal information.',
+    canonical: 'https://www.optivoic.com/privacy',
+    robots: 'noindex, follow'
+  });
+
   return (
     <div className="text-gray-300 font-sans selection:bg-cyan-500 selection:text-white">
       <main className="max-w-4xl mx-auto px-8 py-12 md:py-20">

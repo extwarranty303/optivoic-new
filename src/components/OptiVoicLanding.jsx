@@ -15,7 +15,7 @@ const OptiVoicLanding = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   usePageMeta({
-    title: 'Optivoic | Technology Consulting Agency, AI Automation & Reseller Templates',
+    title: 'Optivoic — AI Automation & Technology Consulting',
     description: 'Optivoic is a premier technology consulting agency and AI automation firm. Discover turnkey reseller command center templates, 1099 tax calculators, and custom software solutions.',
     keywords: 'technology consulting agency, AI automation agency, reseller command center, reseller templates, 1099 tax estimation template, business automation frameworks, custom software development',
     canonical: 'https://www.optivoic.com/',
@@ -157,8 +157,8 @@ const OptiVoicLanding = () => {
             </span>
           </div>
           <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-tight drop-shadow-2xl">
-            AI Templates <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">for Work & Life.</span>
+            AI Automation Templates & <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">Technology Consulting.</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
             The marketplace to discover, customize, and deploy AI-powered templates for business, productivity, and personal use. Or, have our experts build a custom solution for you.

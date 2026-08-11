@@ -102,12 +102,12 @@ const BentoServices = () => (
 
 export default function Consulting() {
     usePageMeta({
-        title: 'Technology Consulting Agency & AI Automation Services | Optivoic',
+        title: 'Technology Consulting & AI Automation — Optivoic',
         description: 'Optivoic is a technology consulting agency offering AI model evaluation, custom Python automation workflows, enterprise web development, and strategy consulting.',
         keywords: 'technology consulting agency, AI automation agency, custom software development consulting, prompt engineering services, Python automation solutions, enterprise tech strategy',
         canonical: 'https://www.optivoic.com/consulting',
         robots: 'index, follow',
-        ogTitle: 'Optivoic | Technology Consulting Agency & AI Automation Services',
+        ogTitle: 'Technology Consulting & AI Automation — Optivoic',
         ogDescription: 'Bespoke technology consulting, AI model evaluation, and enterprise software engineering.',
         ogType: 'website',
         ogUrl: 'https://www.optivoic.com/consulting'

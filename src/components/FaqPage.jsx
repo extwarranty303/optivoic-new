@@ -28,7 +28,7 @@ const faqs = [
 
 export default function FaqPage() {
   usePageMeta({
-    title: 'FAQ | Technology Consulting Agency & Reseller Templates | Optivoic',
+    title: 'FAQ — Optivoic Technology Consulting & Templates',
     description: 'Frequently asked questions regarding Optivoic technology consulting, AI automation agency services, reseller command center templates, and custom software.',
     keywords: 'technology consulting agency FAQ, AI automation agency FAQ, reseller templates FAQ, business automation questions',
     canonical: 'https://www.optivoic.com/faq',

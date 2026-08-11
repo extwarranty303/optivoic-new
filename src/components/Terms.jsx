@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
+import { usePageMeta } from '../utils/usePageMeta';
 
 const NoiseOverlay = () => (
   <div 
@@ -10,6 +11,13 @@ const NoiseOverlay = () => (
 );
 
 export default function Terms() {
+  usePageMeta({
+    title: 'Terms of Service — Optivoic',
+    description: 'Read the Optivoic Terms of Service for our consulting, software, and digital marketplace products.',
+    canonical: 'https://www.optivoic.com/terms',
+    robots: 'noindex, follow'
+  });
+
   return (
     <div className="min-h-screen bg-[#020202] text-gray-300 font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
       <NoiseOverlay />
