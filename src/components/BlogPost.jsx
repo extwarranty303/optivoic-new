@@ -4,6 +4,7 @@ import { usePageMeta } from '../utils/usePageMeta';
 import { supabase } from '../supabaseClient';
 import { fetchBookmarks, isBookmarked, toggleBookmark } from '../utils/bookmarkManager';
 import AuthModal from './AuthModal';
+import AdSenseBanner from './AdSenseBanner';
 
 const SEED_POSTS_MAP = {
   'scaling-reseller-operations-with-automated-frameworks': {
@@ -229,6 +230,35 @@ function RelatedArticles({ currentSlug, currentCategory }) {
       </div>
     </div>
   );
+}
+
+/**
+ * Automatically injects the Google Reader Revenue Manager (RRM) Inline CTA div
+ * into the article body after the second paragraph if not already present.
+ */
+function injectInlineCTA(contentStr) {
+  if (!contentStr) return '';
+  if (contentStr.includes('rrm-inline-cta')) {
+    return contentStr; // Respect manually placed snippet
+  }
+
+  const ctaSnippet = '<div rrm-inline-cta="8417e44e-8aab-4f00-85d7-bff3973fe391" class="my-8"></div>';
+
+  let pCount = 0;
+  const injected = contentStr.replace(/<\/p>/gi, (match) => {
+    pCount++;
+    if (pCount === 2) {
+      return match + '\n' + ctaSnippet + '\n';
+    }
+    return match;
+  });
+
+  if (pCount >= 2) {
+    return injected;
+  }
+
+  // Fallback if fewer than 2 paragraphs exist
+  return contentStr + '\n' + ctaSnippet;
 }
 
 export default function BlogPost() {
@@ -504,7 +534,7 @@ export default function BlogPost() {
         )}
 
         {/* HTML Article Body */}
-        <div className="blog-prose" dangerouslySetInnerHTML={{ __html: post.content }} />
+        <div className="blog-prose" dangerouslySetInnerHTML={{ __html: injectInlineCTA(post.content) }} />
 
         {/* Bottom tags */}
         {rawTags && (
@@ -521,6 +551,11 @@ export default function BlogPost() {
         {/* Share bar (bottom) */}
         <div className="mt-8">
           <ShareBar title={post.title} slug={post.slug} />
+        </div>
+
+        {/* Google AdSense Banner */}
+        <div className="my-10">
+          <AdSenseBanner className="text-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4" />
         </div>
 
         {/* Related Articles */}

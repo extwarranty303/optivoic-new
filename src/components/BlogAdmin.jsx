@@ -550,7 +550,20 @@ export default function BlogAdmin() {
                   </div>
 
                   <div>
-                    <label htmlFor="content" className="text-xs font-semibold text-gray-400 mb-2 block uppercase tracking-wider">Article HTML Content *</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label htmlFor="content" className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Article HTML Content *</label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const cta = '<div rrm-inline-cta="8417e44e-8aab-4f00-85d7-bff3973fe391"></div>';
+                          setForm(prev => ({ ...prev, content: (prev.content || '') + '\n' + cta }));
+                        }}
+                        className="text-[11px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 rounded-full cursor-pointer transition-all"
+                        title="Insert Google Reader Revenue Manager Inline CTA snippet into HTML content"
+                      >
+                        + Insert RRM Inline CTA
+                      </button>
+                    </div>
                     <textarea id="content" required value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12} placeholder="Paste or type raw HTML article content (<p>, <h2>, <ul>, etc.)..." className="w-full rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none font-mono" />
                   </div>
 

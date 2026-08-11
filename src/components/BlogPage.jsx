@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 import { BLOG_CATEGORIES } from './BlogAdmin';
 import { fetchBookmarks, isBookmarked, toggleBookmark } from '../utils/bookmarkManager';
 import AuthModal from './AuthModal';
+import AdSenseBanner from './AdSenseBanner';
 
 const SEED_POSTS = [
   {
@@ -511,6 +512,11 @@ export default function BlogPage() {
           </div>
         )}
       </section>
+
+      {/* ── Google AdSense Banner ─────────────────────────────────── */}
+      <div className="max-w-6xl mx-auto px-6 md:px-8 my-6">
+        <AdSenseBanner className="text-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4" />
+      </div>
 
       {/* ── Newsletter / CTA Banner ──────────────────────────────────── */}
       {!loading && posts.length > 0 && (
