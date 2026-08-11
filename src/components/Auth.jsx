@@ -46,8 +46,8 @@ const Auth = () => {
         
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-white tracking-wide mb-2">
-            Opti<span className="text-[#38B6FF]">Vöic</span>
+          <h2 className="text-3xl font-black text-white tracking-tighter drop-shadow-lg mb-2">
+            OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
           </h2>
           <p className="text-gray-400">
             {isLogin ? 'Welcome back to your unified platform.' : 'Create your secure B2B account.'}

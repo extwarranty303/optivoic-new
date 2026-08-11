@@ -298,8 +298,8 @@ export default function ClientPortal() {
       {/* Top Navbar */}
       <nav className="relative z-50 border-b border-white/10 py-5 px-8 flex justify-between items-center bg-black/50 backdrop-blur-2xl">
         <div className="flex items-center gap-3">
-          <span className="text-xl font-bold text-white tracking-tight">
-            OptiVoic Portal
+          <span className="text-xl font-black text-white tracking-tighter drop-shadow-lg flex items-center gap-1">
+            OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span> <span className="text-white font-bold ml-1 tracking-tight text-lg">Portal</span>
           </span>
           <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
             Executive Workspace

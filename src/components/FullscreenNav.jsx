@@ -60,8 +60,8 @@ const FullscreenNav = () => {
         <div className="fullscreen-nav-content">
           <div className="nav-grid">
             {/* Logo */}
-            <div className="nav-item nav-logo">
-              <span>OPTIVÖIC</span>
+            <div className="nav-item nav-logo text-4xl font-black text-white tracking-tighter drop-shadow-lg">
+              OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
             </div>
 
             {/* Navigation Links */}

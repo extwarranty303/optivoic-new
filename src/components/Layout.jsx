@@ -28,7 +28,7 @@ const Navbar = ({ onLoginClick, user }) => {
   return (
     <nav className="fixed w-full border-b border-white/10 py-4 px-8 flex justify-between items-center bg-black/30 backdrop-blur-2xl z-50 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
       <Link to="/" className="text-2xl font-black text-white tracking-tighter drop-shadow-lg hover:opacity-90 transition-opacity">
-        OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VOIC</span>
+        OPTI<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">VÖIC</span>
       </Link>
       <div className="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
         {navLinks.map(link => (
