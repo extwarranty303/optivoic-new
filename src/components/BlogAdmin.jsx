@@ -26,8 +26,21 @@ const emptyForm = {
   meta_description: '',
   featured_image: '',
   image_alt: '',
-  schema_type: 'Article'
+  schema_type: 'Article',
+  read_time: ''
 };
+
+/**
+ * Calculate estimated reading time from HTML content.
+ * Strips tags, counts words, assumes 225 wpm average reading speed.
+ */
+function calculateReadTime(htmlContent) {
+  if (!htmlContent) return '1 min read';
+  const text = htmlContent.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = text.split(' ').filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 225));
+  return `${minutes} min read`;
+}
 
 export default function BlogAdmin() {
   const navigate = useNavigate();
@@ -121,6 +134,7 @@ export default function BlogAdmin() {
       featured_image: form.featured_image,
       image_alt: form.image_alt || form.title,
       schema_type: form.schema_type,
+      read_time: form.read_time || calculateReadTime(form.content),
       updated_at: new Date().toISOString()
     };
 
@@ -251,6 +265,7 @@ export default function BlogAdmin() {
       featured_image: form.featured_image,
       image_alt: form.image_alt || form.title,
       schema_type: form.schema_type,
+      read_time: form.read_time || calculateReadTime(form.content),
       updated_at: new Date().toISOString()
     };
 
@@ -335,7 +350,8 @@ export default function BlogAdmin() {
       meta_description: post.meta_description || '',
       featured_image: post.featured_image || '',
       image_alt: post.image_alt || post.title || '',
-      schema_type: post.schema_type || 'Article'
+      schema_type: post.schema_type || 'Article',
+      read_time: post.read_time || calculateReadTime(post.content)
     });
     setActiveTab('editor');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -360,9 +376,29 @@ export default function BlogAdmin() {
   };
 
   const contentWordCount = useMemo(() => {
-    const words = (form.content || '').trim().split(/\s+/).filter(Boolean);
-    return words.length;
+    const text = (form.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    return text.split(' ').filter(Boolean).length;
   }, [form.content]);
+
+  const liveReadTime = useMemo(() => calculateReadTime(form.content), [form.content]);
+
+  // Backfill read_time for all posts that are missing it
+  const handleBackfillReadTimes = async () => {
+    const missing = posts.filter(p => !p.read_time);
+    if (missing.length === 0) {
+      setMessage({ type: 'success', text: 'All articles already have read time set — nothing to backfill!' });
+      return;
+    }
+    setMessage({ type: 'info', text: `Backfilling read time for ${missing.length} article(s)...` });
+    let updated = 0;
+    for (const post of missing) {
+      const rt = calculateReadTime(post.content);
+      const { error } = await supabase.from('blog_posts').update({ read_time: rt }).eq('id', post.id);
+      if (!error) updated++;
+    }
+    await fetchPosts();
+    setMessage({ type: 'success', text: `✅ Backfilled read time for ${updated} article(s).` });
+  };
 
   if (loading) return <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center">Loading blog manager…</div>;
   if (!authorized) return null;
@@ -395,6 +431,14 @@ export default function BlogAdmin() {
               title="Submit all published URLs directly to Bing & IndexNow for instant search indexing"
             >
               <span>⚡</span> Ping IndexNow to Bing
+            </button>
+            <button
+              type="button"
+              onClick={handleBackfillReadTimes}
+              className="text-xs font-bold px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-all cursor-pointer flex items-center gap-1.5"
+              title="Auto-calculate and save 'read_time' for all articles that are currently missing it"
+            >
+              <span>⏱</span> Backfill Read Times
             </button>
             <Link to="/blog" target="_blank" className="text-xs font-semibold px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-all">
               View Public Blog ↗
@@ -467,7 +511,7 @@ export default function BlogAdmin() {
                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Autosave active (Every 3m)
                   </span>
                 )}
-                <span className="text-xs text-gray-400">{contentWordCount} words</span>
+                <span className="text-xs text-gray-400">{contentWordCount} words &bull; {liveReadTime}</span>
               </div>
             </div>
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient'; 
 import { useNavigate } from 'react-router-dom';
 
-export default function AuthModal({ isOpen, onClose, redirectTo }) {
+export default function AuthModal({ isOpen, onClose, redirectTo, subtitle }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(1); // Step 1: Email entry, Step 2: Password entry
   const [email, setEmail] = useState('');
@@ -200,10 +200,17 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
           /* STEP 1: Enter Email */
           <form onSubmit={handleCheckEmail} className="relative z-10 space-y-5">
             <div>
-              <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Access Portal</h2>
+              <h2 className="text-2xl font-black text-white mb-2 tracking-tight">
+                {subtitle ? 'Save to Knowledge Vault' : 'Access Portal'}
+              </h2>
               <p className="text-gray-400 text-sm">
-                Enter the email address associated with your purchases.
+                {subtitle || 'Enter the email address associated with your purchases.'}
               </p>
+              {subtitle && (
+                <p className="text-xs text-gray-500 mt-1.5">
+                  Log in or create a free account to save articles across all your devices.
+                </p>
+              )}
             </div>
 
             {message.text && (

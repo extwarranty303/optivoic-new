@@ -18,24 +18,101 @@ body {
   min-height: 100vh;
 }
 
-/* Blog Article Typography & HTML Content Styling */
+/* ============================================================
+   BLOG CATEGORY COLOR SYSTEM
+   ============================================================ */
+:root {
+  --cat-business: #22d3ee;    /* cyan */
+  --cat-consulting: #a78bfa;  /* violet */
+  --cat-finance: #34d399;     /* emerald */
+  --cat-ai: #f472b6;          /* pink */
+  --cat-systems: #fb923c;     /* orange */
+  --cat-default: #38bdf8;     /* sky */
+}
+
+/* ============================================================
+   READING PROGRESS BAR
+   ============================================================ */
+#reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  z-index: 9999;
+  background: linear-gradient(90deg, #22d3ee, #818cf8, #a78bfa);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.7), 0 0 20px rgba(34, 211, 238, 0.4);
+  transition: width 0.08s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ============================================================
+   BLOG ARTICLE BODY — PREMIUM PROSE
+   ============================================================ */
+@keyframes blog-fade-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .blog-prose {
   color: #e2e8f0;
   font-size: 1.125rem;
-  line-height: 1.8;
+  line-height: 1.85;
+  animation: blog-fade-in 0.6s ease forwards;
 }
 
-.blog-prose h1, .blog-prose h2, .blog-prose h3, .blog-prose h4 {
+/* Drop-cap on first paragraph */
+.blog-prose > p:first-of-type::first-letter {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 0.85;
+  float: left;
+  margin-right: 0.12em;
+  margin-top: 0.06em;
+  background: linear-gradient(135deg, #22d3ee, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: inherit;
+}
+
+.blog-prose h1,
+.blog-prose h2,
+.blog-prose h3,
+.blog-prose h4 {
   color: #ffffff;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   margin-bottom: 1rem;
 }
 
 .blog-prose h1 { font-size: 2.25rem; }
-.blog-prose h2 { font-size: 1.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
-.blog-prose h3 { font-size: 1.35rem; color: #38bdf8; }
+
+/* h2 — glowing left accent bar */
+.blog-prose h2 {
+  font-size: 1.75rem;
+  padding-left: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+}
+.blog-prose h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  bottom: 0.2em;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #22d3ee, #818cf8);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+}
+
+.blog-prose h3 {
+  font-size: 1.35rem;
+  color: #38bdf8;
+}
 
 .blog-prose p {
   margin-bottom: 1.5rem;
@@ -54,27 +131,92 @@ body {
   color: #a855f7;
 }
 
-.blog-prose ul, .blog-prose ol {
+.blog-prose ul,
+.blog-prose ol {
   margin-bottom: 1.5rem;
-  padding-left: 1.5rem;
+  padding-left: 0.5rem;
+  list-style: none;
 }
 
-.blog-prose ul { list-style-type: disc; }
-.blog-prose ol { list-style-type: decimal; }
+.blog-prose ol {
+  counter-reset: blog-ol;
+  list-style: none;
+}
 
-.blog-prose li {
-  margin-bottom: 0.5rem;
+/* Custom glowing bullet for ul */
+.blog-prose ul > li {
+  position: relative;
+  padding-left: 1.75rem;
+  margin-bottom: 0.75rem;
   color: #cbd5e1;
 }
+.blog-prose ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 0.6em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.7);
+}
 
+/* Custom numbered list */
+.blog-prose ol > li {
+  position: relative;
+  padding-left: 2.25rem;
+  margin-bottom: 0.75rem;
+  color: #cbd5e1;
+  counter-increment: blog-ol;
+}
+.blog-prose ol > li::before {
+  content: counter(blog-ol);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(34,211,238,0.15), rgba(129,140,248,0.15));
+  border: 1px solid rgba(34,211,238,0.3);
+  color: #22d3ee;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pull-quote blockquote with decorative quote marks */
 .blog-prose blockquote {
-  border-left: 4px solid #38bdf8;
-  background: rgba(56, 189, 248, 0.05);
-  padding: 1rem 1.5rem;
-  border-radius: 0 1rem 1rem 0;
-  margin: 1.5rem 0;
+  position: relative;
+  border-left: none;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.04), rgba(129, 140, 248, 0.04));
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  padding: 2rem 2rem 1.5rem 3.5rem;
+  border-radius: 1rem;
+  margin: 2rem 0;
   font-style: italic;
-  color: #94a3b8;
+  color: #e2e8f0;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.06), inset 0 0 30px rgba(129, 140, 248, 0.03);
+}
+.blog-prose blockquote::before {
+  content: '\201C';
+  position: absolute;
+  left: 0.75rem;
+  top: 0.5rem;
+  font-size: 4rem;
+  line-height: 1;
+  font-style: normal;
+  font-weight: 900;
+  background: linear-gradient(135deg, #22d3ee, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.8;
 }
 
 .blog-prose img {
@@ -86,25 +228,103 @@ body {
 }
 
 .blog-prose code {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(34, 211, 238, 0.08);
   color: #38bdf8;
-  padding: 0.2rem 0.4rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 0.375rem;
   font-size: 0.9em;
-  font-family: monospace;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  border: 1px solid rgba(34, 211, 238, 0.15);
 }
 
 .blog-prose pre {
-  background: #0d0d12;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1.25rem;
+  background: #0a0a12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
   border-radius: 1rem;
   overflow-x: auto;
-  margin: 1.5rem 0;
+  margin: 2rem 0;
+  box-shadow: inset 0 2px 20px rgba(0,0,0,0.4);
 }
 
 .blog-prose pre code {
   background: transparent;
+  border: none;
   padding: 0;
   color: #e2e8f0;
+}
+
+/* ============================================================
+   BLOG CARD SCROLL-REVEAL
+   ============================================================ */
+@keyframes card-slide-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.blog-card-reveal {
+  animation: card-slide-up 0.55s ease forwards;
+  opacity: 0;
+}
+
+/* ============================================================
+   BLOG CARD GRADIENT BORDER GLOW (hover)
+   ============================================================ */
+.blog-card-glow {
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.blog-card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(34,211,238,0), rgba(129,140,248,0), rgba(167,139,250,0));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.blog-card-glow:hover::before {
+  background: linear-gradient(135deg, #22d3ee, #818cf8, #a78bfa);
+  opacity: 1;
+}
+.blog-card-glow:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(34, 211, 238, 0.1), 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* ============================================================
+   SHARE BUTTON ROW
+   ============================================================ */
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+.share-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.25);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(129,140,248,0.25);
+}
+.share-btn.copied {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.4);
+  color: #34d399;
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.2);
 }
