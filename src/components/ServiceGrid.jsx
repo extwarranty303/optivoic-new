@@ -14,7 +14,7 @@ const DEFAULT_TEMPLATES = [
     price: '99.00',
     status: 'READY',
     route: '/reseller-command-center',
-    image_url: 'https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/general/gemini-reseller-collage.png'
+    image_url: '/reseller-command-center-preview.jpg'
   },
   {
     id: 'executive-tax-engine',
@@ -108,7 +108,7 @@ const ServiceGrid = () => {
           })
           .map(p => {
             const isReseller = p.title && p.title.toLowerCase().includes('reseller');
-            const img = p.image_url || (isReseller ? 'https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/general/gemini-reseller-collage.png' : null);
+            const img = p.image_url || (isReseller ? '/reseller-command-center-preview.jpg' : null);
             return {
               ...p,
               icon: p.icon || (isReseller ? '📊' : '🚀'),
