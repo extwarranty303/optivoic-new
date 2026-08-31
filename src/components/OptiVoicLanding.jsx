@@ -495,64 +495,83 @@ const OptiVoicLanding = () => {
       <main className="relative z-10">
 
         {/* ================================================================
-            SECTION 1 — Hero
+            SECTION 1 — Hero with Full Background Ambient Video
         ================================================================ */}
-        <section className="px-8 pt-32 pb-20 max-w-5xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="inline-flex items-center mb-8 px-5 py-2 rounded-full border border-violet-500/30 bg-violet-500/10 backdrop-blur-xl">
-              <span className="text-xs font-bold tracking-widest uppercase text-violet-300 flex items-center">
-                <span className="w-2.5 h-2.5 inline-block rounded-full bg-cyan-400 mr-3 animate-pulse" />
-                AI-Powered Web Solutions
-              </span>
-            </div>
+        <section className="relative px-8 pt-36 pb-28 min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-white/5">
+          {/* Full Bleed Dimmed Background Video */}
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="/reseller-command-center-preview.jpg"
+              className="w-full h-full object-cover scale-105 opacity-35 filter brightness-75 contrast-110"
+            >
+              <source src="/assets/hero-showcase.mp4" type="video/mp4" />
+              <source src="/assets/hero-showcase.webm" type="video/webm" />
+            </video>
+            
+            {/* Dimming & Gradient Masks for Crisp Text Contrast */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#020202]/90 via-[#020202]/60 to-[#020202]" />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+          </div>
 
-            <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-tight drop-shadow-2xl">
-              AI Automation Templates &amp; <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">
-                Technology Consulting.
-              </span>
-            </h1>
+          {/* Hero Text Content Overlay */}
+          <div className="relative z-10 max-w-5xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="inline-flex items-center mb-8 px-5 py-2 rounded-full border border-cyan-400/30 bg-black/60 backdrop-blur-xl shadow-[0_0_20px_rgba(56,182,255,0.15)]">
+                <span className="text-xs font-bold tracking-widest uppercase text-cyan-300 flex items-center">
+                  <span className="w-2.5 h-2.5 inline-block rounded-full bg-cyan-400 mr-3 animate-pulse shadow-[0_0_8px_#22d3ee]" />
+                  AI-Powered Web Solutions
+                </span>
+              </div>
 
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-              The marketplace to discover, customize, and deploy AI-powered templates for business,
-              productivity, and personal use. Or, have our experts build a custom solution for you.
-            </p>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tighter leading-tight drop-shadow-[0_10px_35px_rgba(0,0,0,0.8)]">
+                AI Automation Templates &amp; <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-500">
+                  Technology Consulting.
+                </span>
+              </h1>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-10">
-              <Link
-                to="/marketplace"
-                className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(56,182,255,0.4)] transition-all"
-              >
-                Explore Marketplace
-              </Link>
-              <button
-                className="bg-white/10 border border-white/20 text-white font-semibold text-lg py-4 px-10 rounded-full hover:bg-white/20 transition-all"
-                onClick={() => scrollToSection('contact')}
-              >
-                Request Custom Build
-              </button>
-            </div>
+              <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
+                The marketplace to discover, customize, and deploy AI-powered templates for business,
+                productivity, and personal use. Or, have our experts build a custom solution for you.
+              </p>
 
-            {/* Video Showcase Visual Anchor */}
-            <HeroVideoShowcase />
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-10">
+                <Link
+                  to="/marketplace"
+                  className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-bold text-lg py-4 px-10 rounded-full hover:shadow-[0_0_40px_rgba(56,182,255,0.5)] hover:scale-105 transition-all"
+                >
+                  Explore Marketplace
+                </Link>
+                <button
+                  className="bg-black/60 border border-white/20 text-white font-semibold text-lg py-4 px-10 rounded-full hover:bg-white/20 hover:border-cyan-400/40 backdrop-blur-md transition-all"
+                  onClick={() => scrollToSection('contact')}
+                >
+                  Request Custom Build
+                </button>
+              </div>
 
-            {/* Scroll indicator */}
-            <div className="mt-16 flex flex-col items-center gap-2 text-gray-600">
-              <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </motion.div>
-            </div>
-          </motion.div>
+              {/* Scroll indicator */}
+              <div className="mt-20 flex flex-col items-center gap-2 text-gray-400">
+                <span className="text-xs uppercase tracking-widest font-semibold text-cyan-400/80">Scroll to explore</span>
+                <motion.div
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+                >
+                  <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         {/* ================================================================
