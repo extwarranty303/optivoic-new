@@ -11,6 +11,7 @@ import ClientPortal from "./components/ClientPortal"; // User client portal
 import AdminDashboard from "./components/AdminDashboard"; // Admin dashboard
 import UpdatePassword from "./components/UpdatePassword"; // Password update page
 import OptiVoicLanding from "./components/OptiVoicLanding"; // AI Service landing page
+import Auth from "./components/Auth"; // Signup and login page
 import Marketplace from "./components/Marketplace"; // Your marketplace listing page
 import ResellerCommandCenter from "./components/ResellerCommandCenter"; // Your specific Reseller Command Center detail page
 import BlogPage from "./components/BlogPage"; // Blog listing page
@@ -58,6 +59,9 @@ function App() {
             <Route path="/aiservice" element={<OptiVoicLanding />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/signup" element={<Auth initialIsLogin={false} />} />
+            <Route path="/login" element={<Auth initialIsLogin={true} />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/sitemap" element={<SitemapPage />} />
           </Routes>

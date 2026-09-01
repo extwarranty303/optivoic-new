@@ -769,18 +769,18 @@ export default function ClientPortal() {
 
             <h2 className="text-xl sm:text-2xl font-black text-white">{activeQuickStart.title}</h2>
 
-            {/* Video Walkthrough Embed Preview */}
-            <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_25px_rgba(56,182,255,0.2)] max-h-[320px] flex items-center justify-center">
-              <video 
-                controls 
-                autoPlay
-                preload="metadata"
-                playsInline
-                className="w-full max-h-[320px] aspect-video rounded-2xl object-contain bg-black"
-                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/Command_Center_v2.5.mp4"
-              >
-                Your browser does not support playing this video.
-              </video>
+            {/* QuickStart Visual Setup Card */}
+            <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-black p-5 shadow-[0_0_25px_rgba(56,182,255,0.15)] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1 text-left">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-300 bg-cyan-500/20 px-2.5 py-0.5 rounded border border-cyan-400/30">
+                  ⚡ Interactive Blueprint Guide
+                </span>
+                <h3 className="text-base font-bold text-white">4-Step Template Deployment Guide</h3>
+                <p className="text-xs text-gray-300">Follow the operational checklist below to configure fee calculations and master sheets in minutes.</p>
+              </div>
+              <div className="shrink-0 px-4 py-2 rounded-xl bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 text-xs font-mono font-bold text-center">
+                ✓ Ready to Import
+              </div>
             </div>
 
             {/* 4-Step Setup Checklist */}

@@ -32,7 +32,7 @@ const staggerContainer = {
 // Hero Video Showcase — Cutting Edge Muted Video Display
 // ---------------------------------------------------------------------------
 
-const HeroVideoShowcase = () => (
+const HeroShowcase = () => (
   <motion.div
     className="mt-14 max-w-5xl mx-auto px-2 sm:px-4"
     initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -53,32 +53,22 @@ const HeroVideoShowcase = () => (
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-cyan-400/30 backdrop-blur-md">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
             <span className="text-[11px] font-mono font-bold tracking-widest text-cyan-300 uppercase">
-              AI ENGINE // LIVE DEMO
+              AI ENGINE // LIVE SYSTEM
             </span>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md text-[11px] font-mono text-gray-300">
-            <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 1 1 0-2h1.586l4.707-4.707C10.923 7.663 12 8.109 12 9v6c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l2 2" />
-            </svg>
-            <span className="uppercase tracking-widest text-gray-400">SILENT PLAYBACK</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span className="uppercase tracking-widest text-gray-300">READY TO DEPLOY</span>
           </div>
         </div>
 
-        {/* Video Element */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="/reseller-command-center-preview.jpg"
+        {/* High Quality Showcase Image */}
+        <img
+          src="/reseller-command-center-preview.jpg"
+          alt="OptiVoic Command Center System Preview"
           className="w-full h-full object-cover relative z-10 transition-transform duration-700 group-hover:scale-[1.02]"
-        >
-          <source src="/assets/hero-showcase.mp4" type="video/mp4" />
-          <source src="/assets/hero-showcase.webm" type="video/webm" />
-          Your browser does not support HTML5 video.
-        </video>
+        />
 
         {/* Bottom Ambient Gradient Mask & Cyber Badge */}
         <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#020202] via-[#020202]/60 to-transparent z-15 pointer-events-none" />
@@ -90,7 +80,7 @@ const HeroVideoShowcase = () => (
             </span>
           </div>
           <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest bg-black/40 px-2.5 py-1 rounded border border-white/5">
-            HIGH PERFORMANCE • MUTED
+            HIGH PERFORMANCE • INSTANT ACCESS
           </span>
         </div>
 
@@ -498,22 +488,11 @@ const OptiVoicLanding = () => {
             SECTION 1 — Hero with Full Background Ambient Video
         ================================================================ */}
         <section className="relative px-8 pt-36 pb-28 min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-white/5">
-          {/* Full Bleed Dimmed Background Video */}
+          {/* High-Performance Cybernetic Ambient Glow Backdrop */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              poster="/reseller-command-center-preview.jpg"
-              className="w-full h-full object-cover scale-105 opacity-35 filter brightness-75 contrast-110"
-            >
-              <source src="/assets/hero-showcase.mp4" type="video/mp4" />
-              <source src="/assets/hero-showcase.webm" type="video/webm" />
-            </video>
-            
-            {/* Dimming & Gradient Masks for Crisp Text Contrast */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#020202]/90 via-[#020202]/60 to-[#020202]" />
+            <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] bg-cyan-500/20 blur-[150px] rounded-full animate-pulse" />
+            <div className="absolute bottom-[-10%] right-[15%] w-[500px] h-[500px] bg-violet-600/20 blur-[140px] rounded-full" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#020202]/95 via-[#020202]/70 to-[#020202]" />
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
           </div>
 

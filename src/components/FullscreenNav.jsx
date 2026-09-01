@@ -75,6 +75,11 @@ const FullscreenNav = () => {
               <span className="link-icon">↗</span>
             </NavLink>
 
+            <NavLink to="/reseller-command-center" className="nav-item nav-link">
+              <span className="link-label">Command Center</span>
+              <span className="link-icon">↗</span>
+            </NavLink>
+
             <NavLink to="/consulting" className="nav-item nav-link">
               <span className="link-label">Hire the Agency</span>
               <span className="link-icon">↗</span>

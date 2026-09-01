@@ -19,6 +19,7 @@ const Navbar = ({ onLoginClick, user }) => {
   const navigate = useNavigate();
   const navLinks = [
     { path: "/marketplace", label: "Marketplace" },
+    { path: "/reseller-command-center", label: "Command Center" },
     { path: "/consulting", label: "Consulting" },
     { path: "/blog", label: "Blog" },
     { path: "/faq", label: "FAQ" },

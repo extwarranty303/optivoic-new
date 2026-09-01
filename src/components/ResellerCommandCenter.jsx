@@ -11,6 +11,7 @@ export default function ResellerCommandCenter() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [activeFeatureTab, setActiveFeatureTab] = useState('fee-engine');
   const [template, setTemplate] = useState({
     id: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
     title: 'Reseller Command Center',
@@ -136,29 +137,173 @@ export default function ResellerCommandCenter() {
             </div>
           </div>
 
-          {/* Promotional Video Preview & Ease of Use Section */}
-          <div className="mb-16 rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-black p-8 md:p-10 backdrop-blur-xl shadow-2xl space-y-6">
+          {/* Interactive System Capabilities & Workflow Spotlight */}
+          <div className="mb-16 rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-black p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-300 bg-cyan-500/20 border border-cyan-500/30 px-3 py-1 rounded-full inline-block mb-2">
-                  🎥 3-Minute Video Demo
+                  ✨ Interactive System Capabilities
                 </span>
-                <h2 className="text-2xl md:text-3xl font-black text-white">Ease of Use & Key Benefits Preview</h2>
-                <p className="text-gray-300 text-sm mt-1">See how the Reseller Command Center automates fee calculations and live profit tracking in seconds.</p>
+                <h2 className="text-2xl md:text-3xl font-black text-white">Automated Workflows & Live Features</h2>
+                <p className="text-gray-300 text-sm mt-1">Explore how the Reseller Command Center handles fee calculations, inventory velocity, and net margin controls.</p>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-cyan-500/30 bg-black overflow-hidden shadow-[0_0_40px_rgba(56,182,255,0.25)]">
-              <video 
-                controls 
-                autoPlay
-                preload="metadata"
-                playsInline
-                className="w-full aspect-video rounded-2xl object-cover"
-                src="https://wekjabmdztgkhfszgyeg.supabase.co/storage/v1/object/public/video/Command_Center_v2.5.mp4"
-              >
-                Your browser does not support playing this video.
-              </video>
+            {/* Interactive Feature Selectors */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 border-b border-white/10 pb-4">
+              {[
+                { id: 'fee-engine', label: 'Profit & Fee Engine', icon: '⚡' },
+                { id: 'sourcing-radar', label: 'Pre-Buy Sourcing', icon: '🔍' },
+                { id: 'inventory-hub', label: 'Inventory Hub', icon: '📦' },
+                { id: 'analytics', label: 'Live Analytics', icon: '📊' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveFeatureTab(tab.id)}
+                  className={`flex flex-col items-center p-3 rounded-xl transition-all text-xs font-bold ${
+                    activeFeatureTab === tab.id
+                      ? 'bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 shadow-[0_0_20px_rgba(56,182,255,0.2)]'
+                      : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <span className="text-base mb-1">{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Feature Spotlight Display Cards */}
+            <div className="rounded-2xl border border-cyan-500/30 bg-black/80 p-6 md:p-8 space-y-6 shadow-[0_0_30px_rgba(56,182,255,0.15)]">
+              {activeFeatureTab === 'fee-engine' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start flex-wrap gap-2">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold">Module 01 // Multi-Channel Profit Engine</span>
+                      <h3 className="text-xl font-bold text-white mt-1">Automated Fee & Tax Allocations</h3>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-mono font-bold">
+                      ✓ Live Profit Lock
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    Automatically factors in platform commission rates (eBay 13.25%, Poshmark 20%, Mercari 10%, Shopify custom), payment processing fees, shipping costs, and state 1099 tax reserve percentages in real-time.
+                  </p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="text-[10px] text-gray-400 block uppercase font-mono">Sample Gross Sale</span>
+                      <span className="text-lg font-black text-white">$120.00</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="text-[10px] text-gray-400 block uppercase font-mono">Item Cost Basis</span>
+                      <span className="text-lg font-black text-amber-400">-$25.00</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="text-[10px] text-gray-400 block uppercase font-mono">Platform & Ship Fees</span>
+                      <span className="text-lg font-black text-rose-400">-$21.40</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-400/30 text-center">
+                      <span className="text-[10px] text-cyan-300 block uppercase font-mono">Net Profit Margin</span>
+                      <span className="text-lg font-black text-cyan-300">+$73.60 (61.3%)</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeatureTab === 'sourcing-radar' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start flex-wrap gap-2">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold">Module 02 // Sourcing Intelligence</span>
+                      <h3 className="text-xl font-bold text-white mt-1">Auction & Estate Sale Pre-Buy Check</h3>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-mono font-bold">
+                      ⚡ &lt; 15s Sourcing Check
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    Compare projected sold comps against auction bids or estate sale prices. Instantly see your minimum breakeven price and projected net ROI before putting cash on the table.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="text-xs text-gray-400 font-mono mb-1">Target ROI Threshold</div>
+                      <div className="text-2xl font-black text-emerald-400">+150% ROI</div>
+                      <div className="text-[11px] text-gray-400 mt-1">Pre-configured margin filter</div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="text-xs text-gray-400 font-mono mb-1">Max Offer Target</div>
+                      <div className="text-2xl font-black text-cyan-300">$35.00 Cap</div>
+                      <div className="text-[11px] text-gray-400 mt-1">Protects minimum $40 net profit</div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="text-xs text-gray-400 font-mono mb-1">Sourcing Decision</div>
+                      <div className="text-2xl font-black text-cyan-400">BUY CONFIRMED</div>
+                      <div className="text-[11px] text-emerald-400 mt-1">High-velocity category</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeatureTab === 'inventory-hub' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start flex-wrap gap-2">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold">Module 03 // Multi-Channel Control</span>
+                      <h3 className="text-xl font-bold text-white mt-1">End-to-End Inventory Lifecycle</h3>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 text-xs font-mono font-bold">
+                      📦 Multi-Channel Sync
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    Track every single item with SKU identifiers, location bin tags, listing dates, and multi-channel cross-listing status (Draft → Active → Sold → Shipped).
+                  </p>
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">DRAFT</span>
+                      <span className="text-gray-500">→</span>
+                      <span className="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+                      <span className="text-gray-500">→</span>
+                      <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">SOLD</span>
+                      <span className="text-gray-500">→</span>
+                      <span className="px-2 py-1 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30">SHIPPED</span>
+                    </div>
+                    <div className="text-gray-300 font-bold">
+                      Zero duplicate listings or lost stock
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeatureTab === 'analytics' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start flex-wrap gap-2">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold">Module 04 // Executive Dashboard</span>
+                      <h3 className="text-xl font-bold text-white mt-1">Live Profit Velocity & Tax Summary</h3>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/40 text-blue-300 text-xs font-mono font-bold">
+                      📈 Instant Analytics
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    Get clear monthly metrics: gross revenue, total inventory asset value, net profit velocity, and estimated tax reserves ready for quarterly filing.
+                  </p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="text-[10px] text-gray-400 block font-mono uppercase">Inventory Valuation</span>
+                      <span className="text-lg font-black text-cyan-300">$14,850.00</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="text-[10px] text-gray-400 block font-mono uppercase">Average Profit / Sale</span>
+                      <span className="text-lg font-black text-emerald-400">$32.40</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center col-span-2 md:col-span-1">
+                      <span className="text-[10px] text-gray-400 block font-mono uppercase">Estimated Tax Set-Aside</span>
+                      <span className="text-lg font-black text-violet-300">15.0% Auto-Bucket</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

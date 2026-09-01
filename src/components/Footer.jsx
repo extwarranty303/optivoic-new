@@ -21,6 +21,9 @@ export default function Footer() {
           <Link to="/marketplace" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
             Marketplace
           </Link>
+          <Link to="/reseller-command-center" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
+            Command Center
+          </Link>
           <Link to="/blog" className="text-xs font-bold text-gray-500 hover:text-cyan-400 transition-colors uppercase tracking-widest">
             Blog
           </Link>
